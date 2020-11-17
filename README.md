@@ -16,3 +16,7 @@ client.query(
 `{"errors":[{"position":["create","id"],"code":"invalid argument","description":"Number or numeric String expected, non-numeric 'zdbQUQ94Nzxkhguxgw0t/eDhAhxazv+v0DsElbQ0opI=.ed25519' provided."}]}`,
 ```
 
+See [users in fauna](https://docs.fauna.com/fauna/current/tutorials/authentication/user?lang=javascript)
+
+
+
