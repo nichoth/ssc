@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/nichoth/ssc/issues"
   },
-  "homepage": "https://github.com/nichoth/ssc#readme"
+  "homepage": "https://github.com/nichoth/ssc#readme",
+  "dependencies": {
+    "faunadb": "^3.0.1"
+  }
 }
