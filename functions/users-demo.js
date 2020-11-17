@@ -1,16 +1,21 @@
+var ssbKeys = require("ssb-keys")
 var faunadb = require('faunadb')
 var q = faunadb.query
-var key = process.env.FAUNA_KEY
+var envKey = process.env.FAUNA_KEY
+
+var keys = ssbKeys.generate()
 
 var client = new faunadb.Client({
-    secret: key
+    secret: envKey
 })
 
 client.query(
     // takes the id of the user: '1'
-    q.Create(q.Ref(q.Collection('users'), '1'), {
+    // q.Create(q.Ref(q.Collection('users'), '1'), {
+    q.Create(q.Collection('users'), {
         data: {
-            userName: 'fooooo'
+            userName: 'fooooo',
+            keys
         }
     })
 )
