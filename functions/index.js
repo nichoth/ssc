@@ -6,7 +6,7 @@ var client = new faunadb.Client({ secret: envKey })
 
 client.query(
     q.CreateIndex({
-        name: 'my-index',
+        name: 'My-index',
         source: q.Collection('users'),
         terms: [{ field: ['data', 'secrets', 'public'] }]
         // values: [{ field: ['data', 'secrets', 'public'] }]

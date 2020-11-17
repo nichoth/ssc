@@ -19,6 +19,6 @@ client.query(
         }
     })
 )
-.then(res => console.log('res', res))
-.catch(err => console.log('errrrr', err))
+    .then(res => console.log('res', res))
+    .catch(err => console.log('errrrr', err))
 
