@@ -60,6 +60,13 @@ You don't really want a secret to be in the database.
 
 - don't use a priv key at all, just function as the current pubs do -- saving and replicating messages
 
+--------------------------------------------------------
+
+## How does auth0 work?
+Auth0 vs the fauna login
+
+
+
 
 
 
