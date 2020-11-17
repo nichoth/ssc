@@ -29,4 +29,12 @@ See [user authentication in fauna](https://docs.fauna.com/fauna/current/tutorial
 [indexes](https://docs.fauna.com/fauna/current/tutorials/indexes/)
 
 
+--------------------------------------------
+
+https://docs.fauna.com/fauna/current/integrations/netlify.html
+
+```
+netlify addons:create fauna
+```
+
 
