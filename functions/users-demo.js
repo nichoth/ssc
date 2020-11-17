@@ -10,12 +10,12 @@ var client = new faunadb.Client({
 })
 
 client.query(
-    // takes the id of the user: '1'
+    // pass the id for the user: '1'
     // q.Create(q.Ref(q.Collection('users'), '1'), {
     q.Create(q.Collection('users'), {
         data: {
             userName: 'fooooo',
-            keys
+            secrets: keys
         }
     })
 )
