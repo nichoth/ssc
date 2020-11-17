@@ -90,3 +90,4 @@ node_modules
 
 bundle.js
 public/
+.env

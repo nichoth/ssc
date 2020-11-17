@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "mkdir -p public && cp src/index.html public",
+    "start": "env $(cat .env | xargs) netlify dev",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -19,5 +20,8 @@
   "homepage": "https://github.com/nichoth/ssc#readme",
   "dependencies": {
     "faunadb": "^3.0.1"
+  },
+  "devDependencies": {
+    "netlify-cli": "^2.68.5"
   }
 }
