@@ -65,6 +65,14 @@ You don't really want a secret to be in the database.
 ## How does auth0 work?
 Auth0 vs the fauna login
 
+* create an account with invite code
+* when you use the invite, check payment $$$
+
+https://auth0.com/blog/deploying-javascript-apps-part-2/
+
+Need to re-make the "client app" and the backend so they use normal stuff like xhr calls. Should make another version of `sbot` that has different method implementations.
+
+* could use a push/pull interface like git
 
 
 
