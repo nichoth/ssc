@@ -74,6 +74,15 @@ Need to re-make the "client app" and the backend so they use normal stuff like x
 
 * could use a push/pull interface like git
 
+----------------------------------------------
+
+## 11-17-2020
+
+[traditional replication](https://github.com/nichoth/eventual-gram-ssb#10-18-2020) calls `createHistoryStream({id, seq})` for every feed you are following
+
+
+
+
 
 
 
