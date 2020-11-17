@@ -19,7 +19,6 @@
   },
   "homepage": "https://github.com/nichoth/ssc#readme",
   "dependencies": {
-    "faunadb": "^3.0.1"
   },
   "devDependencies": {
     "netlify-cli": "^2.68.5"

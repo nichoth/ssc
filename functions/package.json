@@ -1,0 +1,7 @@
+{
+    "dependencies": {
+        "faunadb": "^3.0.1"
+        "ssb-keys": "^8.0.0"
+    }
+}
+
