@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/nichoth/ssc#readme",
   "dependencies": {
+    "auth0-js": "^9.14.0",
     "faunadb": "^3.0.1",
     "ssb-keys": "^8.0.0"
   },
