@@ -50,7 +50,6 @@ netlify addons:create fauna
 ------------------------------------------------
 
 ## How to store the secret key
-
 You don't really want a secret to be in the database.
 
 - save the priv key, don't let anyone see it, not even the user. Then use it to sign messages
@@ -79,7 +78,7 @@ Need to re-make the "client app" and the backend so they use normal stuff like x
 
 [traditional replication](https://github.com/nichoth/eventual-gram-ssb#10-18-2020) calls `createHistoryStream({id, seq})` for every feed you are following
 
-https://github.com/ssbc/ssb-replicate/blob/28d763ce2da79b870547b247eecff0fe56baf17c/legacy.js#L256 -- `createHistoryStream` call in the wild
+[`createHistoryStream` call in the wild](https://github.com/ssbc/ssb-replicate/blob/28d763ce2da79b870547b247eecff0fe56baf17c/legacy.js#L256)
 
 [sbot.createWriteStream](https://github.com/ssbc/ssb-db#dbcreatewritestream-source) -- used in the replicate code above.
 > A pull-stream sink that expects a stream of messages and calls `db.add` on each item, appending every valid message to the log.
