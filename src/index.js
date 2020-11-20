@@ -1,14 +1,14 @@
 function createCustomer() {
     let billingEmail = document.querySelector('#email').value;
 
-    return fetch('/create-customer', {
+    return fetch('/.netlify/functions/create-customer', {
         method: 'post',
         headers: {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({
             email: billingEmail,
-        }),
+        })
     })
       .then((response) => {
           return response.json()
