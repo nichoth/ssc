@@ -84,6 +84,10 @@ Need to re-make the "client app" and the backend so they use normal stuff like x
 > A pull-stream sink that expects a stream of messages and calls `db.add` on each item, appending every valid message to the log.
 
 
+-----------------------------------------------
+
+doing this -- https://stripe.com/docs/billing/subscriptions/checkout/fixed-price
+
 
 
 
