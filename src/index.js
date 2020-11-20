@@ -1,14 +1,10 @@
-function createCustomer() {
-    let billingEmail = document.querySelector('#email').value;
-
+function createCustomer({ email }) {
     return fetch('/.netlify/functions/create-customer', {
         method: 'post',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({
-            email: billingEmail,
-        })
+        body: JSON.stringify({ email })
     })
       .then((response) => {
           return response.json()
@@ -21,10 +17,11 @@ function createCustomer() {
 }
 
 let signupForm = document.getElementById('signup-form')
-signupForm.addEventListener('submit', function (evt) {
-    evt.preventDefault()
+signupForm.addEventListener('submit', function (ev) {
+    ev.preventDefault()
+    var { email } = ev.target.elements
     // Create Stripe customer
-    createCustomer().then((result) => {
+    createCustomer({ email }).then((result) => {
         customer = result.customer
     })
 })
