@@ -7,6 +7,9 @@ exports.handler = async function (ev, ctx, cb) {
     var { email } = JSON.parse(ev.body)
     const customer = await stripe.customers.create({ email });
 
+    // TODO
+    // store the customer in our database
+
     cb(null, {
         statusCode: 200,
         body: JSON.stringify({

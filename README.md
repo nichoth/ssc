@@ -1,4 +1,11 @@
 # ssc
+
+## stripe test card
+4242 4242 4242 4242, any three-digit CVC number, any expiration date in the
+future, and any five-digit ZIP code.
+
+--------------------------------------------------
+
 Using the public key as the user ID returns an error. The ID must be numeric
 
 ```
