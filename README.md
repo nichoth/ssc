@@ -88,6 +88,12 @@ Need to re-make the "client app" and the backend so they use normal stuff like x
 
 doing this -- https://stripe.com/docs/billing/subscriptions/checkout/fixed-price
 
+---------------------------------------------
+
+## 11-20-2020
+* [subscriptions with checkout](https://stripe.com/docs/billing/subscriptions/checkout/fixed-price)
+* [subscriptions with elements](https://stripe.com/docs/billing/subscriptions/fixed-price)
+
 
 
 
