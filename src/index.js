@@ -11,7 +11,8 @@ function createCustomer({ email }) {
       })
       .then((result) => {
           // result.customer.id is used to map back to the customer object
-          // result.setupIntent.client_secret is used to create the payment method
+          // result.setupIntent.client_secret is used to create the
+          // payment method
           return result
       })
 }

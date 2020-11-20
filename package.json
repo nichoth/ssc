@@ -4,8 +4,10 @@
   "version": "0.0.0",
   "main": "index.js",
   "scripts": {
-    "start": "npm run build && env $(cat .env | xargs) netlify dev",
-    "build": "mkdir -p public && cp src/* public",
+    "start": "npm run build && concurrently --kill-others \"env $(cat .env | xargs) netlify dev\" \"npm run watch-css\"",
+    "build-css": "node-sass --output-style=compressed src/style.scss > public/style.css",
+    "watch-css": "node-sass --watch src/style.scss --source-map-embed public/style.css",
+    "build": "mkdir -p public && cp src/* public && npm run build-css",
     "env": "env $(cat .env | xargs)",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -26,6 +28,8 @@
     "stripe": "^8.125.0"
   },
   "devDependencies": {
-    "netlify-cli": "^2.68.5"
+    "concurrently": "^5.3.0",
+    "netlify-cli": "^2.68.5",
+    "node-sass": "^5.0.0"
   }
 }
