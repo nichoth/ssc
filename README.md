@@ -106,3 +106,7 @@ doing this -- https://stripe.com/docs/billing/subscriptions/checkout/fixed-price
 
 we are only using the email, what do we do with the card data?
 
+* Where does the `card` variable come from?
+
+See https://stripe.com/docs/billing/subscriptions/fixed-price . Make a test
+for each section
