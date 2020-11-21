@@ -1,4 +1,20 @@
 #signup-form {
-    max-width: 650px;
+    max-width: 60vw;
+    margin: 0 auto;
+    border: 1px solid red;
+    padding: 1em;
+
+    & > * {
+        margin-bottom: 1em;
+    }
+
+    .form-controls {
+        display: flex;
+        justify-content: flex-end;
+    }
 }
 
+#card-element {
+    border: 1px solid gray;
+    padding: 1em;
+}
