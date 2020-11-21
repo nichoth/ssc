@@ -104,5 +104,5 @@ doing this -- https://stripe.com/docs/billing/subscriptions/checkout/fixed-price
 
 
 
-
+we are only using the email, what do we do with the card data?
 
