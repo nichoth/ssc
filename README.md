@@ -1,8 +1,13 @@
 # ssc
 
-## stripe test card
-4242 4242 4242 4242, any three-digit CVC number, any expiration date in the
-future, and any five-digit ZIP code.
+## stripe test cards
+* 4242 4242 4242 4242, any three-digit CVC number, any expiration date in the
+future, and any five-digit ZIP code -- Succeeds and immediately creates an active subscription.
+* 4000002500003155 -- Requires authentication. `confirmCardPayment()` will trigger a modal asking for the customer to authenticate. Once the user confirms, the subscription will become active. See [manage payment authentication](https://stripe.com/docs/billing/subscriptions/fixed-price#manage-payment-authentication).
+* 4000008260003178 -- Always fails with a decline code of insufficient_funds. See create subscription step on how to handle this server side.
+* 4000000000000341 -- Succeeds when it initially attaches to Customer object, but fails on the first payment of a subscription with the payment_intent value of requires_payment_method. See the manage subscription payment failure step.
+
+
 
 --------------------------------------------------
 
