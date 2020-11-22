@@ -7,11 +7,10 @@ const stripe = require('stripe')('sk_test_8n6qv7Bl3KjhZzdYhbwBCPnU00lo8hErSb')
 exports.handler = async function (ev, ctx, cb) {
     var { sessionId } = JSON.parse(ev.body)
     var checkoutSession = await stripe.checkout.sessions.retrieve(sessionId)
-    const returnUrl = process.env.DOMAIN;
 
     const portalSession = await stripe.billingPortal.sessions.create({
         customer: checkoutSession.customer,
-        return_url: returnUrl,
+        return_url: process.env.DOMAIN,
     })
 
     cb(null, {

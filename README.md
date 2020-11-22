@@ -1,5 +1,32 @@
 # ssc
 
+## stripe
+* Model your subscription with Products and Prices -- use the stripe dashboard
+* Collect payment information and create the subscription with Stripe Checkout
+* Integrate the customer portal to allow customers to manage their billing settings
+
+
+### how it works
+* create a 'checkout session' by calling our backend.
+  - pass the price id, sucess-url, and cancel-url
+  - get back a `sessionId`
+* on the frontend, call `stripe.redirectToCheckout` with the `sessionId`
+* get the `customerId` somehow, and create the 'portal session' in the backend, returning the prortal url to the frontend. Also pass a return url (a url to send the customer to when they are done with the portal)
+```js
+const portalsession = await stripe.billingPortal.sessions.create({
+    customer: checkoutsession.customer,
+    return_url: returnUrl,
+});
+
+res.send({
+    url: portalsession.url,
+});
+```
+* when you receive a `checkout.session.completed` webhook event, you should provision the subscription
+* also listen for webhook events to cancel a subscription
+
+-----------------------------------------
+
 ## stripe test cards
 * 4242 4242 4242 4242, any three-digit CVC number, any expiration date in the
 future, and any five-digit ZIP code -- Succeeds and immediately creates an active subscription.
@@ -11,9 +38,9 @@ future, and any five-digit ZIP code -- Succeeds and immediately creates an activ
 
 --------------------------------------------------
 
+## fauna
 Using the public key as the user ID returns an error. The ID must be numeric
-
-```
+```js
 client.query(
     q.Create(q.Ref(q.Collection('users'), keys.public), {
         data: {
@@ -64,10 +91,7 @@ netlify addons:create fauna
 ## How to store the secret key
 You don't really want a secret to be in the database.
 
-- save the priv key, don't let anyone see it, not even the user. Then use it to sign messages
-
 - use a different priv key & a same-as message with the local user
-
 - don't use a priv key at all, just function as the current pubs do -- saving and replicating messages
 
 --------------------------------------------------------
@@ -138,3 +162,7 @@ price id -- price_1HpPOxBnqQbRlIvQeMvblXi5
 
 *function URL:*
 /.netlify/functions/hello
+
+
+
+

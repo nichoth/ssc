@@ -26,7 +26,7 @@ if (sessionId) {
 }
 
 
-//Add an event handler to the button to redirect to the portal, passing
+// Add an event handler to the button to redirect to the portal, passing
 // the customer ID:
 
 // In production, this should check CSRF, and not pass the session ID.
@@ -35,7 +35,7 @@ if (sessionId) {
 const manageBillingForm = document.querySelector('#manage-billing-form');
 manageBillingForm.addEventListener('submit', function (ev) {
     ev.preventDefault()
-    fetch('/.netlify/functions/customer-portal', {
+    fetch('/.netlify/functions/create-customer-portal', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -45,9 +45,9 @@ manageBillingForm.addEventListener('submit', function (ev) {
         })
     })
     .then((response) => response.json())
-    .then((data) => {
-        console.log('data in here', data)
-        window.location.href = data.url
+    .then((res) => {
+        console.log('res in here', res)
+        window.location.href = res.url
     })
     .catch((error) => {
         console.error('Error:', error)
