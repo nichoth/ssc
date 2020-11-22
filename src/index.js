@@ -1,6 +1,39 @@
 var stripe = Stripe('pk_test_IRey7snzagoQj4MI1BV91vRv00ebgkZoJw')
 var elements = stripe.elements()
 
+// After the form loads, create an instance of an Element and mount
+// it to the Element container.
+var style = {
+    base: {
+        color: "#32325d",
+        fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
+        fontSmoothing: "antialiased",
+        fontSize: "16px",
+        "::placeholder": {
+            color: "#aab7c4"
+        }
+    },
+    invalid: {
+        color: "#fa755a",
+        iconColor: "#fa755a"
+    }
+}
+var card = elements.create("card", { style: style })
+card.mount("#card-element")
+
+// To help your customers catch mistakes, listen to change events on the
+// card Element and display any errors.
+card.on('change', function (event) {
+    console.log('change', event)
+    var displayError = document.getElementById('card-errors')
+    if (event.error) {
+        displayError.textContent = event.error.message
+    } else {
+        displayError.textContent = ''
+    }
+})
+
+
 function createCustomer ({ email }) {
     return fetch('/.netlify/functions/create-customer', {
         method: 'post',
@@ -331,43 +364,3 @@ function cancelSubscription() {
     });
 }
 
-
-
-
-
-
-// Set your publishable key: remember to change this to your live
-// publishable key in production
-// See your keys here: https://dashboard.stripe.com/account/apikeys
-var style = {
-    base: {
-        color: "#32325d",
-        fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
-        fontSmoothing: "antialiased",
-        fontSize: "16px",
-        "::placeholder": {
-            color: "#aab7c4"
-        }
-    },
-    invalid: {
-        color: "#fa755a",
-        iconColor: "#fa755a"
-    }
-}
-
-// After the form loads, create an instance of an Element and mount
-// it to the Element container.
-var cardElement = elements.create("card", { style: style })
-cardElement.mount("#card-element")
-
-// To help your customers catch mistakes, listen to change events on the
-// card Element and display any errors.
-cardElement.on('change', function (event) {
-    console.log('change', event)
-    var displayError = document.getElementById('card-errors')
-    if (event.error) {
-        displayError.textContent = event.error.message
-    } else {
-        displayError.textContent = ''
-    }
-})

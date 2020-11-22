@@ -107,11 +107,34 @@ doing this -- https://stripe.com/docs/billing/subscriptions/checkout/fixed-price
 * [subscriptions with elements](https://stripe.com/docs/billing/subscriptions/fixed-price)
 
 
+--------------------------------------------------------
 
-
-we are only using the email, what do we do with the card data?
 
 * Where does the `card` variable come from?
+it was a naming error. You can see if you view [the full example](https://github.com/stripe-samples/subscription-use-cases/blob/master/fixed-price-subscriptions/client/vanillajs/script.js)
 
 See https://stripe.com/docs/billing/subscriptions/fixed-price . Make a test
-for each section
+for each section. see the issue for tests
+
+stripe demo site:
+https://github.com/stripe/stripe-payments-demo
+https://stripe-payments-demo.appspot.com/
+
+
+https://stripe.com/docs/stripe-js
+
+
+[the checkout tutorial](https://stripe.com/docs/billing/subscriptions/checkout/fixed-price). I haven't read this one
+
+
+--------------------------------------------
+
+## 22-21-2020
+[stripe subscriptions](https://stripe.com/docs/billing/subscriptions/overview)
+
+reading https://stripe.com/docs/billing/subscriptions/checkout/fixed-price -- the stripe-hosted checkout page
+
+price id -- price_1HpPOxBnqQbRlIvQeMvblXi5
+
+
+
