@@ -5,9 +5,10 @@ var PRICE_ID = 'price_1HpPOxBnqQbRlIvQeMvblXi5'
 document.getElementById("checkout").addEventListener("click", function (ev) {
     createCheckoutSession(PRICE_ID).then(function (res) {
         // Call Stripe.js method to redirect to the new Checkout page
+        console.log('create checkout session', res)
         stripe.redirectToCheckout({
             sessionId: res.sessionId
-        }).then(res => console.log('create checkout sess', res))
+        }).then(res => console.log('redirect to checkout', res))
     })
 })
  
@@ -23,7 +24,7 @@ function createCheckoutSession (priceId) {
     }).then(function(result) {
         return result.json()
     })
-};
+}
 
 
 
