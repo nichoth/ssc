@@ -1,6 +1,6 @@
 // https://stripe.com/docs/billing/subscriptions/checkout/fixed-price#create-session
 
-const stripe = require('stripe')('sk_test_8n6qv7Bl3KjhZzdYhbwBCPnU00lo8hErSb');
+const stripe = require('stripe')('sk_test_8n6qv7Bl3KjhZzdYhbwBCPnU00lo8hErSb')
 
 exports.handler = async function (ev, ctx, cb) {
     // need to put the priceId in the frontend
@@ -14,7 +14,7 @@ exports.handler = async function (ev, ctx, cb) {
             line_items: [{
                   price: priceId,
                   quantity: 1
-              }],
+            }],
             // {CHECKOUT_SESSION_ID} is a string literal; do not change it!
             // the actual Session ID is returned in the query parameter
             // when your customer is redirected to the success page.

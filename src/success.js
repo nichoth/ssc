@@ -3,7 +3,7 @@ const sessionId = urlParams.get("session_id")
 let customerId;
 
 if (sessionId) {
-    fetch("/checkout-session?sessionId=" + sessionId)
+    fetch("/.netlify/functions/checkout-session?sessionId=" + sessionId)
         .then(function (result) {
             return result.json()
         })
@@ -35,7 +35,7 @@ if (sessionId) {
 const manageBillingForm = document.querySelector('#manage-billing-form');
 manageBillingForm.addEventListener('submit', function (ev) {
     ev.preventDefault()
-    fetch('/customer-portal', {
+    fetch('/.netlify/functions/customer-portal', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

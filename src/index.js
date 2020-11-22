@@ -2,15 +2,10 @@ var stripe = Stripe('pk_test_IRey7snzagoQj4MI1BV91vRv00ebgkZoJw')
 var elements = stripe.elements()
 var PRICE_ID = 'price_1HpPOxBnqQbRlIvQeMvblXi5'
 
-// /.netlify/functions/hello
-
 document.getElementById("checkout").addEventListener("click", function (ev) {
     createCheckoutSession(PRICE_ID).then(function (res) {
         console.log('create checkout session', res)
-        // error:
-            // message: "No such price: 'price_1HpPOxBnqQbRlIvQeMvblXi5'
 
-        // Call Stripe.js method to redirect to the new Checkout page
         stripe.redirectToCheckout({
             sessionId: res.sessionId
         }).then(res => console.log('redirect to checkout', res))
