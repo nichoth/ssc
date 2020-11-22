@@ -136,5 +136,5 @@ reading https://stripe.com/docs/billing/subscriptions/checkout/fixed-price -- th
 
 price id -- price_1HpPOxBnqQbRlIvQeMvblXi5
 
-
-
+*function URL:*
+/.netlify/functions/hello

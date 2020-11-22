@@ -1,11 +1,12 @@
 // https://stripe.com/docs/billing/subscriptions/checkout/fixed-price#create-session
 
-const stripe = require('stripe')('sk_test_4eC39HqLyjWDarjtT1zdp7dc');
+const stripe = require('stripe')('sk_test_8n6qv7Bl3KjhZzdYhbwBCPnU00lo8hErSb');
 
 exports.handler = async function (ev, ctx, cb) {
     // need to put the priceId in the frontend
     var { priceId } = JSON.parse(ev.body)
-
+    console.log('price id', priceId)
+    
     try {
         const session = await stripe.checkout.sessions.create({
             mode: "subscription",
