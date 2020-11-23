@@ -1,17 +1,18 @@
 # ssc
 
 ## stripe
+[instructions for stripe checkout](https://stripe.com/docs/billing/subscriptions/checkout/fixed-price)
+
 * Model your subscription with Products and Prices -- use the stripe dashboard
 * Collect payment information and create the subscription with Stripe Checkout
 * Integrate the customer portal to allow customers to manage their billing settings
-
 
 ### how it works
 * create a 'checkout session' by calling our backend.
   - pass the price id, sucess-url, and cancel-url
   - get back a `sessionId`
 * on the frontend, call `stripe.redirectToCheckout` with the `sessionId`
-* get the `customerId` somehow, and create the 'portal session' in the backend, returning the prortal url to the frontend. Also pass a return url (a url to send the customer to when they are done with the portal)
+* for subscription management, get the `customerId` somehow, and create the 'portal session' in the backend, returning the prortal url to the frontend. Also pass a return url (a url to send the customer to when they are done with the portal)
 ```js
 const portalsession = await stripe.billingPortal.sessions.create({
     customer: checkoutsession.customer,
@@ -24,6 +25,12 @@ res.send({
 ```
 * when you receive a `checkout.session.completed` webhook event, you should provision the subscription
 * also listen for webhook events to cancel a subscription
+
+-------------------------------------------
+
+### how to check the subscription status
+When you make a call to replicate, how do you know if it is paid for?
+
 
 -----------------------------------------
 
