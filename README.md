@@ -242,21 +242,27 @@ no private key
 
 ```js
 {
-  "ref": Ref(Collection("users"), "282415672351261196"),
-  "ts": 1605591423320000,
-  "data": {
-    "userName": "fooooo",
-    "secrets": {
-        "curve": "ed25519",
-        "public": "zhyS3C1K1ixjBSIy9ezwAbsI877ol61uza8fnP8RFXk=.ed25519",
-        "private": "SFg85EiJLHspP5HsTONBuJ3+4NRmZ5E7JlOndO2SUhLOHJLcLUrWLGMFIjL17PABuwjzvuiXrW7Nrx+c/xEVeQ==.ed25519",
-        "id": "@zhyS3C1K1ixjBSIy9ezwAbsI877ol61uza8fnP8RFXk=.ed25519"
+    "ref": Ref(Collection("users"), "282415672351261196"),
+    "ts": 1605591423320000,
+    "data": {
+        "userName": "fooooo",
+        "secrets": {
+            "curve": "ed25519",
+            "public": "zhyS3C1K1ixjBSIy9ezwAbsI877ol61uza8fnP8RFXk=.ed25519",
+            "private": "SFg85EiJLHspP5HsTONBuJ3+4NRmZ5E7JlOndO2SUhLOHJLcLUrWLGMFIjL17PABuwjzvuiXrW7Nrx+c/xEVeQ==.ed25519",
+            "id": "@zhyS3C1K1ixjBSIy9ezwAbsI877ol61uza8fnP8RFXk=.ed25519"
+        }
     }
-  }
 }
 ```
 
 How to store private key?
+
+------------------------------------------------------
+
+https://developers.yubico.com/U2F/Libraries/Using_a_library.html
+
+
 
 
 
