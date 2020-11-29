@@ -1,2 +1,4 @@
 [build]
   functions = "./functions"
+[dev]
+  autoLaunch = false

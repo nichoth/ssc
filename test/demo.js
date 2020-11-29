@@ -10,6 +10,7 @@ var DOMAIN = 'http://localhost:8888'
 var ntl
 test('setup', function (t) {
     ntl = spawn('npx', ['netlify', 'dev']);
+
     ntl.stdout.once('data', (data) => {
         console.log(`stdout: ${data}`);
         t.end()
