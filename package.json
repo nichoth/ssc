@@ -9,7 +9,8 @@
     "watch-css": "node-sass --watch src/style.scss --source-map-embed public/style.css",
     "build": "mkdir -p public && cp src/* public && npm run build-css",
     "env": "env $(cat .env | xargs)",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "lambda": "netlify-lambda serve functions/",
+    "test": "tape test/*.js | tap-spec"
   },
   "repository": {
     "type": "git",
@@ -29,7 +30,11 @@
   },
   "devDependencies": {
     "concurrently": "^5.3.0",
+    "got": "^11.8.0",
     "netlify-cli": "^2.68.5",
-    "node-sass": "^5.0.0"
+    "netlify-lambda": "^2.0.1",
+    "node-sass": "^5.0.0",
+    "tap-spec": "^5.0.0",
+    "tape": "^5.0.1"
   }
 }

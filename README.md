@@ -263,6 +263,23 @@ How to store private key?
 https://developers.yubico.com/U2F/Libraries/Using_a_library.html
 
 
+## 11-27-2020
+* should have the equivalent of `.publish` and `.createHistoryStream`
+
+`flume-db` includes nothing for replication it seems. That is done in `ssb-db` and `ssb-server`.
+
+Could try it with a synchronizing DB -- like `flumelog-idb`. 
+
+Need to check the signatures on the server.
+
+
+---------------------------------------------------
+
+
+## 11-28-2020
+Need to make and endpoint for `.publish`
+
+
 
 
 
