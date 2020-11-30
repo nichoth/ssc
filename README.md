@@ -314,9 +314,24 @@ https://github.com/ssbc/ssb-db/blob/master/index.js
 https://github.com/ssbc/ssb-db/blob/788cd5c5d067b3bc90949337d8387ba1b0151276/create.js
 https://github.com/ssbc/ssb-db/blob/788cd5c5d067b3bc90949337d8387ba1b0151276/minimal.js
 
-`publish` =>
-`db.add` => `db.queue` => `v.append(state, hmacKey, message)`
+`publish` =>                                                     `db = Flume()`
+`db.add` => `db.queue` => `v.append(state, hmacKey, message)` => `db.append` =>
+`v.create`, `queue(msg)`
+
+---------------------------------------------------------
 
 
+## 11-30-2020
+Make a `publish` endpoint
+* should validate the message server-side
+* pass your public key and the message itself
+* how to validate on server? --
+`checkInvalid(state, hmac_key, msg)`
+
+https://github.com/ssb-js/ssb-validate/blob/main/index.js#L167
+```js
+if(!ssbKeys.verifyObj({public: msg.author.substring(1)}, hmac_key, msg))
+```
+[ssb-keys verify obj](https://github.com/ssb-js/ssb-keys#verifyobjkeys-hmac_key-obj)
 
 

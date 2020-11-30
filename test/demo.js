@@ -5,7 +5,8 @@ var validate = require('ssb-validate')
 var ssbKeys = require("ssb-keys")
 var timestamp = require('monotonic-timestamp')
 
-var DOMAIN = 'http://localhost:8888'
+// var DOMAIN = 'http://localhost:8888'
+var PATH = 'http://localhost:8888/.netlify/functions'
 
 // ntl.on('message', msg => console.log('*msg*', msg))
 // ntl.on('spawn', ev => console.log('*spawned*', ev))
@@ -30,7 +31,7 @@ test('setup', function (t) {
 
 test('demo', function (t) {
     t.plan(1)
-    got(DOMAIN + '/.netlify/functions/test')
+    got(PATH + '/test')
         .then(function (res) {
             console.log('in here', res.body)
             t.pass('ok')
@@ -49,6 +50,13 @@ test('create a message', function (t) {
     // console.log('*state*', state)
     // so we pass in state as null instead
     // exports.create = function (state, keys, hmac_key, content, timestamp)
+
+    // in ssb-db they do it like
+    // var msg = V.create(state.feeds[opts.keys.id],
+    // so the first arg would be `undefined` in this case, where there is no
+    // `state.feeds` data
+    // state -- { validated: 0, queued: 0, queue: [], feeds: {}, error: null }
+    // https://github.com/ssbc/ssb-db/blob/788cd5c5d067b3bc90949337d8387ba1b0151276/minimal.js#L151
     t.plan(2)
     var keys = ssbKeys.generate()
     var content = { type: 'test', text: 'woooo' }
