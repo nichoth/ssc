@@ -1,5 +1,13 @@
 # ssc
 
+`ssc` because c comes after b in the alphabet
+
+This is `ssb` but more boring
+
+
+-------------------------------------------------------
+
+
 ## stripe
 [instructions for stripe checkout](https://stripe.com/docs/billing/subscriptions/checkout/fixed-price)
 
