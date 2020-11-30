@@ -279,7 +279,8 @@ Need to check the signatures on the server.
 ## 11-28-2020
 Need to make and endpoint for `.publish`
 
+* start with doing it in-memory, no writing to disk
 
-
+* server should verify the `.publish(msg)` calls are correct. (it can validate messages but not sign them)
 
 

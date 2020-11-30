@@ -1,6 +1,9 @@
 var test = require('tape')
-const got = require('got');
-const { spawn } = require('child_process');
+const got = require('got')
+const { spawn } = require('child_process')
+var validate = require('ssb-validate')
+var ssbKeys = require("ssb-keys")
+var timestamp = require('monotonic-timestamp')
 
 var DOMAIN = 'http://localhost:8888'
 
@@ -12,7 +15,7 @@ test('setup', function (t) {
     ntl = spawn('npx', ['netlify', 'dev']);
 
     ntl.stdout.once('data', (data) => {
-        console.log(`stdout: ${data}`);
+        // console.log(`stdout: ${data}`);
         t.end()
     })
 
@@ -36,6 +39,23 @@ test('demo', function (t) {
             console.log('err', err)
             t.error(err)
         })
+})
+
+test('wooo', function (t) {
+    // can't use the .initial() `state` in the call to v.create, it creates
+    // the wrong sequence number
+    // https://github.com/ssb-js/ssb-validate/blob/main/index.js#L317
+    // var state = validate.initial()
+    // console.log('*state*', state)
+    // so we pass in state as null instead
+    // exports.create = function (state, keys, hmac_key, content, timestamp)
+    t.plan(2)
+    var keys = ssbKeys.generate()
+    var content = { type: 'test', text: 'woooo' }
+    var msg = validate.create(null, keys, null, content, timestamp())
+    console.log('*msg*', msg)
+    t.ok(msg, 'should create a message')
+    t.equal(msg.content.type, 'test', 'should create the right content')
 })
 
 test('done', function (t) {
