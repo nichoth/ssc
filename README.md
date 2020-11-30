@@ -292,3 +292,31 @@ Need to make and endpoint for `.publish`
 * server should verify the `.publish(msg)` calls are correct. (it can validate messages but not sign them)
 
 
+---------------------------------------------------
+
+https://github.com/ssb-js/ssb-validate
+
+message
+```js
+{
+    previous: null,
+    sequence: 1,
+    author: '@vYAqxqmL4/WDSoHjg54LUJRN4EH9/I4A/OFrMpXIWkQ=.ed25519',
+    timestamp: 1606692151952,
+    hash: 'sha256',
+    content: { type: 'test', text: 'woooo' },
+    signature: 'wHdXRQBt8k0rFEa9ym35pNqmeHwA+kTTdOC3N6wAn4yOb6dsfIq/X0JpHCBZVJcw6Luo6uH1udpq12I4eYzBAw==.sig.ed25519'
+}
+```
+
+
+https://github.com/ssbc/ssb-db/blob/master/index.js
+https://github.com/ssbc/ssb-db/blob/788cd5c5d067b3bc90949337d8387ba1b0151276/create.js
+https://github.com/ssbc/ssb-db/blob/788cd5c5d067b3bc90949337d8387ba1b0151276/minimal.js
+
+`publish` =>
+`db.add` => `db.queue` => `v.append(state, hmacKey, message)`
+
+
+
+

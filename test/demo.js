@@ -14,7 +14,7 @@ var ntl
 test('setup', function (t) {
     ntl = spawn('npx', ['netlify', 'dev']);
 
-    ntl.stdout.once('data', (data) => {
+    ntl.stdout.once('data', (/* data */) => {
         // console.log(`stdout: ${data}`);
         t.end()
     })
@@ -41,7 +41,7 @@ test('demo', function (t) {
         })
 })
 
-test('wooo', function (t) {
+test('create a message', function (t) {
     // can't use the .initial() `state` in the call to v.create, it creates
     // the wrong sequence number
     // https://github.com/ssb-js/ssb-validate/blob/main/index.js#L317
