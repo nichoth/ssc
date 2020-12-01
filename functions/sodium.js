@@ -26,5 +26,5 @@ module.exports = {
 
   verify: function (publicKey, sig, message) {
     return sodium.crypto_sign_verify_detached(sig, message, publicKey);
-  },
-};
+  }
+}
