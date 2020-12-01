@@ -30,6 +30,7 @@ exports.handler = function (ev, ctx, cb) {
     // do a DB lookup for the keys for a feed
 
     // @TODO -- get `keys` object
+
     if (!msg || !verifyObj(keys, null, msg)) {
         // is invalid
         // 422 (Unprocessable Entity)
@@ -39,9 +40,13 @@ exports.handler = function (ev, ctx, cb) {
         })
     }
 
+    // has been verified
     cb(null, {
         statusCode: 200,
-        body: JSON.stringify({ ok: 'true' })
+        body: JSON.stringify({
+            ok: 'true',
+            message: msg
+        })
     })
 }
 
