@@ -335,3 +335,7 @@ if(!ssbKeys.verifyObj({public: msg.author.substring(1)}, hmac_key, msg))
 [ssb-keys verify obj](https://github.com/ssb-js/ssb-keys#verifyobjkeys-hmac_key-obj)
 
 
+
+
+
+
