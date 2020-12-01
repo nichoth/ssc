@@ -29,7 +29,7 @@ exports.handler = function (ev, ctx, cb) {
     // need keys = { public, curve }
     // do a DB lookup for the keys for a feed
 
-    // @TODO
+    // @TODO -- get `keys` object
     if (!msg || !verifyObj(keys, null, msg)) {
         // is invalid
         // 422 (Unprocessable Entity)
