@@ -1,6 +1,8 @@
 var curves = {};
 curves.ed25519 = require("./sodium");
 
+var isBuffer = Buffer.isBuffer;
+
 var u = {
     toBuffer: function (buf) {
         if (buf == null) return buf;
@@ -28,6 +30,7 @@ exports.handler = function (ev, ctx, cb) {
 
     // need keys = { public, curve }
     // do a DB lookup for the keys for a feed
+    // public key should be passed in the message
 
     // @TODO -- get `keys` object
 
@@ -36,7 +39,11 @@ exports.handler = function (ev, ctx, cb) {
         // 422 (Unprocessable Entity)
         return cb(null, {
             statusCode: 422,
-            body: JSON.stringify({ error: 'invalid message' })
+            body: JSON.stringify({
+                ok: false,
+                error: 'invalid message',
+                message: msg
+            })
         })
     }
 
@@ -44,7 +51,7 @@ exports.handler = function (ev, ctx, cb) {
     cb(null, {
         statusCode: 200,
         body: JSON.stringify({
-            ok: 'true',
+            ok: true,
             message: msg
         })
     })
