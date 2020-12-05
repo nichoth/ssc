@@ -398,23 +398,22 @@ exports.id = function (msg) {
 
 from the log
 ```js
-{
-    "key": "%SPzeq9OdZWh4X/4tIPpaYa61jU87Yw5lwBC0MwLI9dA=.sha256",
-    "value":{
-        "previous":null,
-        "sequence":1,
-        "author":"@RPFLJtoWjcQyYC51lEUxm4brAyE6Okln8LGeh4Z7sVw=.ed25519",
-        "timestamp":1579904787188,
+{
+    "key":"%32430gJSyyUgtFXC+SbN28lQAImdhF+QNCMHdWA0g1s=.sha256",
+    "value": {
+        "previous": "%MlfqQwx2JB0+I1fmKXs/0YFHd1ByCG2YxrzG6aNvBLU=.sha256",
+        "sequence":3,
+        "author":"@MauI+NQ1dOg4Eo5NPs4OKxVQgWXMjlp5pjQ87CdRJtQ=.ed25519",
+        "timestamp":1552173261043,
         "hash":"sha256",
         "content": {
             "type":"about",
-            "about":"@RPFLJtoWjcQyYC51lEUxm4brAyE6Okln8LGeh4Z7sVw=.ed25519",
-            "image":"&vczwtGvZMt12nSSJ0BiBgYRNF5tOI3rjI/CCXMDIjHU=.sha256",
-            "name":"nichoth"
-        }, 
-        "signature":"CfDTwh0OjrUGaiVHcyrT0ZhRDLYQKhYFEQfKNbQWfMiMrJCgwoxLjldQm0fbBBPPvC8Y7288N/WQCZVt6JWSBA==.sig.ed25519"
+            "about":"@MauI+NQ1dOg4Eo5NPs4OKxVQgWXMjlp5pjQ87CdRJtQ=.ed25519",
+            "name":"SSB PeerNet USW"
+        },
+        "signature":"nTvZNy7DrIpMKWNXthzVMvXPqrnwftG5vW9kqQtUXt71UyDCYCJAQRIeYWEpY/57Xx/1DPFcXCXx1RiNF0hLBQ==.sig.ed25519"
     },
-    "timestamp":1579904787189
+    "timestamp":1579905060637
 }
 ```
 
@@ -422,7 +421,7 @@ from the log
 we check explicitly that `msg.previous === state.id` (the prev message keys are equal, in the queue and the new message),
 then check that the signature is valid by passing the message, the keys, and signature to `ssb-keys.verify`
 
-
+since the previous msg hash is in the next msg, you know it is valid
 
 
 
