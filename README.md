@@ -335,6 +335,95 @@ if(!ssbKeys.verifyObj({public: msg.author.substring(1)}, hmac_key, msg))
 [ssb-keys verify obj](https://github.com/ssb-js/ssb-keys#verifyobjkeys-hmac_key-obj)
 
 
+--------------------------------------------------------------------
+
+
+comes down to `sodium.verify`
+[sodium.verify](https://github.com/ssb-js/ssb-keys/blob/main/index.js#L104)
+
+but where does the previous signature come in? I guess it's a part of the current message, so that works
+
+the `initial` state
+```
+init { validated: 0, queued: 0, queue: [], feeds: {}, error: null }
+```
+
+we check explicitly that `msg.previous === state.id`
+that the prev hash equals our recorded prev hash
+https://github.com/ssb-js/ssb-validate/blob/main/index.js#L149
+
+
+[checkInvalidCheap](https://github.com/ssb-js/ssb-validate/blob/main/index.js#L134)
+
+i think here `state` is a unique object (not related to other instances). 
+
+`state` in `checkInvalid` is a particular feed
+```js
+state.error = exports.checkInvalidCheap(flatState(state.feeds[msg.author]), msg)
+```
+
+```js
+// state is
+{ id, sequence, timestamp }
+flatState(state.feeds[msg.author])
+```
+
+`state.id` is the hash of the prev msg
+
+this is where items are added to `state.feeds`: 
+https://github.com/ssb-js/ssb-validate/blob/main/index.js#L200
+```js
+state.feeds[msg.author].queue.push(exports.toKeyValueTimestamp(msg))
+```
+
+`toKeyValueTimestamp`:
+https://github.com/ssb-js/ssb-validate/blob/main/index.js#L200
+```js
+exports.toKeyValueTimestamp = function (msg, id) {
+    // this is where `key` comes from in the message
+  return {
+    key: id ? id : exports.id(msg),
+    value: msg,
+    timestamp: timestamp()
+  }
+}
+```
+
+`exports.id`:
+```js
+exports.id = function (msg) {
+  return '%'+ssbKeys.hash(JSON.stringify(msg, null, 2))
+}
+```
+
+from the log
+```js
+{
+    "key": "%SPzeq9OdZWh4X/4tIPpaYa61jU87Yw5lwBC0MwLI9dA=.sha256",
+    "value":{
+        "previous":null,
+        "sequence":1,
+        "author":"@RPFLJtoWjcQyYC51lEUxm4brAyE6Okln8LGeh4Z7sVw=.ed25519",
+        "timestamp":1579904787188,
+        "hash":"sha256",
+        "content": {
+            "type":"about",
+            "about":"@RPFLJtoWjcQyYC51lEUxm4brAyE6Okln8LGeh4Z7sVw=.ed25519",
+            "image":"&vczwtGvZMt12nSSJ0BiBgYRNF5tOI3rjI/CCXMDIjHU=.sha256",
+            "name":"nichoth"
+        }, 
+        "signature":"CfDTwh0OjrUGaiVHcyrT0ZhRDLYQKhYFEQfKNbQWfMiMrJCgwoxLjldQm0fbBBPPvC8Y7288N/WQCZVt6JWSBA==.sig.ed25519"
+    },
+    "timestamp":1579904787189
+}
+```
+
+
+we check explicitly that `msg.previous === state.id` (the prev message keys are equal, in the queue and the new message),
+then check that the signature is valid by passing the message, the keys, and signature to `ssb-keys.verify`
+
+
+
 
 
 
