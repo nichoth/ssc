@@ -1,6 +1,4 @@
-var curves = {}
-curves.ed25519 = require("./sodium")
-
+var curve = require('./sodium')
 var isBuffer = Buffer.isBuffer
 
 var u = {
@@ -13,26 +11,19 @@ var u = {
             buf.substring(start, ~i ? i : buf.length),
             "base64"
         )
-    },
-
-    getTag: function getTag(string) {
-        var i = string.indexOf('.')
-        return string.substring(i + 1)
     }
 }
 
 exports.handler = function (ev, ctx, cb) {
     console.log('**ev**', ev)
-    // console.log('**ctx**', ctx)
-    // console.log('**parsed**', JSON.parse(ev.body))
 
-    var msg = JSON.parse(ev.body)
+    var { keys, msg } = JSON.parse(ev.body)
+    console.log('**msg**', msg)
 
-    // need keys = { public, curve }
-    // do a DB lookup for the keys for a feed
-    // public key should be passed in the message
-
-    // @TODO -- get `keys` object
+    // todo -- get public key from DB
+    // we just need keys = { public: '' }
+    // well no, i guess the public key should be in the message body,
+    // so we don't need to do a DB lookup
 
     if (!msg || !verifyObj(keys, null, msg)) {
         // is invalid
@@ -47,6 +38,7 @@ exports.handler = function (ev, ctx, cb) {
         })
     }
 
+    // @TODO -- need to add the message to the DB
     // has been verified
     cb(null, {
         statusCode: 200,
@@ -67,43 +59,18 @@ function verifyObj (keys, hmac_key, obj) {
     return verify(keys, sig, b);
 }
 
-// takes a public key, signature, and a hash
-// and returns true if the signature was valid.
-function verify (keys, sig, msg) {
-    if (isObject(sig))
-        throw new Error('signature should be base64 string,' +
+//takes a public key, signature, and a hash
+//and returns true if the signature was valid.
+function verify(keys, sig, msg) {
+    if (isObject(sig)) {
+        throw new Error(
+        'signature should be base64 string,' +
             'did you mean verifyObj(public, signed_obj)'
-    )
-    return curves[getCurve(keys)].verify(
+        )
+    }
+    return curve.verify(
         u.toBuffer(keys.public || keys),
         u.toBuffer(sig),
         isBuffer(msg) ? msg : Buffer.from(msg)
     )
 }
-
-function isObject (o) {
-    return typeof o === 'object'
-}
-
-function clone (obj) {
-    var _obj = {}
-    for (var k in obj) {
-        if (Object.hasOwnProperty.call(obj, k)) _obj[k] = obj[k]
-    }
-    return _obj
-}
-
-function getCurve (keys) {
-    var curve = keys.curve
-    if (!keys.curve && isString(keys.public)) keys = keys.public
-    if (!curve && isString(keys)) curve = u.getTag(keys)
-  
-    if (!curves[curve]) {
-        throw new Error(
-            "unkown curve:" + curve + " expected: " + Object.keys(curves)
-        )
-    }
-  
-    return curve
-}
-
