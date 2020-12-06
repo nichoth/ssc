@@ -1,5 +1,4 @@
 var curve = require('./sodium')
-var isBuffer = Buffer.isBuffer
 
 var u = {
     toBuffer: function (buf) {
@@ -14,11 +13,15 @@ var u = {
     }
 }
 
+// requests are like
+// { keys: { public }, msg: {} }
+
 exports.handler = function (ev, ctx, cb) {
     console.log('**ev**', ev)
 
     var { keys, msg } = JSON.parse(ev.body)
     console.log('**msg**', msg)
+    console.log('**keys**', keys)
 
     // todo -- get public key from DB
     // we just need keys = { public: '' }
@@ -39,7 +42,6 @@ exports.handler = function (ev, ctx, cb) {
     }
 
     // @TODO -- need to add the message to the DB
-    // has been verified
     cb(null, {
         statusCode: 200,
         body: JSON.stringify({
@@ -61,16 +63,15 @@ function verifyObj (keys, hmac_key, obj) {
 
 //takes a public key, signature, and a hash
 //and returns true if the signature was valid.
-function verify(keys, sig, msg) {
-    if (isObject(sig)) {
-        throw new Error(
-        'signature should be base64 string,' +
-            'did you mean verifyObj(public, signed_obj)'
-        )
+function verify (keys, sig, msg) {
+    if (typeof sig === 'object') {
+        throw new Error('signature should be base64 string,' +
+            'did you mean verifyObj(public, signed_obj)')
     }
+
     return curve.verify(
         u.toBuffer(keys.public || keys),
         u.toBuffer(sig),
-        isBuffer(msg) ? msg : Buffer.from(msg)
+        Buffer.isBuffer(msg) ? msg : Buffer.from(msg)
     )
 }

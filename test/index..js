@@ -81,7 +81,35 @@ test('create a message', function (t) {
 // comes down to sodium.verify --
 // https://github.com/ssb-js/ssb-keys/blob/main/index.js#L104
 
-test('done', function (t) {
+// @TODO
+// * create and sign msg client side
+// * test with the same public key twice
+// * test with unknown public key
+// * test with invalid signature
+test('publish', function (t) {
+    t.plan(1)
+
+    got.post(PATH + '/publish', {
+        json: {
+            keys: {
+                public: '123'
+            },
+            msg: {
+                foo: 'bar'
+            }
+        },
+        responseType: 'json'
+    })
+        .then(function (res) {
+            console.log('in here', res)
+            t.pass('got a response')
+        })
+        .catch(err => {
+            t.error(err)
+        })
+})
+
+test('all done', function (t) {
     ntl.kill()
     t.end()
 })
