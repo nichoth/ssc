@@ -48,7 +48,7 @@ test('create a message', function (t) {
     // https://github.com/ssb-js/ssb-validate/blob/main/index.js#L317
     // var state = validate.initial()
     // console.log('*state*', state)
-    // so we pass in state as null instead
+    // so we pass in `state` as null instead
     // exports.create = function (state, keys, hmac_key, content, timestamp)
 
     // in ssb-db they do it like
@@ -81,11 +81,16 @@ test('create a message', function (t) {
 // comes down to sodium.verify --
 // https://github.com/ssb-js/ssb-keys/blob/main/index.js#L104
 
+
 // @TODO
 // * create and sign msg client side
-// * test with the same public key twice
+// * test with the same public key twice, to make sure subsequent messages
+//   are valid
 // * test with unknown public key
 // * test with invalid signature
+
+// just copy paste a valid message into the test, since this is a test of the
+// backend -- no need to test *creating* the message
 test('publish', function (t) {
     t.plan(1)
 
@@ -108,6 +113,7 @@ test('publish', function (t) {
             t.error(err)
         })
 })
+
 
 test('all done', function (t) {
     ntl.kill()
