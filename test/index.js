@@ -5,15 +5,11 @@ var validate = require('ssb-validate')
 var ssbKeys = require("ssb-keys")
 var timestamp = require('monotonic-timestamp')
 
-// var DOMAIN = 'http://localhost:8888'
 var PATH = 'http://localhost:8888/.netlify/functions'
-
-// ntl.on('message', msg => console.log('*msg*', msg))
-// ntl.on('spawn', ev => console.log('*spawned*', ev))
 
 var ntl
 test('setup', function (t) {
-    ntl = spawn('npx', ['netlify', 'dev']);
+    ntl = spawn('npx', ['netlify', 'dev', '--port=8888']);
 
     ntl.stdout.once('data', (/* data */) => {
         // console.log(`stdout: ${data}`);
@@ -69,13 +65,34 @@ test('create a message', function (t) {
     var keys = ssbKeys.generate()
     var content = { type: 'test', text: 'woooo' }
     var msg = validate.create(null, keys, null, content, timestamp())
-    console.log('*msg*', msg)
+    // console.log('*msg*', msg)
     t.ok(msg, 'should create a message')
     t.equal(msg.content.type, 'test', 'should create the right content')
 
     // todo
     // create a second message
 })
+
+test('demo 22222222', function (t) {
+    t.plan(1)
+    var url = PATH + '/test'
+    got.post(url, {
+        json: {
+            hello: 'world'
+        },
+        responseType: 'json'
+    })
+        .then(function (res) {
+            // console.log('herererere', res.body)
+            t.ok(res.body.ok, 'response ok')
+        })
+        .catch(err => {
+            console.log('err', err)
+            t.error(err)
+        })
+})
+
+
 
 // validate a msg
 // comes down to sodium.verify --
@@ -94,7 +111,9 @@ test('create a message', function (t) {
 test('publish', function (t) {
     t.plan(1)
 
-    got.post(PATH + '/publish', {
+    var url = PATH + '/publish'
+    console.log('url', url)
+    got.post(url, {
         json: {
             keys: {
                 public: '123'
@@ -110,6 +129,7 @@ test('publish', function (t) {
             t.pass('got a response')
         })
         .catch(err => {
+            // console.log('errrrrrr', err)
             t.error(err)
         })
 })

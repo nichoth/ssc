@@ -23,7 +23,19 @@ var u = {
 exports.handler = function (ev, ctx, cb) {
     console.log('**ev**', ev)
 
-    var { keys, msg } = JSON.parse(ev.body)
+    try {
+        var { keys, msg } = JSON.parse(ev.body)
+    } catch (err) {
+        return cb(null, {
+            statusCode: 422,
+            body: JSON.stringify({
+                ok: false,
+                error: 'invalid json',
+                message: err.message
+            })
+        })
+    }
+
     console.log('**msg**', msg)
     console.log('**keys**', keys)
 
@@ -31,6 +43,8 @@ exports.handler = function (ev, ctx, cb) {
     // we just need keys = { public: '' }
     // well no, i guess the public key should be in the message body,
     // so we don't need to do a DB lookup
+    // need to lookup the previous message though, to make sure the new
+    // message contains its hash
 
     if (!msg || !verifyObj(keys, null, msg)) {
         // is invalid

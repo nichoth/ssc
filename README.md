@@ -417,11 +417,22 @@ from the log
 }
 ```
 
+[check for the prev hash](https://github.com/ssb-js/ssb-validate/blob/main/index.js#L149)
 
 we check explicitly that `msg.previous === state.id` (the prev message keys are equal, in the queue and the new message),
 then check that the signature is valid by passing the message, the keys, and signature to `ssb-keys.verify`
 
 since the previous msg hash is in the next msg, you know it is valid
+
+
+--------------------------------------------------------
+
+## 10-8-2020
+
+`sodium` takes the message and sig to verify
+
+https://github.com/ssb-js/ssb-keys/blob/2342a85c5bd4a1cf8739b7b09eb2f667f735bd08/sodium.js#L28
+
 
 
 
