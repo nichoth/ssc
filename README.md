@@ -436,5 +436,13 @@ https://github.com/ssb-js/ssb-keys/blob/2342a85c5bd4a1cf8739b7b09eb2f667f735bd08
 
 
 
+I think the message that is validated is everything from the 'value' level,
+but without the signature:
+
+https://github.com/ssb-js/ssb-keys/blob/main/index.js#L126
+
+You can't include the hash in the object to be hashed.
+
+
 
 

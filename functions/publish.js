@@ -93,3 +93,11 @@ function verify (keys, sig, msg) {
         Buffer.isBuffer(msg) ? msg : Buffer.from(msg)
     )
 }
+
+function clone(obj) {
+    var _obj = {}
+    for (var k in obj) {
+      if (Object.hasOwnProperty.call(obj, k)) _obj[k] = obj[k]
+    }
+    return _obj
+}

@@ -11,8 +11,11 @@ var ntl
 test('setup', function (t) {
     ntl = spawn('npx', ['netlify', 'dev', '--port=8888']);
 
+    // ntl.stdout.on('data', function (d) {
+    //     console.log('stdout', d.toString('utf8'))
+    // })
+
     ntl.stdout.once('data', (/* data */) => {
-        // console.log(`stdout: ${data}`);
         t.end()
     })
 
@@ -29,11 +32,9 @@ test('demo', function (t) {
     t.plan(1)
     got(PATH + '/test')
         .then(function (res) {
-            console.log('in here', res.body)
             t.pass('ok')
         })
         .catch(err => {
-            console.log('err', err)
             t.error(err)
         })
 })
@@ -83,11 +84,9 @@ test('demo again', function (t) {
         responseType: 'json'
     })
         .then(function (res) {
-            // console.log('herererere', res.body)
             t.ok(res.body.ok, 'response is ok')
         })
         .catch(err => {
-            console.log('err', err)
             t.error(err)
         })
 })
@@ -111,25 +110,27 @@ test('demo again', function (t) {
 test('publish', function (t) {
     t.plan(1)
 
-    var url = PATH + '/publish'
-    console.log('url', url)
-    got.post(url, {
+    got.post(PATH + '/publish', {
         json: {
             keys: {
-                public: '123'
+                public: 'vYAqxqmL4/WDSoHjg54LUJRN4EH9/I4A/OFrMpXIWkQ=.ed25519'
             },
             msg: {
-                foo: 'bar'
+                previous: null,
+                sequence: 1,
+                author: '@vYAqxqmL4/WDSoHjg54LUJRN4EH9/I4A/OFrMpXIWkQ=.ed25519',
+                timestamp: 1606692151952,
+                hash: 'sha256',
+                content: { type: 'test', text: 'woooo' },
+                signature: 'wHdXRQBt8k0rFEa9ym35pNqmeHwA+kTTdOC3N6wAn4yOb6dsfIq/X0JpHCBZVJcw6Luo6uH1udpq12I4eYzBAw==.sig.ed25519'
             }
         },
         responseType: 'json'
     })
         .then(function (res) {
-            console.log('in here', res)
             t.pass('got a response')
         })
         .catch(err => {
-            // console.log('errrrrrr', err)
             t.error(err)
         })
 })
