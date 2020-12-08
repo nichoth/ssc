@@ -74,25 +74,6 @@ test('create a message', function (t) {
     // create a second message
 })
 
-test('demo again', function (t) {
-    t.plan(1)
-    var url = PATH + '/test'
-    got.post(url, {
-        json: {
-            hello: 'world'
-        },
-        responseType: 'json'
-    })
-        .then(function (res) {
-            t.ok(res.body.ok, 'response is ok')
-        })
-        .catch(err => {
-            t.error(err)
-        })
-})
-
-
-
 // validate a msg
 // comes down to sodium.verify --
 // https://github.com/ssb-js/ssb-keys/blob/main/index.js#L104
@@ -108,27 +89,32 @@ test('demo again', function (t) {
 // just copy paste a valid message into the test, since this is a test of the
 // backend -- no need to test *creating* the message
 test('publish', function (t) {
-    t.plan(1)
+    t.plan(2)
+
+    var testMsg = {
+        keys: {
+            public: 'vYAqxqmL4/WDSoHjg54LUJRN4EH9/I4A/OFrMpXIWkQ=.ed25519'
+        },
+        msg: {
+            previous: null,
+            sequence: 1,
+            author: '@vYAqxqmL4/WDSoHjg54LUJRN4EH9/I4A/OFrMpXIWkQ=.ed25519',
+            timestamp: 1606692151952,
+            hash: 'sha256',
+            content: { type: 'test', text: 'woooo' },
+            signature: 'wHdXRQBt8k0rFEa9ym35pNqmeHwA+kTTdOC3N6wAn4yOb6dsfIq/X0JpHCBZVJcw6Luo6uH1udpq12I4eYzBAw==.sig.ed25519'
+        }
+    }
 
     got.post(PATH + '/publish', {
-        json: {
-            keys: {
-                public: 'vYAqxqmL4/WDSoHjg54LUJRN4EH9/I4A/OFrMpXIWkQ=.ed25519'
-            },
-            msg: {
-                previous: null,
-                sequence: 1,
-                author: '@vYAqxqmL4/WDSoHjg54LUJRN4EH9/I4A/OFrMpXIWkQ=.ed25519',
-                timestamp: 1606692151952,
-                hash: 'sha256',
-                content: { type: 'test', text: 'woooo' },
-                signature: 'wHdXRQBt8k0rFEa9ym35pNqmeHwA+kTTdOC3N6wAn4yOb6dsfIq/X0JpHCBZVJcw6Luo6uH1udpq12I4eYzBAw==.sig.ed25519'
-            }
-        },
+        json: testMsg,
         responseType: 'json'
     })
         .then(function (res) {
             t.pass('got a response')
+            t.equal(res.body.message.signature, testMsg.msg.signature,
+                'should send back the message')
+            console.log('res', res.body)
         })
         .catch(err => {
             t.error(err)
