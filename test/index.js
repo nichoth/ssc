@@ -73,7 +73,7 @@ test('create a message', function (t) {
     // create a second message
 })
 
-test('demo 22222222', function (t) {
+test('demo again', function (t) {
     t.plan(1)
     var url = PATH + '/test'
     got.post(url, {
@@ -84,7 +84,7 @@ test('demo 22222222', function (t) {
     })
         .then(function (res) {
             // console.log('herererere', res.body)
-            t.ok(res.body.ok, 'response ok')
+            t.ok(res.body.ok, 'response is ok')
         })
         .catch(err => {
             console.log('err', err)
