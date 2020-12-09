@@ -8,8 +8,10 @@ var timestamp = require('monotonic-timestamp')
 var PATH = 'http://localhost:8888/.netlify/functions'
 
 var ntl
+var keys
 test('setup', function (t) {
     ntl = spawn('npx', ['netlify', 'dev', '--port=8888']);
+    keys = ssbKeys.generate()
 
     // ntl.stdout.on('data', function (d) {
     //     console.log('stdout', d.toString('utf8'))
@@ -56,21 +58,14 @@ test('create a message', function (t) {
     // https://github.com/ssbc/ssb-db/blob/788cd5c5d067b3bc90949337d8387ba1b0151276/minimal.js#L151
     t.plan(2)
 
-
-    // *need to try creating a signed msg in the browser*
-    // i think we want to copy paste the code for it and then we can
-    // `require(buffer)` for the browser
-
-    // can do the test with `tape-run`
-
-    var keys = ssbKeys.generate()
     var content = { type: 'test', text: 'woooo' }
+    // exports.create = function (state, keys, hmac_key, content, timestamp) {
     var msg = validate.create(null, keys, null, content, timestamp())
     // console.log('*msg*', msg)
     t.ok(msg, 'should create a message')
     t.equal(msg.content.type, 'test', 'should create the right content')
 
-    // todo
+    // TODO
     // create a second message
 })
 
@@ -95,6 +90,7 @@ test('publish', function (t) {
         keys: {
             public: 'vYAqxqmL4/WDSoHjg54LUJRN4EH9/I4A/OFrMpXIWkQ=.ed25519'
         },
+        // this is the message we created in the prev test
         msg: {
             previous: null,
             sequence: 1,
@@ -114,7 +110,7 @@ test('publish', function (t) {
             t.pass('got a response')
             t.equal(res.body.message.signature, testMsg.msg.signature,
                 'should send back the message')
-            console.log('res', res.body)
+            // console.log('res', res.body)
         })
         .catch(err => {
             t.error(err)
@@ -126,3 +122,13 @@ test('all done', function (t) {
     ntl.kill()
     t.end()
 })
+
+// toKeyValueTimestamp:
+// https://github.com/ssb-js/ssb-validate/blob/main/index.js#L204
+// `msg` is just the 'value' level
+
+// the msg key is the id is the hash of the message (the value in KVT)
+// https://github.com/ssb-js/ssb-validate/blob/main/index.js#L339
+
+
+

@@ -430,6 +430,7 @@ since the previous msg hash is in the next msg, you know it is valid
 ## 10-8-2020
 
 `sodium` takes the message and sig to verify
+(deletes the sig before verifying)
 
 https://github.com/ssb-js/ssb-keys/blob/2342a85c5bd4a1cf8739b7b09eb2f667f735bd08/sodium.js#L28
 
@@ -442,6 +443,8 @@ but without the signature:
 https://github.com/ssb-js/ssb-keys/blob/main/index.js#L126
 
 You can't include the hash in the object to be hashed.
+
+
 
 
 

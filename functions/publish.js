@@ -1,5 +1,8 @@
 var curve = require('./sodium')
 
+// see https://github.com/ssb-js/ssb-keys/blob/main/index.js#L113 and
+// https://github.com/ssb-js/ssb-validate/blob/main/index.js#L317
+
 function hasSigil (s) {
     return /^(@|%|&)/.test(s);
 }
@@ -21,7 +24,7 @@ var u = {
 // { keys: { public }, msg: {} }
 
 exports.handler = function (ev, ctx, cb) {
-    console.log('**ev**', ev)
+    // console.log('**ev**', ev)
 
     try {
         var { keys, msg } = JSON.parse(ev.body)
@@ -39,11 +42,7 @@ exports.handler = function (ev, ctx, cb) {
     console.log('**msg**', msg)
     console.log('**keys**', keys)
 
-    // todo -- get public key from DB
-    // we just need keys = { public: '' }
-    // well no, i guess the public key should be in the message body,
-    // so we don't need to do a DB lookup
-    // need to lookup the previous message though, to make sure the new
+    // need to lookup the previous message to make sure the new
     // message contains its hash
 
     if (!msg || !verifyObj(keys, null, msg)) {
@@ -60,6 +59,7 @@ exports.handler = function (ev, ctx, cb) {
     }
 
     // @TODO -- need to add the message to the DB
+
     cb(null, {
         statusCode: 200,
         body: JSON.stringify({
