@@ -1,9 +1,12 @@
 var sodium = require("chloride")
 var hmac = sodium.crypto_auth
 var curve = require('./sodium')
+var validate = require('ssb-validate')
+var timestamp = require('monotonic-timestamp')
 
 module.exports = {
-    verifyObj: verifyObj
+    verifyObj: verifyObj,
+    createMsg: createMsg
 }
 
 // see https://github.com/ssb-js/ssb-keys/blob/main/index.js#L113 and
@@ -35,6 +38,12 @@ var u = {
     }
 }
 
+function createMsg (keys, content) {
+    // exports.create = function (state, keys, hmac_key, content, timestamp) {
+    var msg = validate.create(null, keys, null, content, timestamp())
+    return msg
+}
+
 function verifyObj (keys, hmac_key, obj) {
     if (!obj) (obj = hmac_key), (hmac_key = null);
     obj = clone(obj);
@@ -47,6 +56,7 @@ function verifyObj (keys, hmac_key, obj) {
 
 // takes a public key, signature, and a hash
 // and returns true if the signature was valid.
+// the msg here does not include the `signature` field
 function verify (keys, sig, msg) {
     if (typeof sig === 'object') {
         throw new Error('signature should be base64 string,' +

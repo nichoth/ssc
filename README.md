@@ -4,13 +4,31 @@
 
 This is `ssb` but more boring
 
-
 -------------------------------------------------------
 
-This is an application, but it also exports some functions.
+This is an application, but it also exports some node functions.
 
+## install
+```
+npm i @nichoth/ssc
+```
+
+## example
 ```js
 var ssc = require('ssc')
+
+var msg = {
+    previous: null,
+    sequence: 1,
+    author: '@vYAqxqmL4/WDSoHjg54LUJRN4EH9/I4A/OFrMpXIWkQ=.ed25519',
+    timestamp: 1606692151952,
+    hash: 'sha256',
+    content: { type: 'test', text: 'woooo' },
+    signature: 'wHdXRQBt8k0rFEa9ym35pNqmeHwA+kTTdOC3N6wAn4yOb6dsfIq/X0JpHCBZVJcw6Luo6uH1udpq12I4eYzBAw==.sig.ed25519'
+}
+
+var msgIsOk = ssc.verifyObj(keys, null, msg)
+// true
 ```
 
 ---------------------------------------------------------

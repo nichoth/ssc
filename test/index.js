@@ -1,9 +1,9 @@
 var test = require('tape')
 const got = require('got')
 const { spawn } = require('child_process')
-var validate = require('ssb-validate')
+// var validate = require('ssb-validate')
 var ssbKeys = require("ssb-keys")
-var timestamp = require('monotonic-timestamp')
+// var timestamp = require('monotonic-timestamp')
 
 var PATH = 'http://localhost:8888/.netlify/functions'
 
@@ -58,6 +58,7 @@ test('demo', function (t) {
         })
 })
 
+// @TODO put this in index
 test('create a message', function (t) {
     // can't use the .initial() `state` in the call to v.create, it creates
     // the wrong sequence number
@@ -76,8 +77,11 @@ test('create a message', function (t) {
     t.plan(2)
 
     var content = { type: 'test', text: 'woooo' }
+
     // exports.create = function (state, keys, hmac_key, content, timestamp) {
-    var msg = validate.create(null, keys, null, content, timestamp())
+    // var msg = validate.create(null, keys, null, content, timestamp())
+    var msg = ssc.createMsg(keys, content)
+
     // console.log('*msg*', msg)
     t.ok(msg, 'should create a message')
     t.equal(msg.content.type, 'test', 'should create the right content')
@@ -118,6 +122,24 @@ test('publish', function (t) {
         })
 })
 
+test('get a feed', function (t) {
+    got.post(PATH + '/feed', {
+        json: { user: testMsg.msg.author },
+        responseType: 'json'
+    })
+        .then(function (res) {
+            t.pass('got a response')
+            console.log('res', res.body)
+        })
+        .catch(err => {
+            t.error(err)
+        })
+})
+
+// @TODO
+// need to create a second message
+// make a createMsg function that takes the previous msg,
+// and puts its hash as the `previous` key
 test('publish another message', function (t) {
     t.plan(1)
 
