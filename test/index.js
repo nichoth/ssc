@@ -4,6 +4,8 @@ const { spawn } = require('child_process')
 // var validate = require('ssb-validate')
 var ssbKeys = require("ssb-keys")
 // var timestamp = require('monotonic-timestamp')
+var xtend = require('xtend')
+var ssc = require('../')
 
 var PATH = 'http://localhost:8888/.netlify/functions'
 
@@ -27,7 +29,7 @@ var testMsg = {
 }
 
 test('setup', function (t) {
-    ntl = spawn('npx', ['netlify', 'dev', '--port=8888']);
+    ntl = spawn('npx', ['netlify', 'dev', '--port=8888'])
     keys = ssbKeys.generate()
 
     // ntl.stdout.on('data', function (d) {
@@ -37,6 +39,8 @@ test('setup', function (t) {
     ntl.stdout.once('data', (/* data */) => {
         t.end()
     })
+
+    ntl.stdout.pipe(process.stdout)
 
     ntl.stderr.on('data', (data) => {
         console.error(`stderr: ${data}`);
@@ -105,8 +109,6 @@ test('create a message', function (t) {
 // just copy paste a valid message into the test, since this is a test of the
 // backend -- no need to test *creating* the message
 test('publish', function (t) {
-    t.plan(2)
-
     got.post(PATH + '/publish', {
         json: testMsg,
         responseType: 'json'
@@ -116,47 +118,71 @@ test('publish', function (t) {
             t.equal(res.body.message.signature, testMsg.msg.signature,
                 'should send back the message')
             // console.log('res', res.body)
+            t.end()
         })
         .catch(err => {
+            console.log('errrrr', err)
             t.error(err)
+            t.end()
         })
 })
 
-test('get a feed', function (t) {
-    got.post(PATH + '/feed', {
-        json: { user: testMsg.msg.author },
+test('publish with an invalid signature', function (t) {
+    got.post(PATH + '/publish', {
+        json: xtend(testMsg, {
+            msg: xtend(testMsg.msg, { signature: 'bad' })
+        }),
         responseType: 'json'
     })
         .then(function (res) {
-            t.pass('got a response')
-            console.log('res', res.body)
+            t.fail('got a response, not an error')
+            t.end()
         })
         .catch(err => {
-            t.error(err)
+            console.log('errrrrrrr', err.message)
+            t.ok(err.message.includes('422'), 'should have error code 422')
+            t.ok(err, 'should return error')
+            t.end()
         })
 })
+
+
+// test('get a feed', function (t) {
+//     got.post(PATH + '/feed', {
+//         json: { user: testMsg.msg.author },
+//         responseType: 'json'
+//     })
+//         .then(function (res) {
+//             t.pass('got a response')
+//             console.log('res', res.body)
+//         })
+//         .catch(err => {
+//             t.error(err)
+//         })
+// })
+
 
 // @TODO
 // need to create a second message
 // make a createMsg function that takes the previous msg,
 // and puts its hash as the `previous` key
-test('publish another message', function (t) {
-    t.plan(1)
+// test('publish another message', function (t) {
+//     t.plan(1)
 
-    got.post(PATH + '/publish', {
-        json: testMsg,
-        responseType: 'json'
-    })
-        .then(function (res) {
-            t.pass('got a response')
-            t.equal(res.body.message.signature, testMsg.msg.signature,
-                'should send back the message')
-            // console.log('res', res.body)
-        })
-        .catch(err => {
-            t.error(err)
-        })
-})
+//     got.post(PATH + '/publish', {
+//         json: testMsg,
+//         responseType: 'json'
+//     })
+//         .then(function (res) {
+//             t.pass('got a response')
+//             t.equal(res.body.message.signature, testMsg.msg.signature,
+//                 'should send back the message')
+//             // console.log('res', res.body)
+//         })
+//         .catch(err => {
+//             t.error(err)
+//         })
+// })
 
 
 test('all done', function (t) {
