@@ -7,6 +7,13 @@ This is `ssb` but more boring
 
 -------------------------------------------------------
 
+This is an application, but it also exports some functions.
+
+```js
+var ssc = require('ssc')
+```
+
+---------------------------------------------------------
 
 ## stripe
 [instructions for stripe checkout](https://stripe.com/docs/billing/subscriptions/checkout/fixed-price)

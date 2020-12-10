@@ -1,31 +1,9 @@
-var curve = require('./sodium')
-
-// see https://github.com/ssb-js/ssb-keys/blob/main/index.js#L113 and
-// https://github.com/ssb-js/ssb-validate/blob/main/index.js#L317
-
-function hasSigil (s) {
-    return /^(@|%|&)/.test(s);
-}
-
-var u = {
-    toBuffer: function (buf) {
-        if (buf == null) return buf;
-        if (Buffer.isBuffer(buf)) return buf;
-        var i = buf.indexOf(".");
-        var start = hasSigil(buf) ? 1 : 0;
-        return Buffer.from(
-            buf.substring(start, ~i ? i : buf.length),
-            "base64"
-        )
-    }
-}
+var ssc = require('../')
 
 // requests are like
 // { keys: { public }, msg: {} }
 
 exports.handler = function (ev, ctx, cb) {
-    // console.log('**ev**', ev)
-
     try {
         var { keys, msg } = JSON.parse(ev.body)
     } catch (err) {
@@ -44,8 +22,10 @@ exports.handler = function (ev, ctx, cb) {
 
     // need to lookup the previous message to make sure the new
     // message contains its hash
+    // see https://github.com/ssb-js/ssb-validate/blob/main/index.js#L149
+    // here state.id is the hash of the prev msg, and `msg` is the current
 
-    if (!msg || !verifyObj(keys, null, msg)) {
+    if (!msg || !ssc.verifyObj(keys, null, msg)) {
         // is invalid
         // 422 (Unprocessable Entity)
         return cb(null, {
@@ -67,37 +47,4 @@ exports.handler = function (ev, ctx, cb) {
             message: msg
         })
     })
-}
-
-function verifyObj (keys, hmac_key, obj) {
-    if (!obj) (obj = hmac_key), (hmac_key = null);
-    obj = clone(obj);
-    var sig = obj.signature;
-    delete obj.signature;
-    var b = Buffer.from(JSON.stringify(obj, null, 2));
-    if (hmac_key) b = hmac(b, u.toBuffer(hmac_key));
-    return verify(keys, sig, b);
-}
-
-//takes a public key, signature, and a hash
-//and returns true if the signature was valid.
-function verify (keys, sig, msg) {
-    if (typeof sig === 'object') {
-        throw new Error('signature should be base64 string,' +
-            'did you mean verifyObj(public, signed_obj)')
-    }
-
-    return curve.verify(
-        u.toBuffer(keys.public || keys),
-        u.toBuffer(sig),
-        Buffer.isBuffer(msg) ? msg : Buffer.from(msg)
-    )
-}
-
-function clone(obj) {
-    var _obj = {}
-    for (var k in obj) {
-      if (Object.hasOwnProperty.call(obj, k)) _obj[k] = obj[k]
-    }
-    return _obj
 }
