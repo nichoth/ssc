@@ -20,10 +20,13 @@ exports.handler = function (ev, ctx, cb) {
     console.log('**msg**', msg)
     console.log('**keys**', keys)
 
+
+    // @TODO
     // need to lookup the previous message to make sure the new
     // message contains its hash
     // see https://github.com/ssb-js/ssb-validate/blob/main/index.js#L149
     // here state.id is the hash of the prev msg, and `msg` is the current
+
 
     if (!msg || !ssc.verifyObj(keys, null, msg)) {
         // is invalid

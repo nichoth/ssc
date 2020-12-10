@@ -9,6 +9,23 @@ var PATH = 'http://localhost:8888/.netlify/functions'
 
 var ntl
 var keys
+
+var testMsg = {
+    keys: {
+        public: 'vYAqxqmL4/WDSoHjg54LUJRN4EH9/I4A/OFrMpXIWkQ=.ed25519'
+    },
+    // this is the message we created in the prev test
+    msg: {
+        previous: null,
+        sequence: 1,
+        author: '@vYAqxqmL4/WDSoHjg54LUJRN4EH9/I4A/OFrMpXIWkQ=.ed25519',
+        timestamp: 1606692151952,
+        hash: 'sha256',
+        content: { type: 'test', text: 'woooo' },
+        signature: 'wHdXRQBt8k0rFEa9ym35pNqmeHwA+kTTdOC3N6wAn4yOb6dsfIq/X0JpHCBZVJcw6Luo6uH1udpq12I4eYzBAw==.sig.ed25519'
+    }
+}
+
 test('setup', function (t) {
     ntl = spawn('npx', ['netlify', 'dev', '--port=8888']);
     keys = ssbKeys.generate()
@@ -86,21 +103,23 @@ test('create a message', function (t) {
 test('publish', function (t) {
     t.plan(2)
 
-    var testMsg = {
-        keys: {
-            public: 'vYAqxqmL4/WDSoHjg54LUJRN4EH9/I4A/OFrMpXIWkQ=.ed25519'
-        },
-        // this is the message we created in the prev test
-        msg: {
-            previous: null,
-            sequence: 1,
-            author: '@vYAqxqmL4/WDSoHjg54LUJRN4EH9/I4A/OFrMpXIWkQ=.ed25519',
-            timestamp: 1606692151952,
-            hash: 'sha256',
-            content: { type: 'test', text: 'woooo' },
-            signature: 'wHdXRQBt8k0rFEa9ym35pNqmeHwA+kTTdOC3N6wAn4yOb6dsfIq/X0JpHCBZVJcw6Luo6uH1udpq12I4eYzBAw==.sig.ed25519'
-        }
-    }
+    got.post(PATH + '/publish', {
+        json: testMsg,
+        responseType: 'json'
+    })
+        .then(function (res) {
+            t.pass('got a response')
+            t.equal(res.body.message.signature, testMsg.msg.signature,
+                'should send back the message')
+            // console.log('res', res.body)
+        })
+        .catch(err => {
+            t.error(err)
+        })
+})
+
+test('publish another message', function (t) {
+    t.plan(1)
 
     got.post(PATH + '/publish', {
         json: testMsg,

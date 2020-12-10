@@ -11,12 +11,12 @@ module.exports = {
 
 // need to implement `checkInvalidCheap`
 // https://github.com/ssb-js/ssb-validate/blob/main/index.js#L134
+// `checkInvalidCheap` is where we check that the prev/next msgs have the
+// right keys
 
 // here is where the calls start
 // https://github.com/ssb-js/ssb-validate/blob/main/index.js#L167
 // first `checkInvalidCheap`, then `verifyObj`
-// `checkInvalidCheap` is where we check that the prev/next msgs have the
-// right keys
 
 function hasSigil (s) {
     return /^(@|%|&)/.test(s);
