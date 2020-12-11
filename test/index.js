@@ -62,7 +62,6 @@ test('demo', function (t) {
         })
 })
 
-// @TODO put this in index
 test('create a message', function (t) {
     // can't use the .initial() `state` in the call to v.create, it creates
     // the wrong sequence number
@@ -84,9 +83,9 @@ test('create a message', function (t) {
 
     // exports.create = function (state, keys, hmac_key, content, timestamp) {
     // var msg = validate.create(null, keys, null, content, timestamp())
+    // @TODO -- should pass in prev msg
     var msg = ssc.createMsg(keys, content)
 
-    // console.log('*msg*', msg)
     t.ok(msg, 'should create a message')
     t.equal(msg.content.type, 'test', 'should create the right content')
     t.ok(ssc.verifyObj(keys, null, msg), 'message should be valid')
@@ -118,7 +117,6 @@ test('publish', function (t) {
             t.pass('got a response')
             t.equal(res.body.message.signature, testMsg.msg.signature,
                 'should send back the message')
-            // console.log('res', res.body)
             t.end()
         })
         .catch(err => {
@@ -127,6 +125,30 @@ test('publish', function (t) {
             t.end()
         })
 })
+
+
+// @TODO
+// need to create a second message
+// make a createMsg function that takes the previous msg,
+// and puts its hash as the `previous` key
+// test('publish another message', function (t) {
+//     t.plan(1)
+
+//     got.post(PATH + '/publish', {
+//         json: testMsg,
+//         responseType: 'json'
+//     })
+//         .then(function (res) {
+//             t.pass('got a response')
+//             t.equal(res.body.message.signature, testMsg.msg.signature,
+//                 'should send back the message')
+//             // console.log('res', res.body)
+//         })
+//         .catch(err => {
+//             t.error(err)
+//         })
+// })
+
 
 test('publish with an invalid signature', function (t) {
     got.post(PATH + '/publish', {
@@ -162,27 +184,6 @@ test('publish with an invalid signature', function (t) {
 // })
 
 
-// @TODO
-// need to create a second message
-// make a createMsg function that takes the previous msg,
-// and puts its hash as the `previous` key
-// test('publish another message', function (t) {
-//     t.plan(1)
-
-//     got.post(PATH + '/publish', {
-//         json: testMsg,
-//         responseType: 'json'
-//     })
-//         .then(function (res) {
-//             t.pass('got a response')
-//             t.equal(res.body.message.signature, testMsg.msg.signature,
-//                 'should send back the message')
-//             // console.log('res', res.body)
-//         })
-//         .catch(err => {
-//             t.error(err)
-//         })
-// })
 
 
 test('all done', function (t) {

@@ -15,7 +15,7 @@ npm i @nichoth/ssc
 
 ## example
 ```js
-var ssc = require('ssc')
+var ssc = require('@nichoth/ssc')
 
 var msg = {
     previous: null,

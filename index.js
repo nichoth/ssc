@@ -38,9 +38,10 @@ var u = {
     }
 }
 
+// @TODO -- need to create a msg given a previous msg
 function createMsg (keys, content) {
     // exports.create = function (state, keys, hmac_key, content, timestamp) {
-    // should be like function createMsg (keys, prevMsg, content) {
+    // should be like `function createMsg (keys, prevMsg, content) {`
     var msg = validate.create(null, keys, null, content, timestamp())
     return msg
 }
