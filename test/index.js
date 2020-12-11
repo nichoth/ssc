@@ -78,7 +78,7 @@ test('create a message', function (t) {
     // `state.feeds` data
     // state -- { validated: 0, queued: 0, queue: [], feeds: {}, error: null }
     // https://github.com/ssbc/ssb-db/blob/788cd5c5d067b3bc90949337d8387ba1b0151276/minimal.js#L151
-    t.plan(2)
+    t.plan(3)
 
     var content = { type: 'test', text: 'woooo' }
 
@@ -89,6 +89,7 @@ test('create a message', function (t) {
     // console.log('*msg*', msg)
     t.ok(msg, 'should create a message')
     t.equal(msg.content.type, 'test', 'should create the right content')
+    t.ok(ssc.verifyObj(keys, null, msg), 'message should be valid')
 
     // TODO
     // create a second message
@@ -139,9 +140,8 @@ test('publish with an invalid signature', function (t) {
             t.end()
         })
         .catch(err => {
-            console.log('errrrrrrr', err.message)
-            t.ok(err.message.includes('422'), 'should have error code 422')
             t.ok(err, 'should return error')
+            t.ok(err.message.includes('422'), 'should have error code 422')
             t.end()
         })
 })
