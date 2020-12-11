@@ -8,9 +8,8 @@
     "build-css": "node-sass --output-style=compressed src/style.scss > public/style.css",
     "watch-css": "node-sass --watch src/style.scss --source-map-embed public/style.css",
     "build": "mkdir -p public && cp src/* public && npm run build-css",
-    "env": "env $(cat .env | xargs)",
     "postversion": "git push && git push --tags",
-    "test": "tape test/*.js | tap-spec"
+    "test": "tape test/*.js | tap-spec && tape test-ntl/*.js | tap-spec"
   },
   "repository": {
     "type": "git",

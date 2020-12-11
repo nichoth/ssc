@@ -27,6 +27,7 @@ var msg = {
     signature: 'wHdXRQBt8k0rFEa9ym35pNqmeHwA+kTTdOC3N6wAn4yOb6dsfIq/X0JpHCBZVJcw6Luo6uH1udpq12I4eYzBAw==.sig.ed25519'
 }
 
+// keys = { public }
 var msgIsOk = ssc.verifyObj(keys, null, msg)
 // true
 ```
