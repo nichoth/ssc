@@ -471,7 +471,12 @@ https://github.com/ssb-js/ssb-keys/blob/main/index.js#L126
 You can't include the hash in the object to be hashed.
 
 
+---------------------------------------------------------
 
+## 12-15-2020
+
+`exports.id`
+https://github.com/ssb-js/ssb-validate/blob/main/index.js#L339
 
 
 

@@ -3,7 +3,7 @@ var ssbKeys = require("ssb-keys")
 var ssc = require('../')
 
 var keys
-
+var msg
 test('create a message', function (t) {
     // can't use the .initial() `state` in the call to v.create, it creates
     // the wrong sequence number
@@ -24,14 +24,42 @@ test('create a message', function (t) {
     keys = ssbKeys.generate()
     var content = { type: 'test', text: 'woooo' }
 
+    // prevMsg
+    // { id, sequence }
+
+    // msg:
+    //   {
+    //     previous: null,
+    //     sequence: 1,
+    //     author: '@IGrkmx/GjfzaOLNjTpdmmPWuTj5xeSv/2pCP+yUI8eo=.ed25519',
+    //     timestamp: 1608054728047,
+    //     hash: 'sha256',
+    //     content: { type: 'test', text: 'woooo' },
+    //     signature: 'LJUQXvR6SZ9lQSlF1w1RFQi3GFIU4B/Cc1sP6kjxnMZn3YW8X7nj9/hlWiTF3cJbWkc9xHvApJ+9uRtHxicXAQ==.sig.ed25519'
+    //   }
+
     // exports.create = function (state, keys, hmac_key, content, timestamp) {
     // var msg = validate.create(null, keys, null, content, timestamp())
-    var msg = ssc.createMsg(keys, content)
+    msg = ssc.createMsg(keys, null, content)
 
     t.ok(msg, 'should create a message')
     t.equal(msg.content.type, 'test', 'should create the right content')
     t.ok(ssc.verifyObj(keys, null, msg), 'message should be valid')
-
-    // @TODO
-    // create a second message
 })
+
+
+// @TODO
+// create a second message
+test('create a second message in the same feed', function (t) {
+    var content = { type: 'test2', text: 'ok' }
+    var msg2 = ssc.createMsg(keys, msg, content)
+    // console.log('***msg2***', msg2)
+    t.plan(4)
+    t.equal(msg2.previous, ssc.getId(msg), 'should have the previous msg hash')
+    t.equal(msg2.content.type, 'test2', 'should create the content')
+    t.equal(msg2.sequence, 2, 'should create the right sequence')
+    t.equal(msg2.author, '@' + keys.public, 'should have the right author')
+})
+
+
+

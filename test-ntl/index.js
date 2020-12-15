@@ -91,9 +91,8 @@ test('publish', function (t) {
         })
 })
 
-
 // @TODO
-// need to create a second message
+// need to publish a second message
 // make a createMsg function that takes the previous msg,
 // and puts its hash as the `previous` key
 // test('publish another message', function (t) {
@@ -113,7 +112,6 @@ test('publish', function (t) {
 //             t.error(err)
 //         })
 // })
-
 
 test('publish with an invalid signature', function (t) {
     got.post(PATH + '/publish', {
