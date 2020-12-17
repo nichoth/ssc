@@ -4,6 +4,7 @@ var ssc = require('../')
 
 var keys
 var msg
+
 test('create a message', function (t) {
     // can't use the .initial() `state` in the call to v.create, it creates
     // the wrong sequence number
@@ -47,15 +48,12 @@ test('create a message', function (t) {
     t.ok(ssc.verifyObj(keys, null, msg), 'message should be valid')
 })
 
-
-// @TODO
-// create a second message
 test('create a second message in the same feed', function (t) {
+    t.plan(4)
     var content = { type: 'test2', text: 'ok' }
     var msg2 = ssc.createMsg(keys, msg, content)
-    // console.log('***msg2***', msg2)
-    t.plan(4)
-    t.equal(msg2.previous, ssc.getId(msg), 'should have the previous msg hash')
+    t.equal(msg2.previous, ssc.getId(msg),
+        'should have the previous msg hash')
     t.equal(msg2.content.type, 'test2', 'should create the content')
     t.equal(msg2.sequence, 2, 'should create the right sequence')
     t.equal(msg2.author, '@' + keys.public, 'should have the right author')

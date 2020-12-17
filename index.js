@@ -56,15 +56,12 @@ var u = {
     }
 }
 
-// @TODO -- need to create a msg given a previous msg
+
+// just creates a msg, doesn't check that the `msg.previous` key is valid
 function createMsg (keys, prevMsg, content) {
     // state here is { id, sequence }
     // exports.create = function (state, keys, hmac_key, content, timestamp) {
 
-
-    // if (timestamp == null || isNaN(+timestamp)) 
-    //     throw new Error('timestamp must be provided')
-    // }
 
     if (!isObject(content) && !isEncrypted(content)) {
         throw new Error('invalid message content, ' +
@@ -84,11 +81,6 @@ function createMsg (keys, prevMsg, content) {
     if (err) throw err
     // exports.signObj = function (keys, hmac_key, obj) {
     return signObj(keys, null, msg)
-
-
-    // var msg = validate.create(prevMsg, keys, null, content, timestamp())
-    // console.log('msg***', msg)
-    // return msg
 }
 
 function verifyObj (keys, hmac_key, obj) {

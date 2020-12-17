@@ -6,8 +6,6 @@ This is `ssb` but more boring
 
 -------------------------------------------------------
 
-This is an application, but it also exports some node functions.
-
 ## install
 ```
 npm i @nichoth/ssc
