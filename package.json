@@ -9,7 +9,6 @@
     "watch-css": "node-sass --watch src/style.scss --source-map-embed public/style.css",
     "build": "mkdir -p public && cp src/* public && npm run build-css",
     "postversion": "git push && git push --tags",
-    "test-here": "tape test/*.js | tap-spec",
     "test": "tape test/*.js | tap-spec"
   },
   "repository": {
