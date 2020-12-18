@@ -10,7 +10,7 @@
     "build": "mkdir -p public && cp src/* public && npm run build-css",
     "postversion": "git push && git push --tags",
     "test-here": "tape test/*.js | tap-spec",
-    "test": "tape test/*.js | tap-spec && tape test-ntl/*.js | tap-spec"
+    "test": "tape test/*.js | tap-spec"
   },
   "repository": {
     "type": "git",

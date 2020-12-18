@@ -250,3 +250,12 @@ https://github.com/ssb-js/ssb-validate/blob/main/index.js#L339
 
 
 
+
+[check for the prev hash](https://github.com/ssb-js/ssb-validate/blob/main/index.js#L149)
+
+here we would check the given prevID against the one in the DB
+
+
+
+
+

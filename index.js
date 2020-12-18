@@ -10,7 +10,8 @@ var feedIdRegex = isCanonicalBase64('@', '.(?:sha256|ed25519)', 32)
 module.exports = {
     verifyObj,
     createMsg,
-    getId
+    getId,
+    isPrevMsgOk
 }
 
 // from ssb-keys
@@ -91,6 +92,11 @@ function verifyObj (keys, hmac_key, obj) {
     var b = Buffer.from(JSON.stringify(obj, null, 2));
     if (hmac_key) b = hmac(b, u.toBuffer(hmac_key));
     return verify(keys, sig, b);
+}
+
+function isPrevMsgOk (prevMsg, msg) {
+    if (prevMsg === null) return (msg.previous === null)
+    return (msg.previous === getId(prevMsg))
 }
 
 // takes a public key, signature, and a hash

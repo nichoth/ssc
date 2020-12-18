@@ -59,5 +59,11 @@ test('create a second message in the same feed', function (t) {
     t.equal(msg2.author, '@' + keys.public, 'should have the right author')
 })
 
-
+test('isPrevMsgOk', function (t) {
+    t.plan(1)
+    var msg = ssc.createMsg(keys, null, { type: 'test', text: 'ok' })
+    var msg2 = ssc.createMsg(keys, msg, { type: 'test', text: 'ok' })
+    var isOk = ssc.isPrevMsgOk(msg, msg2)
+    t.equal(isOk, true, 'should reference the prev msg hash')
+})
 
