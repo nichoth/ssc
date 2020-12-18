@@ -1,10 +1,7 @@
 # ssc
+Completely generic merkle-dag functions.
 
-`ssc` because c comes after b in the alphabet
-
-This is `ssb` but more boring
-
-This should only expose 
+This is `ssb` but more boring. `ssc` because c comes after b in the alphabet
 
 -------------------------------------------------------
 
@@ -15,37 +12,45 @@ npm i @nichoth/ssc
 
 ------------------------------------
 
-TODO
-
-* make a test for `verifyObj`
-
-```js
-function verifyObj (keys, hmac_key, obj) {
-```
-
--------------------------------
-
 ## example
 
+### create a message
+This create a root message (no ancestors in the merkle list)
 ```js
 var ssc = require('@nichoth/ssc')
+var ssbKeys = require("ssb-keys")
+var keys = ssbKeys.generate()
+var content = { type: 'test', text: 'woooo' }
 
-var msg = {
-    previous: null,
-    sequence: 1,
-    author: '@vYAqxqmL4/WDSoHjg54LUJRN4EH9/I4A/OFrMpXIWkQ=.ed25519',
-    timestamp: 1606692151952,
-    hash: 'sha256',
-    content: { type: 'test', text: 'woooo' },
-    signature: 'wHdXRQBt8k0rFEa9ym35pNqmeHwA+kTTdOC3N6wAn4yOb6dsfIq/X0JpHCBZVJcw6Luo6uH1udpq12I4eYzBAw==.sig.ed25519'
-}
+var msg = ssc.createMsg(keys, null, content)
+```
 
+### validate a message
+```js
 // keys = { public }
 var msgIsOk = ssc.verifyObj(keys, null, msg)
 // true
 ```
 
+### create another message
+The new message contains the previous message's hash
+
+```js
+var content2 = { type: 'test2', text: 'ok' }
+// we pass in the original msg here
+var msg2 = ssc.createMsg(keys, msg, content2)
+(msg2.previous === ssc.getId(msg))
+// => true 
+```
+
+
+
+
+
+
+
 ---------------------------------------------------------
+
 
 ## 11-17-2020
 
