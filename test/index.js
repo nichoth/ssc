@@ -43,6 +43,8 @@ test('create a message', function (t) {
     // var msg = validate.create(null, keys, null, content, timestamp())
     msg = ssc.createMsg(keys, null, content)
 
+    console.log('msg', msg)
+
     t.ok(msg, 'should create a message')
     t.equal(msg.content.type, 'test', 'should create the right content')
     t.ok(ssc.verifyObj(keys, null, msg), 'message should be valid')

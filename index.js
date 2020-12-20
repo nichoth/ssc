@@ -73,7 +73,7 @@ function createMsg (keys, prevMsg, content) {
         previous: prevMsg ? getId(prevMsg) : null,
         sequence: prevMsg ? prevMsg.sequence + 1 : 1,
         author: keys.id,
-        timestamp: +timestamp,
+        timestamp: +timestamp(),
         hash: 'sha256',
         content: content
     }
@@ -229,7 +229,7 @@ function encode  (obj) {
     return JSON.stringify(obj, null, 2)
 }
 
-var isInvalidContent = exports.isInvalidContent = function (content) {
+function isInvalidContent  (content) {
     if (!isEncrypted(content)) {
         var type = content.type
         if (!(isString(type) && type.length <= 52 && type.length >= 3)) {
