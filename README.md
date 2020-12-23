@@ -15,14 +15,17 @@ npm i @nichoth/ssc
 ## example
 
 ### create a message
-This create a root message (no ancestors in the merkle list)
 ```js
 var ssc = require('@nichoth/ssc')
 var ssbKeys = require("ssb-keys")
 var keys = ssbKeys.generate()
 var content = { type: 'test', text: 'woooo' }
 
+// this create a root message (no ancestors in the merkle list)
 var msg = ssc.createMsg(keys, null, content)
+
+// pass in prev msg to create the merkle-list
+var msg2 = ssc.createMsg(keys, msg, content)
 ```
 
 ### validate a message
