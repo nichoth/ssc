@@ -1,5 +1,5 @@
 # ssc
-Completely generic merkle-dag functions.
+Completely generic functions for working with a merkle-dag.
 
 This is `ssb` but more boring. `ssc` because c comes after b in the alphabet
 
@@ -22,6 +22,7 @@ var keys = ssbKeys.generate()
 var content = { type: 'test', text: 'woooo' }
 
 // this create a root message (no ancestors in the merkle list)
+// (keys, prevMsg, content)
 var msg = ssc.createMsg(keys, null, content)
 
 // pass in prev msg to create the merkle-list

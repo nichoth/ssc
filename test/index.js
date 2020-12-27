@@ -69,3 +69,14 @@ test('isPrevMsgOk', function (t) {
     t.equal(isOk, true, 'should reference the prev msg hash')
 })
 
+test('isValidMsg', function (t) {
+    t.plan(2)
+    var msg = ssc.createMsg(keys, null, { type: 'test', text: 'ok' })
+    var msg2 = ssc.createMsg(keys, msg, { type: 'test', text: 'ok' })
+    var isOk = ssc.isValidMsg(msg2, msg, keys)
+    t.equal(isOk, true, 'should validate a message')
+
+    var badMsg = ssc.createMsg(keys, null, { type: 'test', text: 'ok' })
+    var isOkPrev = ssc.isValidMsg(badMsg, msg2, keys)
+    t.notOk(isOkPrev, 'should not validate an invalid message')
+})

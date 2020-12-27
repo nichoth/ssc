@@ -11,7 +11,8 @@ module.exports = {
     verifyObj,
     createMsg,
     getId,
-    isPrevMsgOk
+    isPrevMsgOk,
+    isValidMsg
 }
 
 // from ssb-keys
@@ -57,7 +58,6 @@ var u = {
     }
 }
 
-
 // just creates a msg, doesn't check that the `msg.previous` key is valid
 function createMsg (keys, prevMsg, content) {
     // state here is { id, sequence }
@@ -94,6 +94,11 @@ function verifyObj (keys, hmac_key, obj) {
     return verify(keys, sig, b);
 }
 
+// @TODO
+function isValidMsg (msg, prevMsg, keys) {
+    return (verifyObj(keys, null, msg) && isPrevMsgOk(prevMsg, msg))
+}
+
 function isPrevMsgOk (prevMsg, msg) {
     if (prevMsg === null) return (msg.previous === null)
     return (msg.previous === getId(prevMsg))
@@ -126,7 +131,7 @@ function clone (obj) {
 function sign (keys, msg) {
     if (isString(msg)) msg = Buffer.from(msg);
     if (!Buffer.isBuffer(msg)) throw new Error("msg should be buffer");
-  
+
     return (curve
         .sign(u.toBuffer(keys.private), msg)
         .toString("base64") + ".sig." + 'ed25519'
@@ -195,9 +200,9 @@ function isInvalidShape  (msg) {
         return new Error('message has invalid properties:' +
             JSON.stringify(msg, null, 2))
     }
-  
+
     //allow encrypted messages, where content is a base64 string.
-  
+
     //NOTE: since this checks the length of javascript string,
     //it's not actually the byte length! it's the number of utf8 chars
     //for latin1 it's gonna be 8k, but if you use all utf8 you can
@@ -208,7 +213,7 @@ function isInvalidShape  (msg) {
         return new Error('Encoded message must not be larger than 8192' +
             'bytes. Current size is ' + asJson.length)
     }
-  
+
     return isInvalidContent(msg.content)
 }
 
@@ -218,8 +223,8 @@ function isEncrypted (str) {
     //XXX check that base64 is canonical!
 
     ///^[0-9A-Za-z\/+]+={0,2}\.box/.test(str)
-    return isString(str) && isEncryptedRx.test(str) 
-} 
+    return isString(str) && isEncryptedRx.test(str)
+}
 
 function isSupportedHash (msg) {
     return msg.hash === 'sha256'
@@ -243,5 +248,4 @@ function isInvalidContent  (content) {
 function isFeedId (data) {
     return isString(data) && feedIdRegex.test(data)
 }
-
 
