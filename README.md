@@ -50,7 +50,7 @@ var msg2 = ssc.createMsg(keys, msg, content2)
 ```
 
 ### isValidMsg
-This check that the message contains the hash of `prevMsg`, and also
+This checks that the message contains the hash of `prevMsg`, and also
 makes sure the signature matches the public key.
 
 ```js
