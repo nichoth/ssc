@@ -30,6 +30,8 @@ var msg2 = ssc.createMsg(keys, msg, content)
 ```
 
 ### validate a message
+This check that the signature and public key are ok together.
+
 ```js
 // keys = { public }
 var msgIsOk = ssc.verifyObj(keys, null, msg)
@@ -47,7 +49,24 @@ var msg2 = ssc.createMsg(keys, msg, content2)
 // => true 
 ```
 
+### isValidMsg
+This check that the message contains the hash of `prevMsg`, and also
+makes sure the signature matches the public key.
 
+```js
+test('isValidMsg', function (t) {
+    t.plan(2)
+    var msg = ssc.createMsg(keys, null, { type: 'test', text: 'ok' })
+    var msg2 = ssc.createMsg(keys, msg, { type: 'test', text: 'ok' })
+    var isValid = ssc.isValidMsg(msg2, msg, keys)
+    // => true
+
+    var badMsg = ssc.createMsg(keys, null, { type: 'test', text: 'ok' })
+    var isOkPrev = ssc.isValidMsg(badMsg, msg2, keys)
+    // => false
+    // we pass in null as the prevMsg, but validate with msg2 as prev
+})
+```
 
 
 
