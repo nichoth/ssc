@@ -30,7 +30,7 @@ var msg2 = ssc.createMsg(keys, msg, content)
 ```
 
 ### validate a message
-This check that the signature and public key are ok together.
+This checks that the signature and public key are ok together.
 
 ```js
 // keys = { public }
