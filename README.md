@@ -29,7 +29,7 @@ var msg = ssc.createMsg(keys, null, content)
 var msg2 = ssc.createMsg(keys, msg, content)
 ```
 
-### validate a message
+### verify a message
 This checks that the signature and public key are ok together.
 
 ```js
