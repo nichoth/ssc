@@ -94,7 +94,6 @@ function verifyObj (keys, hmac_key, obj) {
     return verify(keys, sig, b);
 }
 
-// @TODO
 function isValidMsg (msg, prevMsg, keys) {
     return (verifyObj(keys, null, msg) && isPrevMsgOk(prevMsg, msg))
 }
