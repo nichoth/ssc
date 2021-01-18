@@ -66,6 +66,36 @@ var isOk = ssc.isValidMsg(badMsg, msg2, keys)
 // we pass in null as the prevMsg, but validate with msg2 as prev
 ```
 
+### example
+Create a merkle list from an array
+
+```js
+test('create a merkle list', function (t) {
+    t.plan(2)
+    var arr = ['one', 'two', 'three']
+    var list = arr.reduce(function (acc, val) {
+        var prev = acc[acc.length - 1]
+        var msg = ssc.createMsg(keys, prev || null, {
+            type: 'test',
+            text: val
+        })
+        acc.push(msg)
+        return acc
+    }, [])
+
+    t.equal(list.length, 3, 'should create a merkle list')
+
+    var isValidList = list.reduce(function (isValid, msg, i) {
+        var prev = list[i - 1] || null
+        // ssc.isValidMsg(msg2, msg, keys)
+        return isValid && ssc.isValidMsg(msg, prev, keys)
+    }, true)
+
+    t.equal(isValidList, true, 'reduced validation should be ok')
+})
+```
+
+
 
 
 

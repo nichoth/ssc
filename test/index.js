@@ -70,15 +70,41 @@ test('isPrevMsgOk', function (t) {
 })
 
 test('isValidMsg', function (t) {
-    t.plan(2)
+    t.plan(3)
     var msg = ssc.createMsg(keys, null, { type: 'test', text: 'ok' })
     var msg2 = ssc.createMsg(keys, msg, { type: 'test', text: 'ok' })
     // function isValidMsg (msg, prevMsg, keys) {
     var isOk = ssc.isValidMsg(msg2, msg, keys)
     t.equal(isOk, true, 'should validate a message')
 
+    t.ok(ssc.isValidMsg(msg, null, keys), 'should validate the first msg')
+
     var badMsg = ssc.createMsg(keys, null, { type: 'test', text: 'ok' })
     var isOkPrev = ssc.isValidMsg(badMsg, msg2, keys)
     t.notOk(isOkPrev, 'should not validate an invalid message')
+})
+
+test('create a merkle list', function (t) {
+    t.plan(2)
+    var arr = ['one', 'two', 'three']
+    var list = arr.reduce(function (acc, val) {
+        var prev = acc[acc.length - 1]
+        var msg = ssc.createMsg(keys, prev || null, {
+            type: 'test',
+            text: val
+        })
+        acc.push(msg)
+        return acc
+    }, [])
+
+    t.equal(list.length, 3, 'should create a merkle list')
+
+    var isValidList = list.reduce(function (isValid, msg, i) {
+        var prev = list[i - 1] || null
+        // ssc.isValidMsg(msg2, msg, keys)
+        return isValid && ssc.isValidMsg(msg, prev, keys)
+    }, true)
+
+    t.equal(isValidList, true, 'reduced validation should be ok')
 })
 
