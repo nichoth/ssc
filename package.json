@@ -24,12 +24,10 @@
   "dependencies": {
     "chloride": "^2.3.0",
     "is-canonical-base64": "^1.1.1",
-    "monotonic-timestamp": "0.0.9",
-    "xtend": "^4.0.2"
+    "monotonic-timestamp": "0.0.9"
   },
   "devDependencies": {
     "concurrently": "^5.3.0",
-    "got": "^11.8.0",
     "node-sass": "^5.0.0",
     "ssb-keys": "^8.0.0",
     "tap-spec": "^5.0.0",
