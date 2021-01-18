@@ -66,8 +66,7 @@ var isOk = ssc.isValidMsg(badMsg, msg2, keys)
 // we pass in null as the prevMsg, but validate with msg2 as prev
 ```
 
-### example
-Create a merkle list from an array
+### Create a merkle list from an array
 
 ```js
 test('create a merkle list', function (t) {
