@@ -25,6 +25,17 @@ var content = { type: 'test', text: 'woooo' }
 // (keys, prevMsg, content)
 var msg = ssc.createMsg(keys, null, content)
 
+    // => msg:
+    //   {
+    //     previous: null,
+    //     sequence: 1,
+    //     author: '@IGrkmx/GjfzaOLNjTpdmmPWuTj5xeSv/2pCP+yUI8eo=.ed25519',
+    //     timestamp: 1608054728047,
+    //     hash: 'sha256',
+    //     content: { type: 'test', text: 'woooo' },
+    //     signature: 'LJUQXvR6SZ9lQSlF1w1RFQi3GFIU4B/Cc1sP6kjxnMZn3YW8X7nj9/hlWiTF3cJbWkc9xHvApJ+9uRtHxicXAQ==.sig.ed25519'
+    //   }
+
 // pass in prev msg to create the merkle-list
 var msg2 = ssc.createMsg(keys, msg, content)
 ```
