@@ -108,3 +108,20 @@ test('create a merkle list', function (t) {
     t.equal(isValidList, true, 'reduced validation should be ok')
 })
 
+// ssb style post
+// {
+//  key: '%uS0xrYDtij+ukWHir98G8cdCo8sgGDp4t2HoBWUYl3Q=.sha256',
+//  value: {
+//    previous: '%Qh2prm1RsxOjYSb0Qp9KNFjp641sL4MJGfnd8jAE3N8=.sha256',
+//    sequence: 3,
+//    author: '@FppHFxGG2TO2HqLGVad1VIwcFlTu9okR5qqj5ejGXFk=.ed25519',
+//    timestamp: 1586138755567,
+//    hash: 'sha256',
+//    content: { type: 'ev.post', text: 'iguana', mentions: [Array] },
+//    signature: 'iDWUHP/v31LELJ9PRkuPA/12IDwltHRUNRYQ0YkRUrr9wPCgi/VUzNrUmid7N64TYjeV6dL9dUx5ESShTsiqCg==.sig.ed25519'
+//  },
+//  timestamp: 1586138755568
+//}
+
+
+

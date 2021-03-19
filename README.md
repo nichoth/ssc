@@ -50,7 +50,8 @@ var msgIsOk = ssc.verifyObj(keys, null, msg)
 ```
 
 ### create another message
-The new message contains the previous message's hash
+The new message contains the previous message's hash, and is signed by the
+message author
 
 ```js
 var content2 = { type: 'test2', text: 'ok' }
@@ -67,6 +68,7 @@ makes sure the signature matches the public key.
 ```js
 var msg = ssc.createMsg(keys, null, { type: 'test', text: 'ok' })
 var msg2 = ssc.createMsg(keys, msg, { type: 'test', text: 'ok' })
+
 // (msg, prevMsg, keys)
 var isValid = ssc.isValidMsg(msg2, msg, keys)
 // => true
@@ -104,3 +106,10 @@ test('create a merkle list', function (t) {
     t.equal(isValidList, true, 'reduced validation should be ok')
 })
 ```
+
+-----------------------------------
+
+ssb format is `{ key: '...', value: msg }`. I think this is just used for storing in the DB though, where key is the hash or something of the message.
+
+
+
