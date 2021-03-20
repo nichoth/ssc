@@ -113,6 +113,7 @@ ssb format is `{ key: '...', value: msg }`. I think this is just used for storin
 
 ----------------------------------
 
+```js
 // ssb style post
 // {
 //  key: '%uS0xrYDtij+ukWHir98G8cdCo8sgGDp4t2HoBWUYl3Q=.sha256',
@@ -127,5 +128,5 @@ ssb format is `{ key: '...', value: msg }`. I think this is just used for storin
 //  },
 //  timestamp: 1586138755568
 //}
-
+```
 
