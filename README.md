@@ -21,7 +21,7 @@ var ssbKeys = require("ssb-keys")
 var keys = ssbKeys.generate()
 var content = { type: 'test', text: 'woooo' }
 
-// this create a root message (no ancestors in the merkle list)
+// this creates a root message (no ancestors in the merkle list)
 // (keys, prevMsg, content)
 var msg = ssc.createMsg(keys, null, content)
 
