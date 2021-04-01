@@ -110,7 +110,7 @@ test('create a merkle list', function (t) {
 
 // messages have { key, value }
 test('create ssb style posts', function (t) {
-    t.plan(2)
+    t.plan(3)
 
     var arr = ['one', 'two', 'three']
     var list = arr.reduce(function (acc, val) {
@@ -122,7 +122,7 @@ test('create ssb style posts', function (t) {
             text: val
         })
         acc.push({
-            key: ssc.hash(JSON.stringify(msg, null, 2), null),
+            key: ssc.getId(msg, null),
             value: msg
         })
         return acc
@@ -131,6 +131,7 @@ test('create ssb style posts', function (t) {
     t.ok(list[0].key, 'should have `.key`')
     t.ok(ssc.verifyObj(keys, null, list[0].value),
         'msg should have valid .value')
+    t.equal(list[0].key[0], '%', 'should have the right format id')
 })
 
 // ssb style post

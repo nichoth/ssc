@@ -12,8 +12,7 @@ module.exports = {
     createMsg,
     getId,
     isPrevMsgOk,
-    isValidMsg,
-    hash
+    isValidMsg
 }
 
 // from ssb-keys
