@@ -109,7 +109,7 @@ test('create a merkle list', function (t) {
 })
 ```
 
-## create ssb style post messages
+### create ssb style post messages
 ```js
 // messages have { key, value }
 test('create ssb style posts', function (t) {
