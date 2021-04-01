@@ -88,8 +88,8 @@ test('create a merkle list', function (t) {
     t.plan(2)
     var arr = ['one', 'two', 'three']
     var list = arr.reduce(function (acc, val) {
-        var prev = acc[acc.length - 1]
-        var msg = ssc.createMsg(keys, prev || null, {
+        var prev = (acc[acc.length - 1] || null)
+        var msg = ssc.createMsg(keys, prev, {
             type: 'test',
             text: val
         })
@@ -108,6 +108,31 @@ test('create a merkle list', function (t) {
     t.equal(isValidList, true, 'reduced validation should be ok')
 })
 
+// messages have { key, value }
+test('create ssb style posts', function (t) {
+    t.plan(2)
+
+    var arr = ['one', 'two', 'three']
+    var list = arr.reduce(function (acc, val) {
+        var prev = (acc[acc.length - 1] || null)
+        // need to use the `.value` key in this case
+        prev = prev === null ? prev : prev.value
+        var msg = ssc.createMsg(keys, prev, {
+            type: 'test',
+            text: val
+        })
+        acc.push({
+            key: ssc.hash(JSON.stringify(msg, null, 2), null),
+            value: msg
+        })
+        return acc
+    }, [])
+
+    t.ok(list[0].key, 'should have `.key`')
+    t.ok(ssc.verifyObj(keys, null, list[0].value),
+        'msg should have valid .value')
+})
+
 // ssb style post
 // {
 //  key: '%uS0xrYDtij+ukWHir98G8cdCo8sgGDp4t2HoBWUYl3Q=.sha256',
@@ -122,6 +147,9 @@ test('create a merkle list', function (t) {
 //  },
 //  timestamp: 1586138755568
 //}
+//
+// The key value is a sha256 hash of your message.
+// You can sbot.get() the message using that key.
 
 
 

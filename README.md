@@ -82,12 +82,14 @@ var isOk = ssc.isValidMsg(badMsg, msg2, keys)
 ### Create a merkle list from an array
 
 ```js
+var keys = ssbKeys.generate()
+
 test('create a merkle list', function (t) {
     t.plan(2)
     var arr = ['one', 'two', 'three']
     var list = arr.reduce(function (acc, val) {
-        var prev = acc[acc.length - 1]
-        var msg = ssc.createMsg(keys, prev || null, {
+        var prev = (acc[acc.length - 1] || null)
+        var msg = ssc.createMsg(keys, prev, {
             type: 'test',
             text: val
         })
@@ -104,6 +106,34 @@ test('create a merkle list', function (t) {
     }, true)
 
     t.equal(isValidList, true, 'reduced validation should be ok')
+})
+```
+
+## create ssb style post messages
+```js
+// messages have { key, value }
+test('create ssb style posts', function (t) {
+    t.plan(2)
+
+    var arr = ['one', 'two', 'three']
+    var list = arr.reduce(function (acc, val) {
+        var prev = (acc[acc.length - 1] || null)
+        // need to use the `.value` key in this case
+        prev = prev === null ? prev : prev.value
+        var msg = ssc.createMsg(keys, prev, {
+            type: 'test',
+            text: val
+        })
+        acc.push({
+            key: ssc.hash(JSON.stringify(msg, null, 2), null),
+            value: msg
+        })
+        return acc
+    }, [])
+
+    t.ok(list[0].key, 'should have `.key`')
+    t.ok(ssc.verifyObj(keys, null, list[0].value),
+        'msg should have valid .value')
 })
 ```
 

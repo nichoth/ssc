@@ -12,12 +12,13 @@ module.exports = {
     createMsg,
     getId,
     isPrevMsgOk,
-    isValidMsg
+    isValidMsg,
+    hash
 }
 
 // from ssb-keys
 // https://github.com/ssb-js/ssb-keys/blob/2342a85c5bd4a1cf8739b7b09eb2f667f735bd08/util.js#L4
-var hash = function (data, enc) {
+function hash (data, enc) {
     data = (typeof data === 'string' && enc == null) ?
         Buffer.from(data, "binary") :
         Buffer.from(data, enc);
@@ -80,7 +81,6 @@ function createMsg (keys, prevMsg, content) {
 
     var err = isInvalidShape(msg)
     if (err) throw err
-    // exports.signObj = function (keys, hmac_key, obj) {
     return signObj(keys, null, msg)
 }
 
