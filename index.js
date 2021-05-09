@@ -5,6 +5,7 @@ var timestamp = require('monotonic-timestamp')
 var isCanonicalBase64 = require('is-canonical-base64')
 var isEncryptedRx = isCanonicalBase64('','\\.box.*')
 var feedIdRegex = isCanonicalBase64('@', '.(?:sha256|ed25519)', 32)
+var ssbKeys = require('ssb-keys')
 
 
 module.exports = {
@@ -12,7 +13,12 @@ module.exports = {
     createMsg,
     getId,
     isPrevMsgOk,
-    isValidMsg
+    isValidMsg,
+    createKeys
+}
+
+function createKeys () {
+    return ssbKeys.generate()
 }
 
 // from ssb-keys

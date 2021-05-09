@@ -5,6 +5,15 @@ var ssc = require('../')
 var keys
 var msg
 
+test('create some keys', function (t) {
+    t.plan(4)
+    keys = ssc.createKeys()
+    t.ok(keys.curve, 'should have .curve')
+    t.ok(keys.public, 'should have .public')
+    t.ok(keys.private, 'should have .private')
+    t.ok(keys.id, 'should have .id')
+})
+
 test('create a message', function (t) {
     // can't use the .initial() `state` in the call to v.create, it creates
     // the wrong sequence number
@@ -22,7 +31,6 @@ test('create a message', function (t) {
     // https://github.com/ssbc/ssb-db/blob/788cd5c5d067b3bc90949337d8387ba1b0151276/minimal.js#L151
     t.plan(3)
 
-    keys = ssbKeys.generate()
     var content = { type: 'test', text: 'woooo' }
 
     // prevMsg
