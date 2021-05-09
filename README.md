@@ -17,8 +17,7 @@ npm i @nichoth/ssc
 ### create a message
 ```js
 var ssc = require('@nichoth/ssc')
-var ssbKeys = require("ssb-keys")
-var keys = ssbKeys.generate()
+var keys = ssc.createKeys()
 var content = { type: 'test', text: 'woooo' }
 
 // this creates a root message (no ancestors in the merkle list)
@@ -125,7 +124,7 @@ test('create ssb style posts', function (t) {
             text: val
         })
         acc.push({
-            key: ssc.getId(msg, null),
+            key: ssc.getId(msg),
             value: msg
         })
         return acc
