@@ -14,7 +14,8 @@ module.exports = {
     getId,
     isPrevMsgOk,
     isValidMsg,
-    createKeys
+    createKeys,
+    hash
 }
 
 function createKeys () {
