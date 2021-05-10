@@ -137,6 +137,15 @@ test('create ssb style posts', function (t) {
 })
 ```
 
+Get the hash of a something
+```js
+var ssc = require('@nichoth/ssc')
+
+function getMessageId (msg) {
+    return '%' + ssc.hash(JSON.stringify(msg, null, 2))
+}
+```
+
 -----------------------------------
 
 ssb format is `{ key: '...', value: msg }`. I think this is just used for storing in the DB though, where key is the hash or something of the message.
