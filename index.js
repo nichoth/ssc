@@ -6,6 +6,7 @@ var isCanonicalBase64 = require('is-canonical-base64')
 var isEncryptedRx = isCanonicalBase64('','\\.box.*')
 var feedIdRegex = isCanonicalBase64('@', '.(?:sha256|ed25519)', 32)
 var ssbKeys = require('ssb-keys')
+var stringify = require('json-stable-stringify')
 
 
 module.exports = {
@@ -33,7 +34,7 @@ function hash (data, enc) {
 
 
 function getId (msg) {
-    return '%' + hash(JSON.stringify(msg, null, 2))
+    return '%' + hash(stringify(msg, null, 2))
 }
 
 // see https://github.com/ssb-js/ssb-keys/blob/main/index.js#L113 and
@@ -95,7 +96,7 @@ function verifyObj (keys, hmac_key, obj) {
     obj = clone(obj);
     var sig = obj.signature;
     delete obj.signature;
-    var b = Buffer.from(JSON.stringify(obj, null, 2));
+    var b = Buffer.from(stringify(obj, null, 2));
     if (hmac_key) b = hmac(b, u.toBuffer(hmac_key));
     return verify(keys, sig, b);
 }
@@ -149,7 +150,7 @@ function signObj (keys, hmac_key, obj) {
         hmac_key = null
     }
     var _obj = clone(obj)
-    var b = Buffer.from(JSON.stringify(_obj, null, 2))
+    var b = Buffer.from(stringify(_obj, null, 2))
     if (hmac_key) b = hmac(b, u.toBuffer(hmac_key))
     _obj.signature = sign(keys, b)
     return _obj
@@ -236,7 +237,7 @@ function isSupportedHash (msg) {
 }
 
 function encode  (obj) {
-    return JSON.stringify(obj, null, 2)
+    return stringify(obj, null, 2)
 }
 
 function isInvalidContent  (content) {
