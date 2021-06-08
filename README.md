@@ -14,6 +14,21 @@ npm i @nichoth/ssc
 
 ## example
 
+### create a key pair
+```js
+var ssc = require('@nichoth/ssc')
+var keys = ssc.createKeys()
+console.log(keys)
+
+// {
+//   curve: 'ed25519',
+//   public: 'd4xotrRAG+l17+r/xXGT1IgHfEzO8fC+5uy/KfFhA0w=.ed25519',
+//   private: 'ns00cIhaZcZjEdb8vcuEiQ1DyTcfNnuePJBEnnyLqaJ3jGi2tEAb6XXv6v/FcZPUiAd8TM7x8L7m7L8p8WEDTA==.ed25519',
+//   id: '@d4xotrRAG+l17+r/xXGT1IgHfEzO8fC+5uy/KfFhA0w=.ed25519'
+// }
+
+```
+
 ### create a message
 ```js
 var ssc = require('@nichoth/ssc')
