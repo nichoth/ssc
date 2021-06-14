@@ -12,7 +12,20 @@ npm i @nichoth/ssc
 
 ------------------------------------
 
-## example
+## examples
+
+### getId
+
+```js
+var ssc = require('@nichoth/ssc')
+
+var msg = ssc.createMsg(keys, prev, {
+    type: 'test',
+    text: 'ok world'
+})
+
+var key = ssc.getId(msg),
+```
 
 ### create a key pair
 ```js
@@ -58,6 +71,8 @@ var msg2 = ssc.createMsg(keys, msg, content)
 This checks that the signature and public key are ok together.
 
 ```js
+var ssc = require('@nichoth/ssc')
+
 // keys = { public }
 var msgIsOk = ssc.verifyObj(keys, null, msg)
 // true
@@ -68,6 +83,8 @@ The new message contains the previous message's hash, and is signed by the
 message author
 
 ```js
+var ssc = require('@nichoth/ssc')
+
 var content2 = { type: 'test2', text: 'ok' }
 // we pass in the original msg here
 var msg2 = ssc.createMsg(keys, msg, content2)
@@ -80,6 +97,8 @@ This checks that the message contains the hash of `prevMsg`, and also
 makes sure the signature matches the public key.
 
 ```js
+var ssc = require('@nichoth/ssc')
+
 var msg = ssc.createMsg(keys, null, { type: 'test', text: 'ok' })
 var msg2 = ssc.createMsg(keys, msg, { type: 'test', text: 'ok' })
 
@@ -96,7 +115,8 @@ var isOk = ssc.isValidMsg(badMsg, msg2, keys)
 ### Create a merkle list from an array
 
 ```js
-var keys = ssbKeys.generate()
+var ssc = require('@nichoth/ssc')
+var keys = ssc.createKeys()
 
 test('create a merkle list', function (t) {
     t.plan(2)
@@ -126,6 +146,8 @@ test('create a merkle list', function (t) {
 ### create ssb style post messages
 ```js
 // messages have { key, value }
+var ssc = require('@nichoth/ssc')
+
 test('create ssb style posts', function (t) {
     t.plan(3)
 
