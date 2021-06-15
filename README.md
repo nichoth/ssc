@@ -143,6 +143,14 @@ test('create a merkle list', function (t) {
 })
 ```
 
+## hash
+Get the hash of a string or buffer
+```js
+var ssc = require('@nichoth/ssc')
+
+var hash = ssc.hash('a string to hash')
+```
+
 ### create ssb style post messages
 ```js
 // messages have { key, value }
