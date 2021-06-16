@@ -80,6 +80,7 @@ test('isPrevMsgOk', function (t) {
 test('isValidMsg', function (t) {
     t.plan(3)
     var msg = ssc.createMsg(keys, null, { type: 'test', text: 'ok' })
+    console.log('msg', msg)
     var msg2 = ssc.createMsg(keys, msg, { type: 'test', text: 'ok' })
     // function isValidMsg (msg, prevMsg, keys) {
     var isOk = ssc.isValidMsg(msg2, msg, keys)

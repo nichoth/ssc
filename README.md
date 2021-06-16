@@ -74,6 +74,7 @@ This checks that the signature and public key are ok together.
 var ssc = require('@nichoth/ssc')
 
 // keys = { public }
+// function verifyObj (keys, hmac_key, obj)
 var msgIsOk = ssc.verifyObj(keys, null, msg)
 // true
 ```
