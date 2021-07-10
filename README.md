@@ -16,6 +16,8 @@ npm i @nichoth/ssc
 
 ### getId
 
+Get the id for a message (the id is the hash of the message)
+
 ```js
 var ssc = require('@nichoth/ssc')
 var keys = ssc.createKeys()
