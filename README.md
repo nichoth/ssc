@@ -18,6 +18,8 @@ npm i @nichoth/ssc
 
 ```js
 var ssc = require('@nichoth/ssc')
+var keys = ssc.createKeys()
+var prev = null
 
 var msg = ssc.createMsg(keys, prev, {
     type: 'test',
