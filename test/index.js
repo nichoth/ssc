@@ -1,5 +1,4 @@
 var test = require('tape')
-var ssbKeys = require("ssb-keys")
 var crypto = require('crypto')
 var ssc = require('../')
 

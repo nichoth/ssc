@@ -31,6 +31,22 @@ var msg = ssc.createMsg(keys, prev, {
 var key = ssc.getId(msg),
 ```
 
+### generate
+```js
+var crypto = require('crypto')
+var ssc = require('@nichoth/ssc')
+
+var seed = crypto.randomBytes(32)
+var keyCap = ssc.generate('ed25519', seed)
+
+// => {
+// curve: 'ed25519',
+// public: 'U6VgAlPvnSwWs/jocgEOrWjqEPJn6k7RXXog7/jC5zU=.ed25519',
+// private: '6iZUnNvLyQHAPobLNA33aavUaljEt06wfuff1iXb9d5TpWACU++dLBaz+OhyAQ6taOoQ8mfqTtFdeiDv+MLnNQ==.ed25519',
+// id: '@U6VgAlPvnSwWs/jocgEOrWjqEPJn6k7RXXog7/jC5zU=.ed25519'
+// }
+```
+
 ### create a key pair
 ```js
 var ssc = require('@nichoth/ssc')
