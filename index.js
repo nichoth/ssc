@@ -16,6 +16,7 @@ module.exports = {
     isPrevMsgOk,
     isValidMsg,
     createKeys,
+    generate: ssbKeys.generate,
     hash
 }
 

@@ -1,5 +1,6 @@
 var test = require('tape')
 var ssbKeys = require("ssb-keys")
+var crypto = require('crypto')
 var ssc = require('../')
 
 var keys
@@ -115,6 +116,19 @@ test('create a merkle list', function (t) {
     }, true)
 
     t.equal(isValidList, true, 'reduced validation should be ok')
+})
+
+test('generate', function (t) {
+    var seed = crypto.randomBytes(32)
+    var keyCap = ssc.generate('ed25519', seed)
+
+    t.equal(keyCap.curve, 'ed25519', 'should have the right curve')
+    t.ok(keyCap.public, 'should create a public key')
+    t.ok(keyCap.private, 'should create a private key')
+    t.equal(keyCap.id, '@' + keyCap.public, 'should have an id' +
+        'of the public key')
+
+    t.end()
 })
 
 // messages have { key, value }
