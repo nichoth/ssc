@@ -10,6 +10,7 @@ var stringify = require('json-stable-stringify')
 
 
 module.exports = {
+    sign,
     verifyObj,
     verify,
     createMsg,
