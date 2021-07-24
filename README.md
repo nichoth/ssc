@@ -215,6 +215,9 @@ function getMessageId (msg) {
 
 -----------------------------------
 
+
+## notes
+
 ssb format is `{ key: '...', value: msg }`. I think this is just used for storing in the DB though, where key is the hash or something of the message.
 
 ----------------------------------
