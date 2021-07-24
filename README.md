@@ -170,6 +170,7 @@ Get the hash of a string or buffer
 var ssc = require('@nichoth/ssc')
 
 var hash = ssc.hash('a string to hash')
+// 'GHx6bNkCvFIPAwFVUNc1qOJPAPiIwDKMm2vL0tfJDPc=.sha256'
 ```
 
 ### create ssb style post messages
