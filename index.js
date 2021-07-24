@@ -11,6 +11,7 @@ var stringify = require('json-stable-stringify')
 
 module.exports = {
     verifyObj,
+    verify,
     createMsg,
     getId,
     isPrevMsgOk,
