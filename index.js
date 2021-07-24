@@ -141,7 +141,7 @@ function sign (keys, msg) {
     if (!Buffer.isBuffer(msg)) throw new Error("msg should be buffer");
 
     return (curve
-        .sign(u.toBuffer(keys.private), msg)
+        .sign(u.toBuffer(keys.private || keys), msg)
         .toString("base64") + ".sig." + 'ed25519'
     )
 }
