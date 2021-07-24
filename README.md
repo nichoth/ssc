@@ -203,7 +203,7 @@ test('create ssb style posts', function (t) {
 })
 ```
 
-Get the hash of a something
+### Get the hash of something
 ```js
 var ssc = require('@nichoth/ssc')
 
