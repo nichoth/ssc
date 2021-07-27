@@ -19,14 +19,21 @@ Sign any string
 
 ```js
 var ssc = require('@nichoth/ssc')
-var _keys = ssc.createKeys()
+var test = require('tape')
 
+var _keys
+var sig
 test('sign a string', function (t) {
-    var _keys = ssc.createKeys()
-    var signature = ssc.sign(_keys, 'a test messsage')
-    // Nrgs0XFnjwbNsOa6sz52lu0bHH+o5qs7YNAdFVaoQ8ftOCDi2geKlNi7mgC2rYYnmk99ThAEV3hkdwA3SqPmCA==.sig.ed25519
+    _keys = ssc.createKeys()
+    var signature = sig = ssc.sign(_keys, 'a test message')
     t.ok(signature, 'should return a signature')
     t.equal(typeof signature, 'string', 'should return a string')
+    t.end()
+})
+
+test('verify a signature', t => {
+    var isValid = ssc.verify(_keys, sig, 'a test message')
+    t.equal(isValid, true, 'signature verification should work')
     t.end()
 })
 ```

@@ -14,11 +14,19 @@ test('create some keys', function (t) {
     t.ok(keys.id, 'should have .id')
 })
 
+var _keys
+var sig
 test('sign a string', function (t) {
-    var _keys = ssc.createKeys()
-    var signature = ssc.sign(_keys, 'a test messsage')
+    _keys = ssc.createKeys()
+    var signature = sig = ssc.sign(_keys, 'a test message')
     t.ok(signature, 'should return a signature')
     t.equal(typeof signature, 'string', 'should return a string')
+    t.end()
+})
+
+test('verify a signature', t => {
+    var isValid = ssc.verify(_keys, sig, 'a test message')
+    t.equal(isValid, true, 'signature verification should work')
     t.end()
 })
 
