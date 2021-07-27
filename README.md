@@ -14,6 +14,23 @@ npm i @nichoth/ssc
 
 ## examples
 
+### sign
+Sign any string
+
+```js
+var ssc = require('@nichoth/ssc')
+var _keys = ssc.createKeys()
+
+test('sign a string', function (t) {
+    var _keys = ssc.createKeys()
+    var signature = ssc.sign(_keys, 'a test messsage')
+    // Nrgs0XFnjwbNsOa6sz52lu0bHH+o5qs7YNAdFVaoQ8ftOCDi2geKlNi7mgC2rYYnmk99ThAEV3hkdwA3SqPmCA==.sig.ed25519
+    t.ok(signature, 'should return a signature')
+    t.equal(typeof signature, 'string', 'should return a string')
+    t.end()
+})
+```
+
 ### getId
 
 Get the id for a message (the id is the hash of the message)

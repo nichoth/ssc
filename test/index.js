@@ -14,6 +14,14 @@ test('create some keys', function (t) {
     t.ok(keys.id, 'should have .id')
 })
 
+test('sign a string', function (t) {
+    var _keys = ssc.createKeys()
+    var signature = ssc.sign(_keys, 'a test messsage')
+    t.ok(signature, 'should return a signature')
+    t.equal(typeof signature, 'string', 'should return a string')
+    t.end()
+})
+
 test('create a message', function (t) {
     // can't use the .initial() `state` in the call to v.create, it creates
     // the wrong sequence number
