@@ -30,7 +30,10 @@ test('sign a string', function (t) {
     t.equal(typeof signature, 'string', 'should return a string')
     t.end()
 })
+```
 
+## verify a signature
+```js
 test('verify a signature', t => {
     var isValid = ssc.verify(_keys, sig, 'a test message')
     t.equal(isValid, true, 'signature verification should work')
