@@ -15,7 +15,7 @@ npm i @nichoth/ssc
 ## examples
 
 ### sign
-Sign any string
+Sign a string with a given private key
 
 ```js
 var ssc = require('@nichoth/ssc')
@@ -35,6 +35,9 @@ test('sign a string', function (t) {
 ```
 
 ## verify a signature
+Verify a signature with a given public key. `_keys` here should have 
+`.public` or can be just a public key: `{ public: 123 }` or `123`
+
 ```js
 test('verify a signature', t => {
     var isValid = ssc.verify(_keys, sig, 'a test message')
