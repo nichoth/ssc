@@ -25,6 +25,8 @@ var _keys
 var sig
 test('sign a string', function (t) {
     _keys = ssc.createKeys()
+    // _keys here is an object with `.private`, or just a key you want to use
+    // `{ private: '123' }` or just `123`
     var signature = sig = ssc.sign(_keys, 'a test message')
     t.ok(signature, 'should return a signature')
     t.equal(typeof signature, 'string', 'should return a string')
