@@ -1,10 +1,10 @@
 {
   "name": "@nichoth/ssc",
   "description": "",
-  "version": "0.0.16",
+  "version": "0.0.17",
   "main": "index.js",
   "bin": {
-      "ssc": "./cli.js"
+    "ssc": "./cli.js"
   },
   "scripts": {
     "start": "npm run build && concurrently --kill-others \"env $(cat .env | xargs) netlify dev\" \"npm run watch-css\"",
