@@ -60,7 +60,7 @@ var u = {
     toBuffer: function (buf) {
         if (buf == null) return buf;
         if (Buffer.isBuffer(buf)) return buf;
-        var i = buf.indexOf(".");
+        var i = buf.indexOf('.')
         var start = hasSigil(buf) ? 1 : 0;
         return Buffer.from(
             buf.substring(start, ~i ? i : buf.length),
