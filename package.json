@@ -1,7 +1,7 @@
 {
   "name": "@nichoth/ssc",
   "description": "",
-  "version": "0.0.17",
+  "version": "0.0.18",
   "main": "index.js",
   "bin": {
     "ssc": "./cli.js"
