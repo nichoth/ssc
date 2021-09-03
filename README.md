@@ -229,9 +229,12 @@ test('create ssb style posts', function (t) {
         return acc
     }, [])
 
+
     t.ok(list[0].key, 'should have `.key`')
     t.ok(ssc.verifyObj(keys, null, list[0].value),
         'msg should have valid .value')
+    t.equal(list[0].value.content.text, 'one',
+        'should have the right content at the right key')
     t.equal(list[0].key[0], '%', 'should have the right format id')
 })
 ```

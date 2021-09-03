@@ -148,7 +148,7 @@ test('generate', function (t) {
 
 // messages have { key, value }
 test('create ssb style posts', function (t) {
-    t.plan(3)
+    t.plan(4)
 
     var arr = ['one', 'two', 'three']
     var list = arr.reduce(function (acc, val) {
@@ -169,6 +169,8 @@ test('create ssb style posts', function (t) {
     t.ok(list[0].key, 'should have `.key`')
     t.ok(ssc.verifyObj(keys, null, list[0].value),
         'msg should have valid .value')
+    t.equal(list[0].value.content.text, 'one',
+        'should have the right content at the right key')
     t.equal(list[0].key[0], '%', 'should have the right format id')
 })
 
