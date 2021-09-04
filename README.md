@@ -1,5 +1,5 @@
 # ssc
-Generic functions for working with a merkle-dag.
+Static functions for working with a merkle-dag.
 
 This is `ssb` but more boring. `ssc` because c comes after b in the alphabet
 
