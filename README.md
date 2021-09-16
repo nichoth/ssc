@@ -39,7 +39,7 @@ test('sign and validate something', async t => {
 
 ---------------------------------------------------------------------
 
-## examples using the node/browser API
+## examples using the old node/browser API
 
 ### sign
 Sign a string with a given private key
