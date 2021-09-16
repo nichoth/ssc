@@ -90,16 +90,17 @@ async function verify (keys, sig, msg) {
     return keys.verify(_msg, sig, publicKey)
 }
 
-async function isValidMsg (msg, prevMsg, keys) {
-    return (await verifyObj(keys, null, msg) && isPrevMsgOk(prevMsg, msg))
-}
-
 function isPrevMsgOk (prevMsg, msg) {
     if (prevMsg === null) return (msg.previous === null)
     return (msg.previous === getId(prevMsg))
 }
 
+async function isValidMsg (msg, prevMsg, keys) {
+    return (await verifyObj(keys, msg) && isPrevMsgOk(prevMsg, msg))
+}
+
 module.exports = {
+    getId,
     createKeys,
     sign,
     createMsg,

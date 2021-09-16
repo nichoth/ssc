@@ -38,3 +38,27 @@ test('is valid message', async t => {
     t.plan(1)
     t.equal(isValid, true, 'should return true for valid message')
 })
+
+var msg2
+test('create a second message', async t => {
+    t.plan(1)
+    var content2 = { type: 'test2', text: 'ok' }
+    // we pass in the original msg here
+    msg2 = await ssc.createMsg(ks, msg, content2)
+    t.ok(msg2.previous === ssc.getId(msg), 
+        'should create `prev` as prev msg hash')
+    // => true 
+})
+
+// checks that the message contains the hash of prevMsg, and also makes sure
+// the signature is valid.
+test('validate the second message', async t => {
+    // (msg, prevMsg, keys)
+    var isValid = await ssc.isValidMsg(msg2, msg, ks)
+    t.equal(isValid, true, 'should validate a message with a previous hash')
+    t.end()
+})
+
+test('create a merkle list', async t => {
+
+})
