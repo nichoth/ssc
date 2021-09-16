@@ -59,6 +59,30 @@ test('validate the second message', async t => {
     t.end()
 })
 
+// this works but is kind of confusing because of the use of promises &
+// async functions. I should re-do this
 test('create a merkle list', async t => {
+    t.plan(2)
+    var arr = ['one', 'two', 'three']
+    var list = await arr.reduce(async function (acc, val) {
+        return acc.then(async res => {
+            var prev = res[res.length - 1]
+            if (!res[res.length - 1]) prev = null
+            return ssc.createMsg(ks, prev, { type: 'test', text: val })
+                .then(result => {
+                    res.push(result)
+                    return res
+                })
+        })
+    }, Promise.resolve([]))
 
+    t.equal(list.length, 3, 'should create the right number of list items')
+
+    var isValidList = await list.reduce(async function (isValid, msg, i) {
+        var prev = list[i - 1] || null
+        // ssc.isValidMsg(msg2, msg, keys)
+        return isValid && await ssc.isValidMsg(msg, prev, ks)
+    }, true)
+
+    t.equal(isValidList, true, 'reduced validation should be ok')
 })
