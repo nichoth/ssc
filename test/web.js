@@ -27,6 +27,8 @@ test('create a message', async t => {
     t.end()
 })
 
-test('validate a message', async t => {
+test('verify a message', async t => {
+    var msgIsOk = await ssc.verifyObj(ks, msg)
+    t.equal(msgIsOk, true, 'should return true for a valid message')
     t.end()
 })
