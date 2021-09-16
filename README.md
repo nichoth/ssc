@@ -15,7 +15,7 @@ npm i @nichoth/ssc
 ## use in a browser
 This uses the [fission/webnative](https://github.com/fission-suite/keystore-idb) modules to create a key pair using the [Web Crypto API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Crypto_API). It uses a different source module — `/web` — than the standard, node-compatible API.
 
-### Example using the web browser API
+### Example using the Web Crypto API
 
 ```js
 var ssc = require('@nichoth/ssc/web')
