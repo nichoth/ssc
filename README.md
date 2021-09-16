@@ -33,7 +33,7 @@ test('sign and validate something', async t => {
     t.ok(sig, 'should sign a message')
     const publicKey = await ks.publicWriteKey()
     var isValid = await ks.verify('my message', sig, publicKey)
-    t.equal(isValid, true, 'shoudl be a valid signature')
+    t.equal(isValid, true, 'should be a valid signature')
 })
 ```
 
