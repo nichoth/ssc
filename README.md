@@ -15,6 +15,33 @@ npm i @nichoth/ssc
 ## use in a browser
 This uses the [fission/webnative](https://github.com/fission-suite/keystore-idb) modules to create a key pair using the [Web Crypto API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Crypto_API). It uses a different source module — `/web` — than the standard, node-compatible API.
 
+
+### UCAN
+UCANs are a merkle-list of signed objects for user permissions. 
+
+You call the `wn.ucan.build` method:
+
+```js
+wn.ucan.build({
+    audience: otherDID,
+    issuer: ourDID,
+    // `facts` can be used for arbitrary data
+    // facts: [],
+    lifetimeInSeconds: 60 * 60 * 24, // UCAN expires in 24 hours
+    // `potency` is used by our application
+    potency: 'APPEND_ONLY',
+    proof: possibleProof
+})
+    .then((ucan) => {})
+
+```
+
+
+
+
+-------------------------------------------------------------------
+
+
 ### Example using the Web Crypto API
 
 ```js
@@ -47,10 +74,19 @@ test('create a message', async t => {
     t.end()
 })
 
+// This checks that the signature and given public key are valid
 test('verify a message', async t => {
     var msgIsOk = await ssc.verifyObj(ks, msg)
     t.equal(msgIsOk, true, 'should return true for a valid message')
     t.end()
+})
+
+// this checks the merkle-ness, in addition to the signature being valid
+test('is valid message', async t => {
+    // (msg, prevMsg, keys)
+    var isValid = await ssc.isValidMsg(msg, null, ks)
+    t.plan(1)
+    t.equal(isValid, true, 'should return true for valid message')
 })
 
 var msg2

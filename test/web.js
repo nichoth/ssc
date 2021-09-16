@@ -13,7 +13,7 @@ test('sign and validate something', async t => {
     t.ok(sig, 'should sign a message')
     const publicKey = await ks.publicWriteKey()
     var isValid = await ks.verify('my message', sig, publicKey)
-    t.equal(isValid, true, 'should be a valid signature')
+    t.equal(isValid, true, 'should return a valid signature')
 })
 
 var msg
@@ -82,7 +82,6 @@ test('create a merkle list', async t => {
 
     var isValidList = await list.reduce(async function (isValid, msg, i) {
         var prev = list[i - 1] || null
-        // ssc.isValidMsg(msg2, msg, keys)
         return isValid && await ssc.isValidMsg(msg, prev, ks)
     }, true)
 
