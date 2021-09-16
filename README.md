@@ -35,6 +35,16 @@ test('sign and validate something', async t => {
     var isValid = await ks.verify('my message', sig, publicKey)
     t.equal(isValid, true, 'should be a valid signature')
 })
+
+test('create a message', async t => {
+    var content = { type: 'test', text: 'woooo' }
+    var msg = await ssc.createMsg(ks, null, content)
+    t.ok(msg, 'should create a message')
+    t.ok(msg.author, 'should have the message author')
+    t.equal(msg.content.type, 'test', 'should have the message content')
+    t.ok(msg.signature, 'should have the message signature')
+    t.end()
+})
 ```
 
 ---------------------------------------------------------------------
