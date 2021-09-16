@@ -44,8 +44,15 @@ test('create a second message', async t => {
     // => true 
 })
 
+// checks that the message contains the hash of prevMsg, and also makes sure
+// the signature is valid.
 test('validate the second message', async t => {
+    // (msg, prevMsg, keys)
     var isValid = await ssc.isValidMsg(msg2, msg, ks)
     t.equal(isValid, true, 'should validate a message with a previous hash')
     t.end()
+})
+
+test('create a merkle list', async t => {
+
 })

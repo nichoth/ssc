@@ -13,7 +13,7 @@
     "build": "mkdir -p public && cp src/* public && npm run build-css",
     "postversion": "git push && git push --tags && npm publish",
     "test": "tape test/index.js | tap-spec",
-    "test-web": "browserify test/web.js -p esmify | tape-run | tap-spec"
+    "test-web": "browserify --debug -p esmify test/web.js | tape-run | tap-spec"
   },
   "repository": {
     "type": "git",
