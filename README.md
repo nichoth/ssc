@@ -12,7 +12,34 @@ npm i @nichoth/ssc
 
 ------------------------------------
 
-## examples
+## use in a browser
+This uses the [fission/webnative](https://github.com/fission-suite/keystore-idb) modules to create a key pair using the [Web Crypto API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Crypto_API). It uses a different source module — `/web` — than the standard, node-compatible API.
+
+### Example using the web browser API
+
+```js
+var ssc = require('@nichoth/ssc/web')
+var test = require('tape')
+
+var ks
+test('create keys', async t => {
+    ks = await ssc.createKeys()
+    t.ok(ks, 'should return a keystore')
+    t.end()
+})
+
+test('sign and validate something', async t => {
+    var sig = await ks.sign('my message')
+    t.ok(sig, 'should sign a message')
+    const publicKey = await ks.publicWriteKey()
+    var isValid = await ks.verify('my message', sig, publicKey)
+    t.equal(isValid, true, 'shoudl be a valid signature')
+})
+```
+
+---------------------------------------------------------------------
+
+## examples using the node/browser API
 
 ### sign
 Sign a string with a given private key
