@@ -4,7 +4,7 @@ var timestamp = require('monotonic-timestamp')
 var stringify = require('json-stable-stringify')
 const KEYSTORE_CFG = { type: CryptoSystem.RSA };
 let ks = null;
-var { clone, isObject, isInvalidShape } = require('./util')
+var { clone, isObject, isInvalidShape, getId } = require('./util')
 
 export const clear = async () => {
     ks = await get();
@@ -90,10 +90,20 @@ async function verify (keys, sig, msg) {
     return keys.verify(_msg, sig, publicKey)
 }
 
+async function isValidMsg (msg, prevMsg, keys) {
+    return (await verifyObj(keys, null, msg) && isPrevMsgOk(prevMsg, msg))
+}
+
+function isPrevMsgOk (prevMsg, msg) {
+    if (prevMsg === null) return (msg.previous === null)
+    return (msg.previous === getId(prevMsg))
+}
+
 module.exports = {
     createKeys,
     sign,
     createMsg,
     signObj,
-    verifyObj
+    verifyObj,
+    isValidMsg
 }

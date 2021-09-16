@@ -32,3 +32,9 @@ test('verify a message', async t => {
     t.equal(msgIsOk, true, 'should return true for a valid message')
     t.end()
 })
+
+test('is valid message', async t => {
+    var isValid = await ssc.isValidMsg(msg, null, ks)
+    t.plan(1)
+    t.equal(isValid, true, 'should return true for valid message')
+})
