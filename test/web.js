@@ -76,6 +76,8 @@ test('create a merkle list', async t => {
         })
     }, Promise.resolve([]))
 
+    // console.log('***list***', list)
+
     t.equal(list.length, 3, 'should create the right number of list items')
 
     var isValidList = await list.reduce(async function (isValid, msg, i) {
