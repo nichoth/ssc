@@ -32,3 +32,20 @@ test('verify a message', async t => {
     t.equal(msgIsOk, true, 'should return true for a valid message')
     t.end()
 })
+
+var msg2
+test('create a second message', async t => {
+    t.plan(1)
+    var content2 = { type: 'test2', text: 'ok' }
+    // we pass in the original msg here
+    msg2 = await ssc.createMsg(ks, msg, content2)
+    t.ok(msg2.previous === ssc.getId(msg), 
+        'should create `prev` as prev msg hash')
+    // => true 
+})
+
+test('validate the second message', async t => {
+    var isValid = await ssc.isValidMsg(msg2, msg, ks)
+    t.equal(isValid, true, 'should validate a message with a previous hash')
+    t.end()
+})
