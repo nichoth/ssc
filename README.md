@@ -16,14 +16,23 @@ npm i @nichoth/ssc
 This uses the [fission/webnative](https://github.com/fission-suite/keystore-idb) modules to create a key pair using the [Web Crypto API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Crypto_API). It uses a different source module — `/web` — than the standard, node-compatible API.
 
 
+---------------------------------------------------------------------
+
+
 ### UCAN
-UCANs are a merkle-list of signed objects for user permissions. 
+UCANs are a merkle-list of signed objects for user permissions. This is better
+than just a DID because it adds some additional fields related to
+permissions.
+
+The `DID` here is a [decentralized identifier](https://www.w3.org/TR/did-core/)
 
 You call the `wn.ucan.build` method:
 
 ```js
 wn.ucan.build({
     audience: otherDID,
+    // the issuer always has to be your DID, because the UCAN will be
+    // signed with your private key
     issuer: ourDID,
     // `facts` can be used for arbitrary data
     // facts: [],
@@ -33,9 +42,55 @@ wn.ucan.build({
     proof: possibleProof
 })
     .then((ucan) => {})
-
 ```
 
+`proof` in the arguments above is another UCAN. Your application would check
+that the UCAN in `proof` is valid, and that it is allowed to give the
+specified permissions to the `audience` user.
+
+You would pass it an 'encoded' UCAN:
+`possibleProof = wn.ucan.encode(otherUcan)`
+
+`ucan.build` returns an object like:
+```js
+{
+    "header": {
+        "alg": "RS256",
+        "typ": "JWT",
+        "uav": "1.0.0"
+    },
+    "payload": {
+        "aud": "did:key:EXAMPLE",
+        "exp": 1631811852,
+        "fct": [],
+        "iss": "did:key:z13V3Sog...",
+        "nbf": 1631811763,
+        "prf": "eyJhbGciOiJSU...",
+        "ptc": "APPEND_ONLY",
+        "rsc": "*"
+    },
+    "signature": "NtlF3wOoVLlZo..."
+}
+```
+
+In our application, we check that the UCAN is valid:
+```js
+wn.ucan.isValid(ucan)
+```
+
+Then you want to check that the proof(s) are valid:
+```js
+if (ucan.prf) {
+    wn.ucan.isValid(wn.ucan.decode(ucan.prf))
+}
+```
+
+You also need to check the permissions -- the `potency` field, and make sure
+that the given `proof` is allowed to issue the given permissions.
+This forms a chain of UCANs and `proof` UCANs. The final validation of
+permissions would happen out of band from the UCAN chain. Meaning, if
+there's no proof field, then we need to lookup the `audience` in the UCAN
+and verify that their permissions are ok.
 
 
 
