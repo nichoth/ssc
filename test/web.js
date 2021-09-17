@@ -107,10 +107,10 @@ test('public key to DID', t => {
     t.end()
 })
 
-test('get the DID from a set of keys', async t => {
+test('get the DID from public key', async t => {
     const publicKey = await ks.publicWriteKey()
     var did = u.publicKeyToDid(publicKey, 'rsa')
-    t.ok(did, 'should return a DID from a key')
+    t.equal(did, msgDid, 'should return a DID from a key')
     t.end()
 })
 
