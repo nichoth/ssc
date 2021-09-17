@@ -12,6 +12,7 @@ npm i @nichoth/ssc
 
 ------------------------------------
 
+
 ## use in a browser
 This uses the [fission/webnative](https://github.com/fission-suite/keystore-idb) modules to create a key pair using the [Web Crypto API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Crypto_API). It uses a different source module — `/web` — than the standard, node-compatible API.
 
@@ -30,9 +31,12 @@ You call the `wn.ucan.build` method:
 
 ```js
 wn.ucan.build({
+    // Audience, the ID of who it's intended for
+    // who this UCAN describes
     audience: otherDID,
     // the issuer always has to be your DID, because the UCAN will be
     // signed with your private key
+    //  the ID of who sent this
     issuer: ourDID,
     // `facts` can be used for arbitrary data
     // facts: [],

@@ -120,7 +120,7 @@ test('get author from a message', t => {
     t.end()
 })
 
-test('get author from some keys', async t => {
+test('get DID from some keys', async t => {
     var auth = await ssc.getDidFromKeys(ks)
     t.equal(auth, ssc.getAuthor(msg),
         'should get the author DID from a set of keys')

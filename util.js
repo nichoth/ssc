@@ -6,8 +6,6 @@ var isEncryptedRx = isCanonicalBase64('','\\.box.*')
 import * as utils from 'keystore-idb/lib/utils'
 import * as uint8arrays from "uint8arrays"
 
-// import * as utils from "keystore-idb/utils.js"
-
 function clone (obj) {
     var _obj = {}
     for (var k in obj) {
