@@ -18,13 +18,14 @@ test('sign and validate something', async t => {
 })
 
 var msg
+var msgDid
 test('create a message', async t => {
     var content = { type: 'test', text: 'woooo' }
     msg = await ssc.createMsg(ks, null, content)
     t.ok(msg, 'should create a message')
 
     const pubKey = await ks.publicWriteKey()
-    var did = u.publicKeyToDid(pubKey, 'rsa')
+    var did = msgDid = u.publicKeyToDid(pubKey, 'rsa')
     t.equal(msg.author, did, 'should have right the message author')
 
     t.equal(msg.content.type, 'test', 'should have the message content')
@@ -67,7 +68,7 @@ test('validate the second message', async t => {
 // this works but is kind of confusing because of the use of promises &
 // async functions. I should re-do this
 test('create a merkle list', async t => {
-    t.plan(2)
+    t.plan(3)
     var arr = ['one', 'two', 'three']
     var list = await arr.reduce(async function (acc, val) {
         return acc.then(async res => {
@@ -84,6 +85,10 @@ test('create a merkle list', async t => {
     // console.log('***list***', list)
 
     t.equal(list.length, 3, 'should create the right number of list items')
+
+    const publicKey = await ks.publicWriteKey()
+    var did = u.publicKeyToDid(publicKey, 'rsa')
+    t.equal(list[0].author, did, 'should have the right author')
 
     var isValidList = await list.reduce(async function (isValid, msg, i) {
         var prev = list[i - 1] || null
@@ -105,6 +110,19 @@ test('public key to DID', t => {
 test('get the DID from a set of keys', async t => {
     const publicKey = await ks.publicWriteKey()
     var did = u.publicKeyToDid(publicKey, 'rsa')
-    t.ok(did, 'should return a public key')
+    t.ok(did, 'should return a DID from a key')
+    t.end()
+})
+
+test('get author from a message', t => {
+    var auth = ssc.getAuthor(msg)
+    t.equal(auth, msgDid, 'should get the DID from a message')
+    t.end()
+})
+
+test('get author from some keys', async t => {
+    var auth = await ssc.getDidFromKeys(ks)
+    t.equal(auth, ssc.getAuthor(msg),
+        'should get the author DID from a set of keys')
     t.end()
 })

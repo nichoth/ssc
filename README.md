@@ -192,6 +192,14 @@ test('create a merkle list', async t => {
     t.equal(isValidList, true, 'reduced validation should be ok')
 })
 
+var u = require('@nichoth/ssc/util')
+
+test('get the DID from a set of keys', async t => {
+    var auth = await ssc.getDidFromKeys(ks)
+    t.equal(auth, ssc.getAuthor(msg),
+        'should get the author DID from a set of keys')
+    t.end()
+})
 ```
 
 

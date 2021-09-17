@@ -104,6 +104,18 @@ async function isValidMsg (msg, prevMsg, keys) {
     return (await verifyObj(keys, msg) && isPrevMsgOk(prevMsg, msg))
 }
 
+function getAuthor (msg) {
+    return msg.author
+}
+
+function getDidFromKeys (ks) {
+    return ks.publicWriteKey()
+        .then(publicKey => {
+            var did = publicKeyToDid(publicKey, 'rsa')
+            return did
+        })
+}
+
 module.exports = {
     getId,
     createKeys,
@@ -111,5 +123,7 @@ module.exports = {
     createMsg,
     signObj,
     verifyObj,
-    isValidMsg
+    isValidMsg,
+    getAuthor,
+    getDidFromKeys
 }
