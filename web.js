@@ -4,7 +4,8 @@ var timestamp = require('monotonic-timestamp')
 var stringify = require('json-stable-stringify')
 const KEYSTORE_CFG = { type: CryptoSystem.RSA };
 let ks = null;
-var { clone, isObject, isInvalidShape, getId } = require('./util')
+var { clone, isObject, isInvalidShape, getId, publicKeyToDid } =
+    require('./util')
 
 export const clear = async () => {
     ks = await get();
@@ -42,13 +43,17 @@ async function createMsg (keys, prevMsg, content) {
     }
 
     const writeKey = await keys.publicWriteKey()
+    // @TODO
+    const ourDID = publicKeyToDid(writeKey, "rsa")
 
     var msg = {
         previous: prevMsg ? getId(prevMsg) : null,
         sequence: prevMsg ? prevMsg.sequence + 1 : 1,
 
         // change this
-        author: '@' + writeKey,
+        // author: '@' + writeKey,
+
+        author: ourDID,
 
         timestamp: +timestamp(),
         hash: 'sha256',
