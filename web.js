@@ -23,7 +23,7 @@ export const set = async (userKeystore) => {
 
 export const get = async () => {
     if (ks) return ks;
-    ks = (await keystore.init(KEYSTORE_CFG));
+    ks = await keystore.init(KEYSTORE_CFG);
     return ks;
 };
 
