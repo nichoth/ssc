@@ -22,7 +22,11 @@ test('create a message', async t => {
     var content = { type: 'test', text: 'woooo' }
     msg = await ssc.createMsg(ks, null, content)
     t.ok(msg, 'should create a message')
-    t.ok(msg.author, 'should have the message author')
+
+    const pubKey = await ks.publicWriteKey()
+    var did = u.publicKeyToDid(pubKey, 'rsa')
+    t.equal(msg.author, did, 'should have right the message author')
+
     t.equal(msg.content.type, 'test', 'should have the message content')
     t.ok(msg.signature, 'should have the message signature')
     t.end()
