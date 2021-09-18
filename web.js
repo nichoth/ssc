@@ -3,28 +3,28 @@ import keystore from "keystore-idb";
 import { CryptoSystem } from "keystore-idb/lib/types.js";
 var timestamp = require('monotonic-timestamp')
 var stringify = require('json-stable-stringify')
-const KEYSTORE_CFG = { type: CryptoSystem.RSA };
 let ks = null;
 var { clone, isObject, isInvalidShape, getId, publicKeyToDid, encodeHeader,
     encodePayload, makeUrlUnsafe, decode,
     verifySignedData } = require('./util')
 import * as ucan from 'webnative/lib/ucan/token'
+const KEYSTORE_CFG = { type: CryptoSystem.RSA };
 
-export const clear = async () => {
-    ks = await get();
-    await ks.destroy();
-    ks = null;
-};
+// const clear = async () => {
+//     ks = await get();
+//     await ks.destroy();
+//     ks = null;
+// };
 
-export const create = async () => {
-    return (await keystore.init(KEYSTORE_CFG));
-};
+// const create = async () => {
+//     return (await keystore.init(KEYSTORE_CFG));
+// };
 
-export const set = async (userKeystore) => {
-    ks = userKeystore;
-};
+// const set = async (userKeystore) => {
+//     ks = userKeystore;
+// };
 
-export const get = async () => {
+const get = async () => {
     if (ks) return ks;
     ks = await keystore.init(KEYSTORE_CFG);
     return ks;
