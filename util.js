@@ -1,4 +1,4 @@
-var sodium = require("chloride")
+// var sodium = require("chloride")
 var stringify = require('json-stable-stringify')
 var isCanonicalBase64 = require('is-canonical-base64')
 // var feedIdRegex = isCanonicalBase64('@', '.(?:sha256|ed25519)', 32)
