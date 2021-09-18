@@ -13,7 +13,8 @@
     "build": "mkdir -p public && cp src/* public && npm run build-css",
     "postversion": "git push && git push --tags && npm publish",
     "test": "tape test/index.js | tap-spec",
-    "test-web": "browserify --debug -p esmify test/web.js | tape-run | tap-spec"
+    "test-web": "browserify --debug -p esmify test/web.js | tape-run | tap-spec",
+    "esbuild": "esbuild web.js --bundle --outfile=out.js"
   },
   "repository": {
     "type": "git",
@@ -37,6 +38,7 @@
   "devDependencies": {
     "browserify": "^17.0.0",
     "concurrently": "^5.3.0",
+    "esbuild": "^0.12.28",
     "esmify": "^2.1.1",
     "node-sass": "^5.0.0",
     "tap-spec": "^5.0.0",

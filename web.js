@@ -7,7 +7,7 @@ let ks = null;
 var { clone, isObject, isInvalidShape, getId, publicKeyToDid, encodeHeader,
     encodePayload, makeUrlUnsafe, decode,
     verifySignedData } = require('./util')
-import * as ucan from 'webnative/lib/ucan/token'
+import * as ucan from 'webnative/ucan/token'
 const KEYSTORE_CFG = { type: CryptoSystem.RSA };
 
 // const clear = async () => {

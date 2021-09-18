@@ -3,7 +3,7 @@ var stringify = require('json-stable-stringify')
 var isCanonicalBase64 = require('is-canonical-base64')
 // var feedIdRegex = isCanonicalBase64('@', '.(?:sha256|ed25519)', 32)
 var isEncryptedRx = isCanonicalBase64('','\\.box.*')
-import * as utils from 'keystore-idb/lib/utils'
+import * as utils from 'keystore-idb/utils'
 import * as uint8arrays from "uint8arrays"
 // todo -- fix import
 // import * as crypto from "../crypto/index.js";
