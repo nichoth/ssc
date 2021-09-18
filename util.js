@@ -5,8 +5,6 @@ var isCanonicalBase64 = require('is-canonical-base64')
 var isEncryptedRx = isCanonicalBase64('','\\.box.*')
 import utils from "keystore-idb/utils.js"
 import * as uint8arrays from "uint8arrays"
-// todo -- fix import
-// import * as crypto from "../crypto/index.js";
 
 function clone (obj) {
     var _obj = {}
