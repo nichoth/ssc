@@ -1,6 +1,6 @@
 // import * as uint8arrays from "uint8arrays";
 import keystore from "keystore-idb";
-import { CryptoSystem } from "keystore-idb/lib/types.js";
+import { CryptoSystem } from "keystore-idb/types.js";
 var timestamp = require('monotonic-timestamp')
 var stringify = require('json-stable-stringify')
 let ks = null;
