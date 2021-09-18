@@ -1,11 +1,13 @@
+import * as uint8arrays from "uint8arrays";
 import keystore from "keystore-idb";
 import { CryptoSystem } from "keystore-idb/lib/types.js";
 var timestamp = require('monotonic-timestamp')
 var stringify = require('json-stable-stringify')
 const KEYSTORE_CFG = { type: CryptoSystem.RSA };
 let ks = null;
-var { clone, isObject, isInvalidShape, getId, publicKeyToDid } =
-    require('./util')
+var { clone, isObject, isInvalidShape, getId, publicKeyToDid, encodeHeader,
+    encodePayload, makeUrlUnsafe, decode,
+    verifySignedData } = require('./util')
 
 export const clear = async () => {
     ks = await get();
@@ -116,6 +118,44 @@ function getDidFromKeys (ks) {
         })
 }
 
+/**
+ * Check if a UCAN is valid.
+ *
+ * @param ucan The decoded UCAN
+ */
+async function _isValid (ucan) {
+    const encodedHeader = encodeHeader(ucan.header);
+    const encodedPayload = encodePayload(ucan.payload);
+    const a = await verifySignedData({
+        charSize: 8,
+        data: `${encodedHeader}.${encodedPayload}`,
+        did: ucan.payload.iss,
+        signature: makeUrlUnsafe(ucan.signature || '')
+    });
+
+    // if it's not valid, then we're done
+    if (!a) return a;
+
+    // has no proof, therefore it is valid
+    if (!ucan.payload.prf) return true;
+
+    // Verify proof
+    const prf = decode(ucan.payload.prf);
+    const b = prf.payload.aud === ucan.payload.iss;
+
+    if (!b) return b;
+
+    return await _isValid(prf);
+}
+
+
+function isValidUcan (ucan) {
+    // return wn.ucan.isValid
+    return _isValid(ucan)
+}
+
+
+
 module.exports = {
     getId,
     createKeys,
@@ -125,5 +165,6 @@ module.exports = {
     verifyObj,
     isValidMsg,
     getAuthor,
-    getDidFromKeys
+    getDidFromKeys,
+    isValidUcan
 }

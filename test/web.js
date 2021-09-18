@@ -39,6 +39,8 @@ test('verify a message', async t => {
     t.end()
 })
 
+// TODO -- check with an invalid message
+
 test('is valid message', async t => {
     var isValid = await ssc.isValidMsg(msg, null, ks)
     t.plan(1)

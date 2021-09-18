@@ -52,7 +52,7 @@ function isEncrypted (str) {
     return isString(str) && isEncryptedRx.test(str)
 }
 
-function encode  (obj) {
+function encode (obj) {
     return stringify(obj, null, 2)
 }
 
@@ -166,7 +166,75 @@ function magicBytes (keyType) {
     }
 }
 
+var base64 = {
+    urlEncode: function urlEncode(str) {
+        return makeUrlSafe(encode64(str));
+    },
 
+    urlDecode: function decode(base64) {
+        return uint8arrays.toString(uint8arrays.fromString(base64, "base64pad"));
+    }
+}
+
+function makeUrlSafe(a) {
+    return a.replace(/\//g, "_").replace(/\+/g, "-").replace(/=+$/, '');
+}
+
+function makeUrlUnsafe (a) {
+    return a.replace(/_/g, "/").replace(/-/g, "+");
+}
+
+function encode64 (str) {
+    return uint8arrays.toString(uint8arrays.fromString(str), "base64pad");
+}
+
+/**
+ * Encode the header of a UCAN.
+ *
+ * @param header The UcanHeader to encode
+ */
+function encodeHeader (header) {
+    return base64.urlEncode(JSON.stringify(header));
+}
+
+/**
+ * Try to decode a UCAN.
+ * Will throw if it fails.
+ *
+ * @param ucan The encoded UCAN to decode
+ */
+function decode (ucan) {
+    const split = ucan.split(".");
+    const header = JSON.parse(base64.urlDecode(split[0]));
+    const payload = JSON.parse(base64.urlDecode(split[1]));
+    return {
+        header,
+        payload,
+        signature: split[2] || null
+    };
+}
+
+
+
+
+async function verifySignedData ({ charSize = 16, data, did, signature }) {
+    try {
+        const { type, publicKey } = didToPublicKey(did);
+        const sigBytes = new Uint8Array(utils.base64ToArrBuf(signature));
+        const dataBytes = new Uint8Array(utils.normalizeUnicodeToBuf(data, charSize));
+        const keyBytes = new Uint8Array(utils.base64ToArrBuf(publicKey));
+        switch (type) {
+            case KeyType.Edwards:
+                return await crypto.ed25519.verify(dataBytes, sigBytes, keyBytes);
+            case KeyType.RSA:
+                return await crypto.rsa.verify(dataBytes, sigBytes, keyBytes);
+            default: return false;
+        }
+    }
+    catch (_) {
+        return false;
+    }
+}
 
 
 module.exports = {
@@ -177,5 +245,9 @@ module.exports = {
     isInvalidShape,
     isString,
     publicKeyToDid,
-    magicBytes
+    magicBytes,
+    encodeHeader,
+    makeUrlUnsafe,
+    verifySignedData,
+    decode
 }
