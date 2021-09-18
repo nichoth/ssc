@@ -5,6 +5,8 @@ var isCanonicalBase64 = require('is-canonical-base64')
 var isEncryptedRx = isCanonicalBase64('','\\.box.*')
 import * as utils from 'keystore-idb/lib/utils'
 import * as uint8arrays from "uint8arrays"
+// todo -- fix import
+// import * as crypto from "../crypto/index.js";
 
 function clone (obj) {
     var _obj = {}
@@ -214,9 +216,6 @@ function decode (ucan) {
     };
 }
 
-
-
-
 async function verifySignedData ({ charSize = 16, data, did, signature }) {
     try {
         const { type, publicKey } = didToPublicKey(did);
@@ -225,7 +224,8 @@ async function verifySignedData ({ charSize = 16, data, did, signature }) {
         const keyBytes = new Uint8Array(utils.base64ToArrBuf(publicKey));
         switch (type) {
             case KeyType.Edwards:
-                return await crypto.ed25519.verify(dataBytes, sigBytes, keyBytes);
+                return await crypto.ed25519.verify(
+                    dataBytes, sigBytes, keyBytes);
             case KeyType.RSA:
                 return await crypto.rsa.verify(dataBytes, sigBytes, keyBytes);
             default: return false;

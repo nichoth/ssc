@@ -1,4 +1,4 @@
-import * as uint8arrays from "uint8arrays";
+// import * as uint8arrays from "uint8arrays";
 import keystore from "keystore-idb";
 import { CryptoSystem } from "keystore-idb/lib/types.js";
 var timestamp = require('monotonic-timestamp')
@@ -8,6 +8,7 @@ let ks = null;
 var { clone, isObject, isInvalidShape, getId, publicKeyToDid, encodeHeader,
     encodePayload, makeUrlUnsafe, decode,
     verifySignedData } = require('./util')
+import * as ucan from 'webnative/lib/ucan/token'
 
 export const clear = async () => {
     ks = await get();
@@ -120,10 +121,12 @@ function getDidFromKeys (ks) {
 
 /**
  * Check if a UCAN is valid.
+ * This is appropriate for checking if the UCANs are well-formed. You
+ * would still need to check the permissions on the root UCAN
  *
  * @param ucan The decoded UCAN
  */
-async function _isValid (ucan) {
+async function isValidUcan (ucan) {
     const encodedHeader = encodeHeader(ucan.header);
     const encodedPayload = encodePayload(ucan.payload);
     const a = await verifySignedData({
@@ -136,24 +139,22 @@ async function _isValid (ucan) {
     // if it's not valid, then we're done
     if (!a) return a;
 
-    // has no proof, therefore it is valid
+    // has no proof, validation is done
     if (!ucan.payload.prf) return true;
 
     // Verify proof
     const prf = decode(ucan.payload.prf);
+    // proof.audience must be ourUcan.issuer
     const b = prf.payload.aud === ucan.payload.iss;
 
     if (!b) return b;
 
-    return await _isValid(prf);
+    return await isValidUcan(prf);
 }
 
-
-function isValidUcan (ucan) {
-    // return wn.ucan.isValid
-    return _isValid(ucan)
+function createUcan (arg) {
+    return ucan.build(arg)
 }
-
 
 
 module.exports = {
@@ -166,5 +167,6 @@ module.exports = {
     isValidMsg,
     getAuthor,
     getDidFromKeys,
-    isValidUcan
+    isValidUcan,
+    createUcan
 }

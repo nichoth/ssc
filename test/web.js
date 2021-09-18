@@ -128,3 +128,30 @@ test('get DID from some keys', async t => {
         'should get the author DID from a set of keys')
     t.end()
 })
+
+test('create a ucan', t => {
+    ssc.getDidFromKeys(ks)
+        .then(did => {
+            ssc.createUcan({
+                // audience should be a DID
+                // (audience is a publicKey)
+                audience: did,
+                issuer: did,
+                // facts: [],
+                lifetimeInSeconds: 60 * 60 * 24, // UCAN expires in 24 hours
+                potency: 'APPEND_ONLY',
+                // proof: 'foo'
+                proof: null
+            })
+                .then(ucan => {
+                    console.log('made a ucan', ucan)
+                    t.end()
+                })
+        })
+})
+
+test('is the ucan valid', t => {
+    t.end()
+})
+
+

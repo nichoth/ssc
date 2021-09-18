@@ -31,7 +31,8 @@
     "json-stable-stringify": "^1.0.1",
     "keystore-idb": "^0.15.0",
     "monotonic-timestamp": "0.0.9",
-    "ssb-keys": "^8.1.0"
+    "ssb-keys": "^8.1.0",
+    "webnative": "^0.28.0"
   },
   "devDependencies": {
     "browserify": "^17.0.0",
