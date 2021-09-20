@@ -1,13 +1,14 @@
 // import * as uint8arrays from "uint8arrays";
 import keystore from "keystore-idb";
-import { CryptoSystem } from "keystore-idb/types.js";
+import { CryptoSystem } from "keystore-idb/lib/types.js";
 var timestamp = require('monotonic-timestamp')
 var stringify = require('json-stable-stringify')
 let ks = null;
 var { clone, isObject, isInvalidShape, getId, publicKeyToDid, encodeHeader,
     encodePayload, makeUrlUnsafe, decode,
     verifySignedData } = require('./util')
-import * as ucan from 'webnative/ucan/token'
+// import * as ucan from 'webnative/ucan/token'
+import * as ucan from 'ucans'
 const KEYSTORE_CFG = { type: CryptoSystem.RSA };
 
 // const clear = async () => {

@@ -7,10 +7,7 @@
     "ssc": "./cli.js"
   },
   "scripts": {
-    "start": "npm run build && concurrently --kill-others \"env $(cat .env | xargs) netlify dev\" \"npm run watch-css\"",
-    "build-css": "node-sass --output-style=compressed src/style.scss > public/style.css",
-    "watch-css": "node-sass --watch src/style.scss --source-map-embed public/style.css",
-    "build": "mkdir -p public && cp src/* public && npm run build-css",
+    "build-web": "browserify -p esmify web.js",
     "postversion": "git push && git push --tags && npm publish",
     "test": "tape test/index.js | tap-spec",
     "test-web": "browserify --debug -p esmify test/web.js | tape-run | tap-spec",
@@ -33,6 +30,7 @@
     "keystore-idb": "^0.15.0",
     "monotonic-timestamp": "0.0.9",
     "ssb-keys": "^8.1.0",
+    "ucans": "^0.7.2",
     "webnative": "^0.28.0"
   },
   "devDependencies": {
@@ -40,7 +38,6 @@
     "concurrently": "^5.3.0",
     "esbuild": "^0.12.28",
     "esmify": "^2.1.1",
-    "node-sass": "^5.0.0",
     "tap-spec": "^5.0.0",
     "tape": "^5.0.1",
     "tape-run": "^9.0.0"
