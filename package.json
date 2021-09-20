@@ -8,10 +8,12 @@
   },
   "scripts": {
     "build-web": "browserify -p esmify web.js",
+    "build-example": "browserify -p esmify example/index.js > example/bundle.js",
     "postversion": "git push && git push --tags && npm publish",
     "test": "tape test/index.js | tap-spec",
     "test-web": "browserify --debug -p esmify test/web.js | tape-run | tap-spec",
-    "esbuild": "esbuild web.js --bundle --outfile=out.js"
+    "start": "npm run build-example && npm run serve",
+    "serve": "budo example/index.js:bundle.js --dir=example/ --live --pushstate --open -- -p esmify -dv"
   },
   "repository": {
     "type": "git",
@@ -35,8 +37,7 @@
   },
   "devDependencies": {
     "browserify": "^17.0.0",
-    "concurrently": "^5.3.0",
-    "esbuild": "^0.12.28",
+    "budo": "^11.6.4",
     "esmify": "^2.1.1",
     "tap-spec": "^5.0.0",
     "tape": "^5.0.1",

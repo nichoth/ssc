@@ -135,7 +135,6 @@ test('create a ucan', async t => {
     t.plan(3)
 
     const keypair = await ucan.keypair.create(ucan.KeyType.Edwards)
-    // const keypair = await ssc.get()
 
     var _did
 
@@ -171,7 +170,8 @@ test('create a ucan', async t => {
             t.equal(_ucan.payload.att[0].wnfs,
                 "boris.fission.name/public/photos/",
                 'should set att to capability')
-            t.equal(_ucan.payload.aud, _did, 'should put the did in the ucan')
+            t.equal(_ucan.payload.aud, _did,
+                'should put the audience did in the ucan')
         })
 })
 
@@ -187,3 +187,5 @@ test('is the ucan valid', t => {
             t.end()
         })
 })
+
+// should get the root ucan, then check the permissions of the root
