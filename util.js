@@ -1,11 +1,10 @@
-// var sodium = require("chloride")
+var sodium = require("chloride")
 var stringify = require('json-stable-stringify')
 var isCanonicalBase64 = require('is-canonical-base64')
 // var feedIdRegex = isCanonicalBase64('@', '.(?:sha256|ed25519)', 32)
 var isEncryptedRx = isCanonicalBase64('','\\.box.*')
 import utils from "keystore-idb/lib/utils.js"
 import * as uint8arrays from "uint8arrays"
-var sodium = require("chloride")
 
 function clone (obj) {
     var _obj = {}

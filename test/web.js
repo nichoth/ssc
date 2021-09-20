@@ -141,6 +141,7 @@ test('create a ucan', async t => {
                 // audience should be a DID
                 // (audience is a publicKey)
                 audience: did,
+                // issuer: did,
                 issuer: keypair,
                 // facts: [],
                 lifetimeInSeconds: 60 * 60 * 24, // UCAN expires in 24 hours

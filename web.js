@@ -77,8 +77,8 @@ async function signObj (keys, obj) {
     return _obj
 }
 
-async function verifyObj (keys, obj) {
-    obj = clone(obj);
+async function verifyObj (keys, _obj) {
+    var obj = clone(_obj);
     var sig = obj.signature;
     delete obj.signature;
     var b = Buffer.from(stringify(obj, null, 2));
