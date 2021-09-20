@@ -106,46 +106,6 @@ function getDidFromKeys (ks) {
         })
 }
 
-/**
- * Check if a UCAN is valid.
- * This is appropriate for checking if the UCANs are well-formed. You
- * would still need to check the permissions on the root UCAN
- *
- * @param ucan The decoded UCAN
- */
-// async function isValidUcan (ucan) {
-//     const encodedHeader = encodeHeader(ucan.header);
-//     const encodedPayload = encodePayload(ucan.payload);
-//     const a = await verifySignedData({
-//         charSize: 8,
-//         data: `${encodedHeader}.${encodedPayload}`,
-//         did: ucan.payload.iss,
-//         signature: makeUrlUnsafe(ucan.signature || '')
-//     });
-
-//     // if it's not valid, then we're done
-//     if (!a) return a;
-
-//     // has no proof, validation is done
-//     if (!ucan.payload.prf) return true;
-
-//     // Verify proof
-//     const prf = decode(ucan.payload.prf);
-//     // proof.audience must be ourUcan.issuer
-//     if (prf.payload.aud !== ucan.payload.iss) return false
-
-//     return await isValidUcan(prf);
-// }
-
-function createUcan (arg) {
-    return ucan.build(arg)
-        .then(res => {
-            // console.log('res', res)
-            return res
-        })
-}
-
-
 module.exports = {
     get,
     getId,
@@ -158,5 +118,4 @@ module.exports = {
     getAuthor,
     getDidFromKeys,
     // isValidUcan,
-    createUcan
 }
