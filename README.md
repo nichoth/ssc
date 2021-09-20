@@ -21,6 +21,11 @@ This uses the [fission/webnative](https://github.com/fission-suite/keystore-idb)
 
 
 ### UCAN
+
+
+Note that the `ucans` module has a `browser` field in `package.json`, which means that it import the right file (`dist/index.js`) when you import it then compile with `esmify`
+
+
 UCANs are a merkle-list of signed objects for user permissions. This is better
 than just a DID because it adds some additional fields related to
 permissions.

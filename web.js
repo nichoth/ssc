@@ -3,27 +3,13 @@ import keystore from "keystore-idb";
 import { CryptoSystem } from "keystore-idb/lib/types.js";
 var timestamp = require('monotonic-timestamp')
 var stringify = require('json-stable-stringify')
-let ks = null;
 var { clone, isObject, isInvalidShape, getId, publicKeyToDid, encodeHeader,
     encodePayload, makeUrlUnsafe, decode,
     verifySignedData } = require('./util')
-// import * as ucan from 'webnative/ucan/token'
 import * as ucan from 'ucans'
 const KEYSTORE_CFG = { type: CryptoSystem.RSA };
 
-// const clear = async () => {
-//     ks = await get();
-//     await ks.destroy();
-//     ks = null;
-// };
-
-// const create = async () => {
-//     return (await keystore.init(KEYSTORE_CFG));
-// };
-
-// const set = async (userKeystore) => {
-//     ks = userKeystore;
-// };
+let ks = null;
 
 const get = async () => {
     if (ks) return ks;
@@ -120,6 +106,7 @@ function getDidFromKeys (ks) {
         })
 }
 
+// @TODO -- should use the ucan library for this
 /**
  * Check if a UCAN is valid.
  * This is appropriate for checking if the UCANs are well-formed. You
@@ -127,31 +114,29 @@ function getDidFromKeys (ks) {
  *
  * @param ucan The decoded UCAN
  */
-async function isValidUcan (ucan) {
-    const encodedHeader = encodeHeader(ucan.header);
-    const encodedPayload = encodePayload(ucan.payload);
-    const a = await verifySignedData({
-        charSize: 8,
-        data: `${encodedHeader}.${encodedPayload}`,
-        did: ucan.payload.iss,
-        signature: makeUrlUnsafe(ucan.signature || '')
-    });
+// async function isValidUcan (ucan) {
+//     const encodedHeader = encodeHeader(ucan.header);
+//     const encodedPayload = encodePayload(ucan.payload);
+//     const a = await verifySignedData({
+//         charSize: 8,
+//         data: `${encodedHeader}.${encodedPayload}`,
+//         did: ucan.payload.iss,
+//         signature: makeUrlUnsafe(ucan.signature || '')
+//     });
 
-    // if it's not valid, then we're done
-    if (!a) return a;
+//     // if it's not valid, then we're done
+//     if (!a) return a;
 
-    // has no proof, validation is done
-    if (!ucan.payload.prf) return true;
+//     // has no proof, validation is done
+//     if (!ucan.payload.prf) return true;
 
-    // Verify proof
-    const prf = decode(ucan.payload.prf);
-    // proof.audience must be ourUcan.issuer
-    const b = prf.payload.aud === ucan.payload.iss;
+//     // Verify proof
+//     const prf = decode(ucan.payload.prf);
+//     // proof.audience must be ourUcan.issuer
+//     if (prf.payload.aud !== ucan.payload.iss) return false
 
-    if (!b) return b;
-
-    return await isValidUcan(prf);
-}
+//     return await isValidUcan(prf);
+// }
 
 function createUcan (arg) {
     return ucan.build(arg)
@@ -163,6 +148,7 @@ function createUcan (arg) {
 
 
 module.exports = {
+    get,
     getId,
     createKeys,
     sign,
@@ -172,6 +158,6 @@ module.exports = {
     isValidMsg,
     getAuthor,
     getDidFromKeys,
-    isValidUcan,
+    // isValidUcan,
     createUcan
 }

@@ -130,18 +130,27 @@ test('get DID from some keys', async t => {
     t.end()
 })
 
+var myUcan
+
 test('create a ucan', async t => {
-    t.plan(1)
+    t.plan(2)
 
     const keypair = await ucan.keypair.create(ucan.KeyType.Edwards)
+    // const keypair = await ssc.get()
+
+    var _did
 
     return ssc.getDidFromKeys(ks)
         .then(did => {
-            return ssc.createUcan({
+            _did = did
+
+            return ucan.build({
                 // audience should be a DID
                 // (audience is a publicKey)
                 audience: did,
                 // issuer: did,
+                // Note that the issuer always has to be your DID,
+                // because the UCAN will be signed with your private key.
                 issuer: keypair,
                 // facts: [],
                 lifetimeInSeconds: 60 * 60 * 24, // UCAN expires in 24 hours
@@ -155,14 +164,23 @@ test('create a ucan', async t => {
                 proof: null
             })
         })
-        .then(ucan => {
+        .then(_ucan => {
             // console.log('made a ucan', ucan)
+            myUcan = _ucan
             t.ok(ucan, 'make a ucan')
+            t.equal(_ucan.payload.aud, _did, 'should put the did in the ucan')
         })
 })
 
 test('is the ucan valid', t => {
-    t.end()
+    t.plan(1)
+    ucan.isValid(myUcan)
+        .then(valid => {
+            t.equal(valid, true, 'should be a valid ucan')
+            t.end()
+        })
+        .catch (err => {
+            t.error(err, 'should not throw')
+            t.end()
+        })
 })
-
-
