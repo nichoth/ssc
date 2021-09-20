@@ -5,6 +5,7 @@ var isCanonicalBase64 = require('is-canonical-base64')
 var isEncryptedRx = isCanonicalBase64('','\\.box.*')
 import utils from "keystore-idb/lib/utils.js"
 import * as uint8arrays from "uint8arrays"
+var sodium = require("chloride")
 
 function clone (obj) {
     var _obj = {}
