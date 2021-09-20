@@ -131,9 +131,8 @@ test('get DID from some keys', async t => {
 })
 
 var myUcan
-
 test('create a ucan', async t => {
-    t.plan(2)
+    t.plan(3)
 
     const keypair = await ucan.keypair.create(ucan.KeyType.Edwards)
     // const keypair = await ssc.get()
@@ -165,9 +164,13 @@ test('create a ucan', async t => {
             })
         })
         .then(_ucan => {
-            // console.log('made a ucan', ucan)
+            console.log('made a ucan', _ucan)
+            console.log('att', _ucan.payload.att)
             myUcan = _ucan
-            t.ok(ucan, 'make a ucan')
+            t.ok(myUcan, 'make a ucan')
+            t.equal(_ucan.payload.att[0].wnfs,
+                "boris.fission.name/public/photos/",
+                'should set att to capability')
             t.equal(_ucan.payload.aud, _did, 'should put the did in the ucan')
         })
 })

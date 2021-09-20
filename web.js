@@ -106,7 +106,6 @@ function getDidFromKeys (ks) {
         })
 }
 
-// @TODO -- should use the ucan library for this
 /**
  * Check if a UCAN is valid.
  * This is appropriate for checking if the UCANs are well-formed. You
