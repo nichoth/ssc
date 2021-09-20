@@ -155,6 +155,10 @@ async function isValidUcan (ucan) {
 
 function createUcan (arg) {
     return ucan.build(arg)
+        .then(res => {
+            // console.log('res', res)
+            return res
+        })
 }
 
 

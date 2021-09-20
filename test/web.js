@@ -1,5 +1,6 @@
 var ssc = require('../web')
 var u = require('../util')
+import * as ucan from 'ucans'
 var test = require('tape')
 
 var ks
@@ -129,24 +130,33 @@ test('get DID from some keys', async t => {
     t.end()
 })
 
-test('create a ucan', t => {
-    ssc.getDidFromKeys(ks)
+test('create a ucan', async t => {
+    t.plan(1)
+
+    const keypair = await ucan.keypair.create(ucan.KeyType.Edwards)
+
+    return ssc.getDidFromKeys(ks)
         .then(did => {
-            ssc.createUcan({
+            return ssc.createUcan({
                 // audience should be a DID
                 // (audience is a publicKey)
                 audience: did,
-                issuer: did,
+                issuer: keypair,
                 // facts: [],
                 lifetimeInSeconds: 60 * 60 * 24, // UCAN expires in 24 hours
-                potency: 'APPEND_ONLY',
+                capabilities: [
+                    {
+                        "wnfs": "boris.fission.name/public/photos/",
+                        "cap": "OVERWRITE"
+                    }
+                ],
                 // proof: 'foo'
                 proof: null
             })
-                .then(ucan => {
-                    console.log('made a ucan', ucan)
-                    t.end()
-                })
+        })
+        .then(ucan => {
+            // console.log('made a ucan', ucan)
+            t.ok(ucan, 'make a ucan')
         })
 })
 
