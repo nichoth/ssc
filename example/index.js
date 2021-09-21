@@ -4,23 +4,26 @@ import * as ucan from 'ucans'
 
 console.log('ok')
 
-ssc.createKeys().then(async ks => {
-    console.log('got keys', ks)
-    var keyDID = await didFromKeys(ks)
-    console.log('key did', keyDID)
-})
 
-function didFromKeys (keys) {
-    return ssc.getDidFromKeys(keys)
-}
+// function didFromKeys (keys) {
+//     return ssc.getDidFromKeys(keys)
+// }
+
+
+// TODO -- look at ucan.keypair in the source
+// how is it different from a keystore
 
 ucan.keypair.create(ucan.KeyType.Edwards)
-    .then(keypair => {
+    .then(async keypair => {
+        var keys = await ssc.createKeys()
+
         console.log('keypair', keypair)
+
         ucan.build({
             // audience should be a DID
             // (audience is a publicKey)
-            audience: keypair.did(),
+            audience: await ssc.getDidFromKeys(keys),
+            // audience: keypair.did(),
             // must be an object with a function `did`
             issuer: keypair,
             // facts: [],

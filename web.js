@@ -3,10 +3,10 @@ import keystore from "keystore-idb";
 import { CryptoSystem } from "keystore-idb/lib/types.js";
 var timestamp = require('monotonic-timestamp')
 var stringify = require('json-stable-stringify')
-var { clone, isObject, isInvalidShape, getId, publicKeyToDid, encodeHeader,
+var { clone, isObject, isInvalidShape, getId, publicKeyToDid, /*encodeHeader,
     encodePayload, makeUrlUnsafe, decode,
-    verifySignedData } = require('./util')
-import * as ucan from 'ucans'
+    verifySignedData */ } = require('./util')
+// import * as ucan from 'ucans'
 const KEYSTORE_CFG = { type: CryptoSystem.RSA };
 
 let ks = null;
