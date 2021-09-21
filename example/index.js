@@ -1,23 +1,69 @@
 var ssc = require('../web')
 var u = require('../util')
 import * as ucan from 'ucans'
+import { fromString } from 'uint8arrays/from-string'
+
+
+var wn = window.webnative
 
 console.log('ok')
 
+var subtle = crypto.subtle
 
-// function didFromKeys (keys) {
-//     return ssc.getDidFromKeys(keys)
-// }
+subtle.generateKey({
+    name: "RSASSA-PKCS1-v1_5",
+    modulusLength: 2048,
+    publicExponent: new Uint8Array([0x01, 0x00, 0x01]),
+    hash: "SHA-256"
+}, false, ["sign", "verify"])
+    .then(async key => {
+        const pk = await subtle.exportKey("jwk", key.publicKey)
+        console.log('keys from suble crypto', key)
+        console.log('pk', pk)
+    })
 
 
-// TODO -- look at ucan.keypair in the source
-// how is it different from a keystore
+wn.keystore.get()
+    .then(async ks => {
+        console.log('ks from wn.keystore.get', ks)
+
+        const writeKey1 = await ks.publicWriteKey()
+        console.log('public key from wn.keystore', writeKey1)
+
+        var sig = await ks.sign('my message')
+        // console.log('the signature', sig)
+
+        var isValid = await ks.verify('my message', sig, writeKey1)
+        console.log('is valid signature?', isValid)
+    })
+
+
+
+
+// could take a keystore key pair and add a method `.did`
+
+// how to use the keystore with this?
+// how does the keypair compare to the keystore?
+// we want the new keypair interface, but backed by keystore persistence
+
+// how to use the keystore keys with this?
+// vs the ucan.keypair version -- it has a method `did`
+
 
 ucan.keypair.create(ucan.KeyType.Edwards)
     .then(async keypair => {
-        var keys = await ssc.createKeys()
+        console.log('keypair from ucan.keypair', keypair)
 
-        console.log('keypair', keypair)
+        // keypair must have a method `.did`
+
+        var keys = await ssc.createKeys()
+        console.log('keys', keys)
+
+        var otherKeypair = await ucan.keypair.create(ucan.KeyType.Edwards)
+        console.log('other key pair', otherKeypair)
+
+        var sig = await keypair.sign(fromString('my message'))
+        console.log('sig', sig)
 
         ucan.build({
             // audience should be a DID
