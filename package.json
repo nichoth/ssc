@@ -29,7 +29,7 @@
     "chloride": "^2.3.0",
     "is-canonical-base64": "^1.1.1",
     "json-stable-stringify": "^1.0.1",
-    "keystore-idb": "^0.15.0",
+    "keystore-idb": "git+https://github.com/nichoth/keystore-idb.git",
     "monotonic-timestamp": "0.0.9",
     "ssb-keys": "^8.1.0",
     "ucans": "^0.7.2",

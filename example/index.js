@@ -2,6 +2,19 @@ var ssc = require('../web')
 var u = require('../util')
 import * as ucan from 'ucans'
 import { fromString } from 'uint8arrays/from-string'
+import Keystore from 'keystore-idb/lib'
+
+
+console.log('Keystore', Keystore)
+
+Keystore.init({ type: 'rsa' })
+    .then(async ks => {
+        console.log('got store', ks)
+        var kp = await ks.getKeypair()
+        console.log('****kp****', kp)
+    })
+
+
 
 
 var wn = window.webnative
@@ -59,7 +72,7 @@ ucan.keypair.create(ucan.KeyType.Edwards)
         var keys = await ssc.createKeys()
         console.log('keys', keys)
 
-        var otherKeypair = await ucan.keypair.create(ucan.KeyType.Edwards)
+        var otherKeypair = await ucan.keypair.create(ucan.KeyType.RSA)
         console.log('other key pair', otherKeypair)
 
         var sig = await keypair.sign(fromString('my message'))

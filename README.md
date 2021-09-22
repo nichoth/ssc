@@ -102,6 +102,21 @@ there's no proof field, then we need to lookup the `audience` in the UCAN
 and verify that their permissions are ok.
 
 
+```
+keystore.init
+=>
+ECCkeystore.init
+=>
+IDB.createStore
+=>
+var store = localforage.createInstance
+=>
+fn = keys.makeKeypair = () => crypto.subtle.generateKey(
+keys.makeKeypair = 
+IDB.createIfDoesNotExist(_, fn, store)
+
+```
+
 
 -------------------------------------------------------------------
 
