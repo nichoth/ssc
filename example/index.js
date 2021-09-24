@@ -12,6 +12,31 @@ Keystore.init({ type: 'rsa' })
         console.log('got store', ks)
         var kp = await ks.getKeypair()
         console.log('****kp****', kp)
+        var did = await kp.did()
+        console.log('**did**', did)
+
+        ucan.build({
+            // audience should be a DID
+            // (audience is a publicKey)
+            audience: 'foo',
+            // audience: await ssc.getDidFromKeys(keys),
+            // audience: keypair.did(),
+            // must be an object with a function `did`
+            issuer: kp,
+            // facts: [],
+            lifetimeInSeconds: 60 * 60 * 24, // UCAN expires in 24 hours
+            capabilities: [
+                {
+                    "wnfs": "boris.fission.name/public/photos/",
+                    "cap": "OVERWRITE"
+                }
+            ],
+            // proof: 'foo'
+            proof: null
+        })
+            .then(ucan => {
+                console.log('***aaa ucan***', ucan)
+            })
     })
 
 
@@ -63,9 +88,9 @@ wn.keystore.get()
 // vs the ucan.keypair version -- it has a method `did`
 
 
-ucan.keypair.create(ucan.KeyType.Edwards)
+ucan.keypair.create(ucan.KeyType.RSA)
     .then(async keypair => {
-        console.log('keypair from ucan.keypair', keypair)
+        console.log('**keypair from ucan.keypair**', keypair)
 
         // keypair must have a method `.did`
 
