@@ -1,5 +1,5 @@
 var ssc = require('../web')
-var u = require('../util')
+// var u = require('../util')
 import * as ucan from 'ucans'
 import { fromString } from 'uint8arrays/from-string'
 import Keystore from 'keystore-idb/lib'
@@ -7,18 +7,26 @@ import Keystore from 'keystore-idb/lib'
 
 console.log('Keystore', Keystore)
 
+console.log('ucan', ucan)
+
 Keystore.init({ type: 'rsa' })
     .then(async ks => {
         console.log('got store', ks)
-        var kp = await ks.getKeypair()
-        console.log('****kp****', kp)
-        var did = await kp.did()
-        console.log('**did**', did)
+
+        // need to re-do this part
+        // var kp = await ks.getKeypair()
+
+        console.log('keypair from keystore', kp)
+
+        // var did = await kp.did()
+
+        console.log('did from keystore keypair.did', did)
 
         ucan.build({
             // audience should be a DID
             // (audience is a publicKey)
-            audience: 'foo',
+            // audience: 'foo',
+            audience: "did:key:zabcde...", //recipient DID
             // audience: await ssc.getDidFromKeys(keys),
             // audience: keypair.did(),
             // must be an object with a function `did`
@@ -35,7 +43,7 @@ Keystore.init({ type: 'rsa' })
             proof: null
         })
             .then(ucan => {
-                console.log('***aaa ucan***', ucan)
+                console.log('ucan from keypair', ucan)
             })
     })
 
@@ -43,8 +51,6 @@ Keystore.init({ type: 'rsa' })
 
 
 var wn = window.webnative
-
-console.log('ok')
 
 var subtle = crypto.subtle
 
@@ -87,6 +93,7 @@ wn.keystore.get()
 // how to use the keystore keys with this?
 // vs the ucan.keypair version -- it has a method `did`
 
+console.log('key type', ucan.KeyType)
 
 ucan.keypair.create(ucan.KeyType.RSA)
     .then(async keypair => {
@@ -121,11 +128,14 @@ ucan.keypair.create(ucan.KeyType.RSA)
             // proof: 'foo'
             proof: null
         })
-            .then(ucan => {
-                console.log('got ucan', ucan)
+            .then(_ucan => {
+                console.log('got ucan', _ucan)
+                ucan.isValid(_ucan)
+                    .then(val => console.log('aaa valid', val))
+
+                _ucan.payload.att[1] = { foo: 'barrr' }
+                ucan.isValid(_ucan)
+                    .then(val => console.log('bbb valid', val))
             })
 
     })
-
-
-// const keypair = await ucan.keypair.create(ucan.KeyType.Edwards)

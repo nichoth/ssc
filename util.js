@@ -5,6 +5,7 @@ var isCanonicalBase64 = require('is-canonical-base64')
 var isEncryptedRx = isCanonicalBase64('','\\.box.*')
 import utils from "keystore-idb/lib/utils.js"
 import * as uint8arrays from "uint8arrays"
+// import * as ucan from 'ucans'
 
 function clone (obj) {
     var _obj = {}
@@ -231,6 +232,35 @@ async function verifySignedData ({ charSize = 16, data, did, signature }) {
     }
     catch (_) {
         return false;
+    }
+}
+
+/**
+ * Convert a DID (did:key) to a base64 public key.
+ */
+function didToPublicKey(did, encoding) {
+    const { publicKey, type } = didToPublicKeyBytes(did)
+    return {
+        publicKey: uint8arrays.toString(publicKey, encoding),
+        type
+    }
+}
+
+/**
+ * Convert a DID (did:key) to the public key in bytes
+ */
+ export function didToPublicKeyBytes(did) {
+    if (!did.startsWith(BASE58_DID_PREFIX)) {
+        throw new Error("Please use a base58-encoded DID formatted `did:key:z...`")
+    }
+  
+    const didWithoutPrefix = did.slice(BASE58_DID_PREFIX.length)
+    const magicBytes = uint8arrays.fromString(didWithoutPrefix, "base58btc")
+    const { keyBytes, type } = parseMagicBytes(magicBytes)
+  
+    return {
+        publicKey: keyBytes,
+        type
     }
 }
 

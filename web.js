@@ -116,5 +116,6 @@ module.exports = {
     verifyObj,
     isValidMsg,
     getAuthor,
-    getDidFromKeys
+    getDidFromKeys,
+    publicKeyToDid
 }
