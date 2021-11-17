@@ -13,14 +13,14 @@ Keystore.init({ type: 'rsa' })
     .then(async ks => {
         console.log('got store', ks)
 
+        const kp = await ucan.EdKeypair.create()
+
         // need to re-do this part
         // var kp = await ks.getKeypair()
-
-        console.log('keypair from keystore', kp)
-
+        // console.log('keypair from keystore', kp)
         // var did = await kp.did()
 
-        console.log('did from keystore keypair.did', did)
+        // console.log('did from keystore keypair.did', did)
 
         ucan.build({
             // audience should be a DID
@@ -95,7 +95,7 @@ wn.keystore.get()
 
 console.log('key type', ucan.KeyType)
 
-ucan.keypair.create(ucan.KeyType.RSA)
+ucan.EdKeypair.create()
     .then(async keypair => {
         console.log('**keypair from ucan.keypair**', keypair)
 
@@ -104,7 +104,7 @@ ucan.keypair.create(ucan.KeyType.RSA)
         var keys = await ssc.createKeys()
         console.log('keys', keys)
 
-        var otherKeypair = await ucan.keypair.create(ucan.KeyType.RSA)
+        var otherKeypair = await ucan.EdKeypair.create()
         console.log('other key pair', otherKeypair)
 
         var sig = await keypair.sign(fromString('my message'))
