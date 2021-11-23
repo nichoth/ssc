@@ -1,4 +1,8 @@
 # ssc
+
+* [old-style node API](#examples-using-the-old-nodebrowser-api)
+* [webCrypto API](#example-using-the-web-crypto-api)
+
 Static functions for working with a merkle-dag.
 
 This is `ssb` but more boring. `ssc` because c comes after b in the alphabet
@@ -9,9 +13,6 @@ This is `ssb` but more boring. `ssc` because c comes after b in the alphabet
 ```
 npm i @nichoth/ssc
 ```
-
-* [old-style node API](#examples-using-the-old-nodebrowser-api)
-* [webCrypto API](#example-using-the-web-crypto-api)
 
 ## examples using the old node/browser API
 
