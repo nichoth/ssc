@@ -16,6 +16,13 @@ This is `ssb` but more boring. `ssc` because c comes after b in the alphabet
 npm i @nichoth/ssc
 ```
 
+-------------------------------------------------------
+
+⚠️
+This is in an intermeiate state -- still need to work on the webcrypto part
+
+-------------------------------------------------------
+
 ## examples using the old node/browser API
 
 ### sign
