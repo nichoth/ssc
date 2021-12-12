@@ -19,7 +19,7 @@ npm i @nichoth/ssc
 -------------------------------------------------------
 
 ⚠️
-This is in an intermeiate state -- still need to work on the webcrypto part
+This is in an intermediate state -- still need to work on the webcrypto part
 
 -------------------------------------------------------
 
