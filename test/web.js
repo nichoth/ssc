@@ -1,6 +1,6 @@
 import test from 'tape'
-import ssc from '../web'
 import * as ucan from 'ucans'
+import ssc from '../web'
 
 var ks
 test('create keys', async t => {
@@ -130,7 +130,7 @@ var myUcan
 test('create a ucan', async t => {
     t.plan(3)
 
-    const keypair = await ucan.keypair.create(ucan.KeyType.Edwards)
+    const keypair = await ucan.EdKeypair.create()
 
     var _did
 

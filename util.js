@@ -4,6 +4,8 @@ var isCanonicalBase64 = require('is-canonical-base64')
 // var feedIdRegex = isCanonicalBase64('@', '.(?:sha256|ed25519)', 32)
 var isEncryptedRx = isCanonicalBase64('','\\.box.*')
 // import * as ucan from 'ucans'
+import * as uint8arrays from "uint8arrays"
+import * as utils from "keystore-idb/lib/utils.js"
 
 function clone (obj) {
     var _obj = {}
@@ -11,6 +13,29 @@ function clone (obj) {
         if (Object.hasOwnProperty.call(obj, k)) _obj[k] = obj[k]
     }
     return _obj
+}
+
+const KeyType = {
+    RSA: "rsa",
+    Edwards: "ed25519",
+    BLS: "bls12-381"
+}
+
+const EDWARDS_DID_PREFIX = new Uint8Array([ 0xed, 0x01 ])
+const BLS_DID_PREFIX = new Uint8Array([ 0xea, 0x01 ])
+const RSA_DID_PREFIX = new Uint8Array([ 0x00, 0xf5, 0x02 ])
+const BASE58_DID_PREFIX = 'did:key:z'
+
+/**
+ * Magic bytes.
+ */
+export function magicBytes(keyType) {
+    switch (keyType) {
+        case KeyType.Edwards: return EDWARDS_DID_PREFIX
+        case KeyType.RSA: return RSA_DID_PREFIX
+        case KeyType.BLS: return BLS_DID_PREFIX
+        default: return null
+    }
 }
 
 function isObject (o) {
@@ -207,6 +232,29 @@ function didToPublicKey(did, encoding) {
 }
 
 
+
+
+function publicKeyToDid(publicKey, type) {
+    const pubKeyBuf = utils.base64ToArrBuf(publicKey)
+  
+    // Prefix public-write key
+    const prefix = magicBytes(type)
+    if (prefix === null) {
+        throw new Error(`Key type '${type}' not supported`)
+    }
+  
+    const prefixedBuf = utils.joinBufs(prefix, pubKeyBuf)
+  
+    // Encode prefixed
+    return BASE58_DID_PREFIX +
+        uint8arrays.toString(new Uint8Array(prefixedBuf), "base58btc")
+}
+
+
+
+
+
+
 module.exports = {
     clone,
     isObject,
@@ -217,5 +265,6 @@ module.exports = {
     encodeHeader,
     makeUrlUnsafe,
     verifySignedData,
-    decode
+    decode,
+    publicKeyToDid
 }
