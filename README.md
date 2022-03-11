@@ -284,7 +284,7 @@ ssb format is `{ key: '...', value: msg }`. I think this is just used for storin
 ```js
 import test from 'tape'
 import * as ucan from 'ucans'
-import ssc from '../web'
+import ssc from '@nichoth/ssc/web'
 
 var ks
 test('create keys', async t => {
