@@ -18,11 +18,6 @@ npm i @nichoth/ssc
 
 -------------------------------------------------------
 
-⚠️
-This is in an intermediate state -- still need to work on the webcrypto part
-
--------------------------------------------------------
-
 ## examples using the old node/browser API
 
 ### sign
