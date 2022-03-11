@@ -3,18 +3,16 @@ import keystore from "keystore-idb";
 import { CryptoSystem } from "keystore-idb/lib/types.js";
 var timestamp = require('monotonic-timestamp')
 var stringify = require('json-stable-stringify')
-var { clone, isObject, isInvalidShape, getId, publicKeyToDid, /*encodeHeader,
-    encodePayload, makeUrlUnsafe, decode,
-    verifySignedData */ } = require('./util')
-// import * as ucan from 'ucans'
+var { clone, isObject, isInvalidShape, getId,
+    publicKeyToDid } = require('./util')
 const KEYSTORE_CFG = { type: CryptoSystem.RSA };
 
-let ks = null;
+let keys = null;
 
 const get = async () => {
-    if (ks) return ks;
-    ks = await keystore.init(KEYSTORE_CFG);
-    return ks;
+    if (keys) return keys;
+    keys = await keystore.init(KEYSTORE_CFG);
+    return keys;
 };
 
 function createKeys () {
@@ -34,7 +32,7 @@ async function createMsg (keys, prevMsg, content) {
 
     const writeKey = await keys.publicWriteKey()
     // @TODO
-    const ourDID = publicKeyToDid(writeKey, "rsa")
+    const ourDID = publicKeyToDid(writeKey, 'rsa')
 
     var msg = {
         previous: prevMsg ? getId(prevMsg) : null,

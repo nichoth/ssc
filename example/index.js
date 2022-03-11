@@ -1,13 +1,10 @@
 var ssc = require('../web')
-// var u = require('../util')
 import * as ucan from 'ucans'
 import { fromString } from 'uint8arrays/from-string'
 import Keystore from 'keystore-idb/lib'
 
 
 console.log('Keystore', Keystore)
-
-console.log('ucan', ucan)
 
 Keystore.init({ type: 'rsa' })
     .then(async ks => {

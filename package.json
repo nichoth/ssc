@@ -35,7 +35,6 @@
     "keystore-idb": "^0.15.4",
     "monotonic-timestamp": "0.0.9",
     "ssb-keys": "^8.1.0",
-    "ucans": "^0.8.0",
     "uint8arrays": "^3.0.0",
     "webnative": "^0.28.0"
   },
@@ -45,6 +44,7 @@
     "esmify": "^2.1.1",
     "tap-spec": "^5.0.0",
     "tape": "^5.0.1",
-    "tape-run": "^9.0.0"
+    "tape-run": "^9.0.0",
+    "ucans": "^0.8.0"
   }
 }
