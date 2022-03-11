@@ -232,8 +232,6 @@ function didToPublicKey(did, encoding) {
 }
 
 
-
-
 function publicKeyToDid(publicKey, type) {
     const pubKeyBuf = utils.base64ToArrBuf(publicKey)
   
@@ -249,10 +247,6 @@ function publicKeyToDid(publicKey, type) {
     return BASE58_DID_PREFIX +
         uint8arrays.toString(new Uint8Array(prefixedBuf), "base58btc")
 }
-
-
-
-
 
 
 module.exports = {
