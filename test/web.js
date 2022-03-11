@@ -4,7 +4,7 @@ import ssc from '../web'
 
 var ks
 test('create keys', async t => {
-    ks = await ssc.createKeys()
+    ks = await ssc.createKeys(ssc.keyTypes.ECC)
     t.ok(ks, 'should return a keystore')
     t.end()
 })

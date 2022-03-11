@@ -1,22 +1,25 @@
 // import * as uint8arrays from "uint8arrays";
 import keystore from "keystore-idb";
-import { CryptoSystem } from "keystore-idb/lib/types.js";
+// import { CryptoSystem } from "keystore-idb/lib/types.js";
 var timestamp = require('monotonic-timestamp')
 var stringify = require('json-stable-stringify')
 var { clone, isObject, isInvalidShape, getId,
     publicKeyToDid } = require('./util')
-const KEYSTORE_CFG = { type: CryptoSystem.RSA };
 
-let keys = null;
+// const KEYSTORE_CFG = { type: CryptoSystem.RSA };
+// const ECC = CryptoSystem.ECC
 
-const get = async () => {
+let keys = null
+
+// 'ecc' or 'rsa'
+const get = async (keyType) => {
     if (keys) return keys;
-    keys = await keystore.init(KEYSTORE_CFG);
+    keys = await keystore.init({ type: keyType });
     return keys;
 };
 
-function createKeys () {
-    return get()
+function createKeys (type) {
+    return get(type)
 }
 
 async function sign (keys, msg) {
@@ -104,6 +107,8 @@ function getDidFromKeys (ks) {
         })
 }
 
+const KEY_TYPES = { ECC: 'ecc', RSA: 'rsa' }
+
 module.exports = {
     get,
     getId,
@@ -115,5 +120,6 @@ module.exports = {
     isValidMsg,
     getAuthor,
     getDidFromKeys,
-    publicKeyToDid
+    publicKeyToDid,
+    keyTypes: KEY_TYPES
 }
