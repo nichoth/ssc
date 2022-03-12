@@ -44,15 +44,8 @@ async function createMsg (keyStore, prevMsg, content) {
     var msg = {
         previous: prevMsg ? getId(prevMsg) : null,
         sequence: prevMsg ? prevMsg.sequence + 1 : 1,
-
-        // TODO
-        // change this
-        // author: '@' + writeKey,
-
         author: '@' + writeKey + '.' + keyType,
-
         // author: ourDID,
-
         timestamp: +timestamp(),
         hash: 'sha256',
         content: content

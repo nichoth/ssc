@@ -19,22 +19,23 @@ test('sign and validate something', async t => {
 
 var msg
 var msgDid
+var msgUserId
 test('create a message', async t => {
     var content = { type: 'test', text: 'woooo' }
     msg = await ssc.createMsg(ks, null, content)
     t.ok(msg, 'should create a message')
 
     const pubKey = await ks.publicWriteKey()
-    const userId = '@' + pubKey + '.ed25519'
-    // var did = msgDid = ssc.publicKeyToDid(pubKey, 'ed25519')
+    const userId = msgUserId = '@' + pubKey + '.ed25519'
+    msgDid = ssc.publicKeyToDid(pubKey, 'ed25519')
     t.equal(msg.author, userId, 'should have right the message author')
-
     t.equal(msg.content.type, 'test', 'should have the message content')
     t.ok(msg.signature, 'should have the message signature')
     t.end()
 })
 
 test('verify a message', async t => {
+    // TODO -- should take a public key and message only
     var msgIsOk = await ssc.verifyObj(ks, msg)
     t.equal(msgIsOk, true, 'should return true for a valid message')
     t.end()
@@ -88,8 +89,9 @@ test('create a merkle list', async t => {
     t.equal(list.length, 3, 'should create the right number of list items')
 
     const publicKey = await ks.publicWriteKey()
-    var did = ssc.publicKeyToDid(publicKey, 'rsa')
-    t.equal(list[0].author, did, 'should have the right author')
+    // var did = ssc.publicKeyToDid(publicKey, 'rsa')
+    t.equal(list[0].author, '@' + publicKey + '.ed25519',
+        'should have the right author')
 
     var isValidList = await list.reduce(async function (isValid, msg, i) {
         var prev = list[i - 1] || null
@@ -107,16 +109,16 @@ test('public key to DID', t => {
     t.end()
 })
 
-test('get the DID from public key', async t => {
-    const publicKey = await ks.publicWriteKey()
-    var did = ssc.publicKeyToDid(publicKey, 'rsa')
-    t.equal(did, msgDid, 'should return a DID from a key')
-    t.end()
-})
+// test('get the DID from public key', async t => {
+//     const publicKey = await ks.publicWriteKey()
+//     var did = ssc.publicKeyToDid(publicKey)
+//     t.equal(did, msgDid, 'should return a DID from a key')
+//     t.end()
+// })
 
 test('get author from a message', t => {
     var auth = ssc.getAuthor(msg)
-    t.equal(auth, msgDid, 'should get the DID from a message')
+    t.equal(auth, msgUserId, 'should get the DID from a message')
     t.end()
 })
 

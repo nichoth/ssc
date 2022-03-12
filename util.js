@@ -233,6 +233,7 @@ function didToPublicKey(did, encoding) {
 
 
 function publicKeyToDid(publicKey, type) {
+    type = type || 'ed25519'
     const pubKeyBuf = utils.base64ToArrBuf(publicKey)
   
     // Prefix public-write key
