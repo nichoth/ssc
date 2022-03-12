@@ -37,15 +37,20 @@ async function createMsg (keyStore, prevMsg, content) {
 
     const writeKey = await keyStore.publicWriteKey()
     const keyType = 'ed25519'
-    // const ourDID = publicKeyToDid(writeKey, keyType)
+    const ourDID = publicKeyToDid(writeKey, keyType)
+
+    // console.log('***')
+    // console.log('write key', writeKey)
+    // console.log('our did', ourDID)
+    // console.log('***')
 
     // console.log('**write key**', writeKey + '.' + keyType)
 
     var msg = {
         previous: prevMsg ? getId(prevMsg) : null,
         sequence: prevMsg ? prevMsg.sequence + 1 : 1,
-        author: '@' + writeKey + '.' + keyType,
-        // author: ourDID,
+        // author: '@' + writeKey + '.' + keyType,
+        author: ourDID,
         timestamp: +timestamp(),
         hash: 'sha256',
         content: content
@@ -105,7 +110,7 @@ function getAuthor (msg) {
 function getDidFromKeys (ks) {
     return ks.publicWriteKey()
         .then(publicKey => {
-            var did = publicKeyToDid(publicKey, 'rsa')
+            var did = publicKeyToDid(publicKey)
             return did
         })
 }
