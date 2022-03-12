@@ -25,8 +25,9 @@ test('create a message', async t => {
     t.ok(msg, 'should create a message')
 
     const pubKey = await ks.publicWriteKey()
-    var did = msgDid = ssc.publicKeyToDid(pubKey, 'rsa')
-    t.equal(msg.author, did, 'should have right the message author')
+    const userId = '@' + pubKey + '.ed25519'
+    // var did = msgDid = ssc.publicKeyToDid(pubKey, 'ed25519')
+    t.equal(msg.author, userId, 'should have right the message author')
 
     t.equal(msg.content.type, 'test', 'should have the message content')
     t.ok(msg.signature, 'should have the message signature')

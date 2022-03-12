@@ -29,7 +29,7 @@ const BASE58_DID_PREFIX = 'did:key:z'
 /**
  * Magic bytes.
  */
-export function magicBytes(keyType) {
+function magicBytes (keyType) {
     switch (keyType) {
         case KeyType.Edwards: return EDWARDS_DID_PREFIX
         case KeyType.RSA: return RSA_DID_PREFIX
