@@ -11,6 +11,8 @@ var { clone, isObject, isInvalidShape, getId,
 
 let keys = null
 
+// const SIG_TYPE = 'ecc'
+
 // 'ecc' or 'rsa'
 const get = async (keyType) => {
     if (keys) return keys;
@@ -27,25 +29,28 @@ async function sign (keys, msg) {
     return sig
 }
 
-async function createMsg (keys, prevMsg, content) {
+async function createMsg (keyStore, prevMsg, content) {
     if (!isObject(content) && !isEncrypted(content)) {
         throw new Error('invalid message content, ' +
             'must be object or encrypted string')
     }
 
-    const writeKey = await keys.publicWriteKey()
-    // @TODO
-    const ourDID = publicKeyToDid(writeKey, 'rsa')
+    const writeKey = await keyStore.publicWriteKey()
+    const keyType = 'ed25519'
+    const ourDID = publicKeyToDid(writeKey, keyType)
+
+    // console.log('***')
+    // console.log('write key', writeKey)
+    // console.log('our did', ourDID)
+    // console.log('***')
+
+    // console.log('**write key**', writeKey + '.' + keyType)
 
     var msg = {
         previous: prevMsg ? getId(prevMsg) : null,
         sequence: prevMsg ? prevMsg.sequence + 1 : 1,
-
-        // change this
-        // author: '@' + writeKey,
-
+        // author: '@' + writeKey + '.' + keyType,
         author: ourDID,
-
         timestamp: +timestamp(),
         hash: 'sha256',
         content: content
@@ -77,7 +82,7 @@ async function verifyObj (keys, _obj) {
 // the msg here does not include the `signature` field
 async function verify (keys, sig, msg) {
     if (typeof sig === 'object') {
-        throw new Error('signature should be base64 string,' +
+        throw new Error('signature should be base64 string, ' +
             'did you mean verifyObj(public, signed_obj)?')
     }
 
@@ -91,6 +96,9 @@ function isPrevMsgOk (prevMsg, msg) {
     return (msg.previous === getId(prevMsg))
 }
 
+// TODO
+// should take just the public key here
+//   - goes to a method `keys.verify`
 async function isValidMsg (msg, prevMsg, keys) {
     return (await verifyObj(keys, msg) && isPrevMsgOk(prevMsg, msg))
 }
@@ -102,7 +110,7 @@ function getAuthor (msg) {
 function getDidFromKeys (ks) {
     return ks.publicWriteKey()
         .then(publicKey => {
-            var did = publicKeyToDid(publicKey, 'rsa')
+            var did = publicKeyToDid(publicKey)
             return did
         })
 }
