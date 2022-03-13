@@ -1,20 +1,12 @@
-// import * as uint8arrays from "uint8arrays";
 import { fromString } from 'uint8arrays/from-string'
 import keystore from "keystore-idb";
-// import { webcrypto } from 'one-webcrypto'
 import { verify } from "keystore-idb/lib/ecc/operations";
-// import { CryptoSystem } from "keystore-idb/lib/types.js";
 var timestamp = require('monotonic-timestamp')
 var stringify = require('json-stable-stringify')
 var { clone, isObject, isInvalidShape, getId,
     publicKeyToDid, didToPublicKey } = require('./util')
 
-// const KEYSTORE_CFG = { type: CryptoSystem.RSA };
-// const ECC = CryptoSystem.ECC
-
 let keys = null
-
-// const SIG_TYPE = 'ecc'
 
 // 'ecc' or 'rsa'
 const get = async (keyType) => {
@@ -71,9 +63,7 @@ async function verifyObj (pubKey, _obj) {
     var obj = clone(_obj);
     var sig = obj.signature;
     delete obj.signature;
-    // const b = fromString('foooooo')
     const msgArr = fromString(stringify(obj, null, 2))
-    // var b = Buffer.from(stringify(obj, null, 2));
     return _verify(pubKey, sig, msgArr);
 }
 

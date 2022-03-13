@@ -21,14 +21,12 @@ test('sign and validate something', async t => {
 
 var msg
 var msgDid
-// var msgUserId
 test('create a message', async t => {
     var content = { type: 'test', text: 'woooo' }
     msg = await ssc.createMsg(ks, null, content)
     t.ok(msg, 'should create a message')
 
     const pubKey = await ks.publicWriteKey()
-    // const userId = msgUserId = '@' + pubKey + '.ed25519'
     const did = msgDid = ssc.publicKeyToDid(pubKey, 'ed25519')
     t.equal(msg.author, did, 'should have right the message author')
     t.equal(msg.content.type, 'test', 'should have the message content')
@@ -45,10 +43,8 @@ test('verify a message', async t => {
 
 // TODO -- check with an invalid message
 
-// TODO -- should validate with just a public key or DID
 test('is valid message', async t => {
     const pubKey = ssc.didToPublicKey(msgDid).publicKey
-    // console.log('**pub key**', pubKey)
     var isValid = await ssc.isValidMsg(msg, null, pubKey)
     t.plan(1)
     t.equal(isValid, true, 'should return true for valid message')
@@ -93,10 +89,6 @@ test('create a merkle list', async t => {
 
     t.equal(list.length, 3, 'should create the right number of list items')
 
-    // const publicKey = await ks.publicWriteKey()
-    // var did = ssc.publicKeyToDid(publicKey, 'rsa')
-    // t.equal(list[0].author, '@' + publicKey + '.ed25519',
-    //     'should have the right author')
     t.equal(list[0].author, msgDid, 'should have the right author')
 
     const pubKey = ssc.didToPublicKey(msgDid).publicKey
@@ -150,7 +142,7 @@ test('create a ucan', async t => {
                 // (audience is a publicKey)
                 audience: did,
                 // issuer: did,
-                // Note that the issuer always has to be your DID,
+                // Note that the issuer always has to be the DID of the signer,
                 // because the UCAN will be signed with your private key.
                 issuer: keypair,
                 // facts: [],
