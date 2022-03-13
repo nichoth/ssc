@@ -35,6 +35,7 @@ test('create a message', async t => {
 })
 
 test('verify a message', async t => {
+    // this validates a single message, does not check the merkle-list integrity
     const pubKey = ssc.didToPublicKey(msgDid).publicKey
     var msgIsOk = await ssc.verifyObj(pubKey, msg)
     t.equal(msgIsOk, true, 'should return true for a valid message')
@@ -88,7 +89,6 @@ test('create a merkle list', async t => {
     }, Promise.resolve([]))
 
     t.equal(list.length, 3, 'should create the right number of list items')
-
     t.equal(list[0].author, msgDid, 'should have the right author')
 
     const pubKey = ssc.didToPublicKey(msgDid).publicKey
@@ -98,7 +98,7 @@ test('create a merkle list', async t => {
         return isValid && await ssc.isValidMsg(msg, prev, pubKey)
     }, true)
 
-    t.equal(isValidList, true, 'reduced validation should be ok')
+    t.equal(isValidList, true, 'should be a valid list')
 })
 
 test('public key to DID', t => {
