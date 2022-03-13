@@ -1,11 +1,14 @@
 import test from 'tape'
 import * as ucan from 'ucans'
 import ssc from '../web'
+import { ECCKeyStore } from 'keystore-idb/lib/ecc/keystore'
+import { didToPublicKey } from 'ucans'
 
 var ks
 test('create keys', async t => {
     ks = await ssc.createKeys(ssc.keyTypes.ECC)
     t.ok(ks, 'should return a keystore')
+    t.ok(ks instanceof ECCKeyStore, 'should be an instance of ECC keystore')
     t.end()
 })
 
@@ -19,7 +22,7 @@ test('sign and validate something', async t => {
 
 var msg
 var msgDid
-var msgUserId
+// var msgUserId
 test('create a message', async t => {
     var content = { type: 'test', text: 'woooo' }
     msg = await ssc.createMsg(ks, null, content)
@@ -35,16 +38,19 @@ test('create a message', async t => {
 })
 
 test('verify a message', async t => {
-    // TODO -- should take a public key and message only
-    var msgIsOk = await ssc.verifyObj(ks, msg)
+    const pubKey = didToPublicKey(msgDid).publicKey
+    var msgIsOk = await ssc.verifyObj(pubKey, msg)
     t.equal(msgIsOk, true, 'should return true for a valid message')
     t.end()
 })
 
 // TODO -- check with an invalid message
 
+// TODO -- should validate with just a public key or DID
 test('is valid message', async t => {
-    var isValid = await ssc.isValidMsg(msg, null, ks)
+    const pubKey = ssc.didToPublicKey(msgDid).publicKey
+    // console.log('**pub key**', pubKey)
+    var isValid = await ssc.isValidMsg(msg, null, pubKey)
     t.plan(1)
     t.equal(isValid, true, 'should return true for valid message')
 })
@@ -105,6 +111,7 @@ test('create a merkle list', async t => {
 test('public key to DID', t => {
     const pubKey = 'BADJg6SOcJ+jEXAWQ1iHVDbH7dF6lGgYYRlx2uJRvFhLtvQtOpdqaNq5uonyG2MFkfuj6iHWsHLS3oD2RhcWOFU='
     const expectedDid = 'did:key:z82T5VCebjLZoZshfGbYZuEEFg79vmMxVibQ9eHcSN63E3p5MxDy9UwJDrZbgXacW4HbCEfYqrTa2sprh694EXc6L5cWg'
+    // these are RSA version
     // const pubkey = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnzyis1ZjfNB0bBgKFMSvvkTtwlvBsaJq7S5wA+kzeVOVpVWwkWdVha4s38XM/pa/yr47av7+z3VTmvDRyAHcaT92whREFpLv9cj5lTeJSibyr/Mrm/YtjCZVWgaOYIhwrXwKLqPr/11inWsAkfIytvHWTxZYEcXLgAXFuUuaS3uF9gEiNQwzGTU1v0FqkqTBr4B8nW3HCN47XUu0t8Y0e+lf4s4OxQawWD79J9/5d3Ry0vbV3Am1FtGJiJvOwRsIfVChDpYStTcHTCMqtvWbV6L11BWkpzGXSW4Hv43qa+GSYOD2QU68Mb59oSk2OB+BtOLpJofmbGEGgvmwyCI9MwIDAQAB"
     // const expectedDid = "did:key:z13V3Sog2YaUKhdGCmgx9UZuW1o1ShFJYc6DvGYe7NTt689NoL2RtpVs65Zw899YrTN9WuxdEEDm54YxWuQHQvcKfkZwa8HTgokHxGDPEmNLhvh69zUMEP4zjuARQ3T8bMUumkSLGpxNe1bfQX624ef45GhWb3S9HM3gvAJ7Qftm8iqnDQVcxwKHjmkV4hveKMTix4bTRhieVHi1oqU4QCVy4QPWpAAympuCP9dAoJFxSP6TNBLY9vPKLazsg7XcFov6UuLWsEaxJ5SomCpDx181mEgW2qTug5oQbrJwExbD9CMgXHLVDE2QgLoQMmgsrPevX57dH715NXC2uY6vo2mYCzRY4KuDRUsrkuYCkewL8q2oK1BEDVvi3Sg8pbC9QYQ5mMiHf8uxiHxTAmPedv8"
     var did = ssc.publicKeyToDid(pubKey)
@@ -112,12 +119,12 @@ test('public key to DID', t => {
     t.end()
 })
 
-test('get the DID from public key', async t => {
-    const publicKey = await ks.publicWriteKey()
-    var did = ssc.publicKeyToDid(publicKey)
-    t.equal(did, msgDid, 'should return a DID from a key')
-    t.end()
-})
+// test('get the DID from public key', async t => {
+//     const publicKey = await ks.publicWriteKey()
+//     var did = ssc.publicKeyToDid(publicKey)
+//     t.equal(did, msgDid, 'should return a DID from a key')
+//     t.end()
+// })
 
 test('get author from a message', t => {
     var author = ssc.getAuthor(msg)
