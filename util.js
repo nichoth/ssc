@@ -223,12 +223,34 @@ async function verifySignedData ({ charSize = 16, data, did, signature }) {
 /**
  * Convert a DID (did:key) to a base64 public key.
  */
-function didToPublicKey(did, encoding) {
-    const { publicKey, type } = didToPublicKeyBytes(did)
+// function didToPublicKey (did, encoding) {
+//     const { publicKey, type } = didToPublicKeyBytes(did)
+//     return {
+//         publicKey: uint8arrays.toString(publicKey, encoding),
+//         type
+//     }
+// }
+
+function didToPublicKey (did) {
+    if (!did.startsWith(BASE58_DID_PREFIX)) {
+        throw new Error(
+            "Please use a base58-encoded DID formatted `did:key:z...`")
+    }
+  
+    const didWithoutPrefix = did.substr(BASE58_DID_PREFIX.length)
+    const magicalBuf = uint8arrays.fromString(didWithoutPrefix, "base58btc")
+    const { keyBuffer, type } = parseMagicBytes(magicalBuf)
+  
     return {
-        publicKey: uint8arrays.toString(publicKey, encoding),
+        publicKey: arrBufToBase64(keyBuffer),
         type
     }
+}
+
+
+
+function arrBufToBase64 (buf) {
+    return uint8arrays.toString(new Uint8Array(buf), "base64pad")
 }
 
 
@@ -249,6 +271,46 @@ function publicKeyToDid(publicKey, type) {
         uint8arrays.toString(new Uint8Array(prefixedBuf), "base58btc")
 }
 
+const arrBufs = {
+    equal: (aBuf, bBuf) => {
+        const a = new Uint8Array(aBuf)
+        const b = new Uint8Array(bBuf)
+        if (a.length !== b.length) return false
+            for (let i = 0; i < a.length; i++) {
+            if (a[i] !== b[i]) return false
+        }
+        return true
+    }
+}
+
+function hasPrefix (prefixedKey, prefix) {
+    return arrBufs.equal(prefix, prefixedKey.slice(0, prefix.byteLength))
+}
+
+function parseMagicBytes (prefixedKey) {
+    // RSA
+    if (hasPrefix(prefixedKey, RSA_DID_PREFIX)) {
+        return {
+            keyBuffer: prefixedKey.slice(RSA_DID_PREFIX.byteLength),
+            type: KeyType.RSA
+        }
+    // EDWARDS
+    } else if (hasPrefix(prefixedKey, EDWARDS_DID_PREFIX)) {
+        return {
+            keyBuffer: prefixedKey.slice(EDWARDS_DID_PREFIX.byteLength),
+            type: KeyType.Edwards
+        }
+    // BLS
+    } else if (hasPrefix(prefixedKey, BLS_DID_PREFIX)) {
+        return {
+            keyBuffer: prefixedKey.slice(BLS_DID_PREFIX.byteLength),
+            type: KeyType.BLS
+        }
+    }
+  
+    throw new Error("Unsupported key algorithm. Try using RSA.")
+}
+
 
 module.exports = {
     clone,
@@ -261,5 +323,6 @@ module.exports = {
     makeUrlUnsafe,
     verifySignedData,
     decode,
-    publicKeyToDid
+    publicKeyToDid,
+    didToPublicKey
 }

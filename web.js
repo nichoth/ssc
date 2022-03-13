@@ -1,10 +1,13 @@
 // import * as uint8arrays from "uint8arrays";
+import { fromString } from 'uint8arrays/from-string'
 import keystore from "keystore-idb";
+// import { webcrypto } from 'one-webcrypto'
+import { verify } from "keystore-idb/lib/ecc/operations";
 // import { CryptoSystem } from "keystore-idb/lib/types.js";
 var timestamp = require('monotonic-timestamp')
 var stringify = require('json-stable-stringify')
 var { clone, isObject, isInvalidShape, getId,
-    publicKeyToDid } = require('./util')
+    publicKeyToDid, didToPublicKey } = require('./util')
 
 // const KEYSTORE_CFG = { type: CryptoSystem.RSA };
 // const ECC = CryptoSystem.ECC
@@ -39,13 +42,6 @@ async function createMsg (keyStore, prevMsg, content) {
     const keyType = 'ed25519'
     const ourDID = publicKeyToDid(writeKey, keyType)
 
-    // console.log('***')
-    // console.log('write key', writeKey)
-    // console.log('our did', ourDID)
-    // console.log('***')
-
-    // console.log('**write key**', writeKey + '.' + keyType)
-
     var msg = {
         previous: prevMsg ? getId(prevMsg) : null,
         sequence: prevMsg ? prevMsg.sequence + 1 : 1,
@@ -69,26 +65,28 @@ async function signObj (keys, obj) {
     return _obj
 }
 
-async function verifyObj (keys, _obj) {
+// TODO verify with just a public key
+// async function verifyObj (keys, _obj) {
+async function verifyObj (pubKey, _obj) {
     var obj = clone(_obj);
     var sig = obj.signature;
     delete obj.signature;
-    var b = Buffer.from(stringify(obj, null, 2));
-    return verify(keys, sig, b);
+    // const b = fromString('foooooo')
+    const msgArr = fromString(stringify(obj, null, 2))
+    // var b = Buffer.from(stringify(obj, null, 2));
+    return _verify(pubKey, sig, msgArr);
 }
 
 // takes a public key, signature, and a hash
 // and returns true if the signature was valid.
 // the msg here does not include the `signature` field
-async function verify (keys, sig, msg) {
+async function _verify (pubKey, sig, msg) {
     if (typeof sig === 'object') {
-        throw new Error('signature should be base64 string, ' +
-            'did you mean verifyObj(public, signed_obj)?')
+        throw new Error('signature should be base64 string. ' +
+            'Did you mean verifyObj(public, signed_obj)?')
     }
 
-    const publicKey = await keys.publicWriteKey()
-    var _msg = Buffer.isBuffer(msg) ? msg : Buffer.from(msg)
-    return keys.verify(_msg, sig, publicKey)
+    return verify(msg, sig, pubKey)
 }
 
 function isPrevMsgOk (prevMsg, msg) {
@@ -96,11 +94,8 @@ function isPrevMsgOk (prevMsg, msg) {
     return (msg.previous === getId(prevMsg))
 }
 
-// TODO
-// should take just the public key here
-//   - goes to a method `keys.verify`
-async function isValidMsg (msg, prevMsg, keys) {
-    return (await verifyObj(keys, msg) && isPrevMsgOk(prevMsg, msg))
+async function isValidMsg (msg, prevMsg, pubKey) {
+    return (await verifyObj(pubKey, msg) && isPrevMsgOk(prevMsg, msg))
 }
 
 function getAuthor (msg) {
@@ -124,10 +119,12 @@ module.exports = {
     sign,
     createMsg,
     signObj,
+    verify: _verify,
     verifyObj,
     isValidMsg,
     getAuthor,
     getDidFromKeys,
     publicKeyToDid,
+    didToPublicKey,
     keyTypes: KEY_TYPES
 }
