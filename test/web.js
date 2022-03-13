@@ -2,7 +2,6 @@ import test from 'tape'
 import * as ucan from 'ucans'
 import ssc from '../web'
 import { ECCKeyStore } from 'keystore-idb/lib/ecc/keystore'
-import { didToPublicKey } from 'ucans'
 
 var ks
 test('create keys', async t => {
@@ -38,7 +37,7 @@ test('create a message', async t => {
 })
 
 test('verify a message', async t => {
-    const pubKey = didToPublicKey(msgDid).publicKey
+    const pubKey = ssc.didToPublicKey(msgDid).publicKey
     var msgIsOk = await ssc.verifyObj(pubKey, msg)
     t.equal(msgIsOk, true, 'should return true for a valid message')
     t.end()
@@ -120,13 +119,6 @@ test('public key to DID', t => {
     t.equal(did, expectedDid, 'should return the right DID')
     t.end()
 })
-
-// test('get the DID from public key', async t => {
-//     const publicKey = await ks.publicWriteKey()
-//     var did = ssc.publicKeyToDid(publicKey)
-//     t.equal(did, msgDid, 'should return a DID from a key')
-//     t.end()
-// })
 
 test('get author from a message', t => {
     var author = ssc.getAuthor(msg)
