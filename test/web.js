@@ -100,9 +100,11 @@ test('create a merkle list', async t => {
     //     'should have the right author')
     t.equal(list[0].author, msgDid, 'should have the right author')
 
+    const pubKey = ssc.didToPublicKey(msgDid).publicKey
+
     var isValidList = await list.reduce(async function (isValid, msg, i) {
         var prev = list[i - 1] || null
-        return isValid && await ssc.isValidMsg(msg, prev, ks)
+        return isValid && await ssc.isValidMsg(msg, prev, pubKey)
     }, true)
 
     t.equal(isValidList, true, 'reduced validation should be ok')
