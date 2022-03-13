@@ -200,37 +200,6 @@ function decode (ucan) {
     };
 }
 
-async function verifySignedData ({ charSize = 16, data, did, signature }) {
-    try {
-        const { type, publicKey } = didToPublicKey(did);
-        const sigBytes = new Uint8Array(utils.base64ToArrBuf(signature));
-        const dataBytes = new Uint8Array(utils.normalizeUnicodeToBuf(data, charSize));
-        const keyBytes = new Uint8Array(utils.base64ToArrBuf(publicKey));
-        switch (type) {
-            case KeyType.Edwards:
-                return await crypto.ed25519.verify(
-                    dataBytes, sigBytes, keyBytes);
-            case KeyType.RSA:
-                return await crypto.rsa.verify(dataBytes, sigBytes, keyBytes);
-            default: return false;
-        }
-    }
-    catch (_) {
-        return false;
-    }
-}
-
-/**
- * Convert a DID (did:key) to a base64 public key.
- */
-// function didToPublicKey (did, encoding) {
-//     const { publicKey, type } = didToPublicKeyBytes(did)
-//     return {
-//         publicKey: uint8arrays.toString(publicKey, encoding),
-//         type
-//     }
-// }
-
 function didToPublicKey (did) {
     if (!did.startsWith(BASE58_DID_PREFIX)) {
         throw new Error(
@@ -321,7 +290,7 @@ module.exports = {
     isString,
     encodeHeader,
     makeUrlUnsafe,
-    verifySignedData,
+    // verifySignedData,
     decode,
     publicKeyToDid,
     didToPublicKey

@@ -168,7 +168,7 @@ test('create a ucan', async t => {
         })
 })
 
-test('is the ucan valid', t => {
+test('is the ucan valid?', t => {
     t.plan(1)
     ucan.isValid(myUcan)
         .then(valid => {
