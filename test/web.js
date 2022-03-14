@@ -1,6 +1,7 @@
 import test from 'tape'
 import * as ucan from 'ucans'
 import ssc from '../web'
+// we use this just for tests. is not necessary for normal use
 import { ECCKeyStore } from 'keystore-idb/lib/ecc/keystore'
 
 var ks
@@ -11,6 +12,7 @@ test('create keys', async t => {
     t.end()
 })
 
+// this is an example just using the keystore, not ssc
 test('sign and validate something', async t => {
     var sig = await ks.sign('my message')
     t.ok(sig, 'should sign a message')
@@ -43,6 +45,14 @@ test('verify a message', async t => {
 })
 
 // TODO -- check with an invalid message
+test('verify an invalid message', async t => {
+    const invalidMsg = Object.assign({}, msg, {
+        signature: (msg.signature + 'foo')
+    })
+    const pubKey = ssc.didToPublicKey(msgDid).publicKey
+    var msgIsOk = await ssc.verifyObj(pubKey, invalidMsg)
+    t.equal(msgIsOk, false, 'should return false for an invalid message')
+})
 
 test('is valid message', async t => {
     const pubKey = ssc.didToPublicKey(msgDid).publicKey
