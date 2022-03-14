@@ -149,12 +149,9 @@ test('create a ucan', async t => {
             _did = did
 
             return ucan.build({
-                // audience should be a DID
-                // (audience is a publicKey)
                 audience: did,
-                // issuer: did,
-                // Note that the issuer always has to be the DID of the signer,
-                // because the UCAN will be signed with your private key.
+                // issuer is a priv/pub keypair because the ucan is signed by
+                // the issuer
                 issuer: keypair,
                 // facts: [],
                 lifetimeInSeconds: 60 * 60 * 24, // UCAN expires in 24 hours
