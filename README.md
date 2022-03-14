@@ -280,6 +280,7 @@ ssb format is `{ key: '...', value: msg }`. I think this is just used for storin
 import test from 'tape'
 import * as ucan from 'ucans'
 import ssc from '../web'
+// we use this just for tests. is not necessary for normal use
 import { ECCKeyStore } from 'keystore-idb/lib/ecc/keystore'
 
 var ks
@@ -290,6 +291,7 @@ test('create keys', async t => {
     t.end()
 })
 
+// this is an example just using the keystore, not ssc
 test('sign and validate something', async t => {
     var sig = await ks.sign('my message')
     t.ok(sig, 'should sign a message')
@@ -300,14 +302,12 @@ test('sign and validate something', async t => {
 
 var msg
 var msgDid
-// var msgUserId
 test('create a message', async t => {
     var content = { type: 'test', text: 'woooo' }
     msg = await ssc.createMsg(ks, null, content)
     t.ok(msg, 'should create a message')
 
     const pubKey = await ks.publicWriteKey()
-    // const userId = msgUserId = '@' + pubKey + '.ed25519'
     const did = msgDid = ssc.publicKeyToDid(pubKey, 'ed25519')
     t.equal(msg.author, did, 'should have right the message author')
     t.equal(msg.content.type, 'test', 'should have the message content')
@@ -316,6 +316,7 @@ test('create a message', async t => {
 })
 
 test('verify a message', async t => {
+    // this validates a single message, does not check the merkle-list integrity
     const pubKey = ssc.didToPublicKey(msgDid).publicKey
     var msgIsOk = await ssc.verifyObj(pubKey, msg)
     t.equal(msgIsOk, true, 'should return true for a valid message')
@@ -323,11 +324,19 @@ test('verify a message', async t => {
 })
 
 // TODO -- check with an invalid message
-
-// TODO -- should validate with just a public key or DID
-test('is valid message', async t => {
+test('verify an invalid message', async t => {
+    const invalidMsg = Object.assign({}, msg, {
+        signature: (msg.signature + 'foo')
+    })
     const pubKey = ssc.didToPublicKey(msgDid).publicKey
-    // console.log('**pub key**', pubKey)
+    var msgIsOk = await ssc.verifyObj(pubKey, invalidMsg)
+    t.equal(msgIsOk, false, 'should return false for an invalid message')
+})
+
+// this checks the merkle integrity of two messages,
+// in addition to the signature
+test('the merkle list integrity of two messages', async t => {
+    const pubKey = ssc.didToPublicKey(msgDid).publicKey
     var isValid = await ssc.isValidMsg(msg, null, pubKey)
     t.plan(1)
     t.equal(isValid, true, 'should return true for valid message')
@@ -341,7 +350,6 @@ test('create a second message', async t => {
     msg2 = await ssc.createMsg(ks, msg, content2)
     t.ok(msg2.previous === ssc.getId(msg), 
         'should create `prev` as the previous msg hash')
-    // => true 
 })
 
 // check that the message contains the hash of prevMsg, and also make sure
@@ -371,11 +379,6 @@ test('create a merkle list', async t => {
     }, Promise.resolve([]))
 
     t.equal(list.length, 3, 'should create the right number of list items')
-
-    // const publicKey = await ks.publicWriteKey()
-    // var did = ssc.publicKeyToDid(publicKey, 'rsa')
-    // t.equal(list[0].author, '@' + publicKey + '.ed25519',
-    //     'should have the right author')
     t.equal(list[0].author, msgDid, 'should have the right author')
 
     const pubKey = ssc.didToPublicKey(msgDid).publicKey
@@ -385,7 +388,7 @@ test('create a merkle list', async t => {
         return isValid && await ssc.isValidMsg(msg, prev, pubKey)
     }, true)
 
-    t.equal(isValidList, true, 'reduced validation should be ok')
+    t.equal(isValidList, true, 'should be a valid list')
 })
 
 test('public key to DID', t => {
@@ -429,7 +432,7 @@ test('create a ucan', async t => {
                 // (audience is a publicKey)
                 audience: did,
                 // issuer: did,
-                // Note that the issuer always has to be your DID,
+                // Note that the issuer always has to be the DID of the signer,
                 // because the UCAN will be signed with your private key.
                 issuer: keypair,
                 // facts: [],
@@ -455,7 +458,7 @@ test('create a ucan', async t => {
         })
 })
 
-test('is the ucan valid', t => {
+test('is the ucan valid?', t => {
     t.plan(1)
     ucan.isValid(myUcan)
         .then(valid => {
@@ -467,4 +470,6 @@ test('is the ucan valid', t => {
             t.end()
         })
 })
+
+// should get the root ucan, then check the permissions of the root
 ```
