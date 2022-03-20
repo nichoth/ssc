@@ -11,21 +11,148 @@
 
 
 
+
+
+
 // -------- web crypto part ----------------
 
 
-const { webcrypto } = require("one-webcrypto")
+
+// const { webcrypto } = require("one-webcrypto")
+import { webcrypto } from "one-webcrypto"
+import * as uint8arrays from 'uint8arrays'
 
 
-// console.log('webcrypto', webcrypto)
-// console.log('webcrypto', webcrypto.subtle)
-console.log('webcrypto', webcrypto.subtle.generateKey)
+const KeyUse = {
+    Exchange: 'exchange',
+    Write: 'write'
+}
 
-var ks = webcrypto.subtle.generateKey()
+
+
+// const result = webcrypto.subtle.importKey(
+//     format,
+//     keyData,
+//     algorithm,
+//     extractable,
+//     keyUsages
+// )
+
+const ECC_EXCHANGE_ALG = 'ECDH'
+const ECC_WRITE_ALG = 'ECDSA'
+
+
+
+function base64ToArrBuf (string) {
+    return uint8arrays.fromString(string, "base64pad").buffer
+}
+
+function importKey (keyData) {
+    const alg = ECC_WRITE_ALG
+    // const alg = use === KeyUse.Exchange ? ECC_EXCHANGE_ALG : ECC_WRITE_ALG 
+    // const uses = (use === KeyUse.Exchange) ? [] : ['verify']
+    // const buf = base64ToArrBuf(keyData)
+
+
+    // const result = crypto.subtle.importKey(
+    //     format,
+    //     keyData,
+    //     algorithm,
+    //     extractable,
+    //     keyUsages
+    // );
+
+    return webcrypto.subtle.importKey(
+        'jwk',
+        keyData,
+        { name: alg, namedCurve: 'P-256' },
+        true,
+        // uses
+        // ['sign', 'verify']
+        ['verify']
+    )
+
+
+    // const aaa = webcrypto.subtle.importKey(
+    //     'raw',
+    //     buf,
+    //     { name: alg, namedCurve: curve },
+    //     true,
+    //     uses
+    // )
+}
+
+// importKey()
+
+function exportKey (key) {
+    // const result = crypto.subtle.exportKey(format, key);
+
+    return webcrypto.subtle.exportKey('jwk', key)
+
+    // const raw = await webcrypto.subtle.exportKey('raw', keypair.publicKey as PublicKey)
+    // return utils.arrBufToBase64(raw)
+}
+
+
+
+
+function generateKey (curve, use) {
+    const alg = use === KeyUse.Exchange ? ECC_EXCHANGE_ALG : ECC_WRITE_ALG
+
+    const uses = use === KeyUse.Exchange ?
+        ['deriveKey', 'deriveBits'] :
+        ['sign', 'verify']
+
+    // crypto.subtle.generateKey(algorithm, extractable, keyUsages);
+    return webcrypto.subtle.generateKey(
+        { name: alg, namedCurve: curve },
+        true,
+        uses
+    )
+}
+
+const EccCurve = {
+    P_256: 'P-256',
+    P_384: 'P-384',
+    P_521: 'P-521'
+}
+
+// P_256 is the default ecc curve in the keystore --
+// https://github.com/fission-suite/keystore-idb/blob/fb8fab2f0346ab6681b2f93913209939dd42d19f/src/constants.ts#L10
+generateKey(EccCurve.P_256, KeyUse.Write)
+    .then(key => {
+        console.log('generated key', key)
+        exportKey(key.publicKey)
+            .then(res => {
+                console.log('exported public', res)
+
+                importKey(res)
+                    .then(aaa => {
+                        console.log('imported', aaa)
+                    })
+            })
+
+
+
+        exportKey(key.privateKey)
+            .then(res => console.log('exported private', res))
+    })
+    .catch(err => {
+        console.log('errrrrr', err)
+    })
+
+
 
 
 
 // -------------------------------------------
+
+
+
+
+
+
+
 
 
 // module.exports = {

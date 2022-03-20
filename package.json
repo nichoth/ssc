@@ -3,6 +3,7 @@
   "description": "",
   "version": "0.0.26",
   "main": "index.js",
+  "type": "module",
   "bin": {
     "ssc": "./cli.js"
   },
