@@ -57,12 +57,12 @@ test('verify an invalid message', async t => {
 
 // this checks the merkle integrity of two messages,
 // in addition to the signature
-test('the merkle list integrity of two messages', async t => {
-    const pubKey = ssc.didToPublicKey(msgDid).publicKey
-    var isValid = await ssc.isValidMsg(msg, null, pubKey)
-    t.plan(1)
-    t.equal(isValid, true, 'should return true for valid message')
-})
+// test('the merkle list integrity of two messages', async t => {
+//     t.plan(1)
+//     const pubKey = ssc.didToPublicKey(msgDid).publicKey
+//     var isValid = await ssc.isValidMsg(msg, null, pubKey)
+//     t.equal(isValid, true, 'should return true for valid message')
+// })
 
 var msg2
 test('create a second message', async t => {
