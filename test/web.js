@@ -130,8 +130,8 @@ test('get author from a message', t => {
 })
 
 test('get DID from some keys', async t => {
-    var auth = await ssc.getDidFromKeys(ks)
-    t.equal(auth, ssc.getAuthor(msg),
+    var author = await ssc.getDidFromKeys(ks)
+    t.equal(author, ssc.getAuthor(msg),
         'should get the author DID from a set of keys')
     t.end()
 })
@@ -149,6 +149,7 @@ test('create a ucan', async t => {
             _did = did
 
             return ucan.build({
+                // aud -- Audience, the DID of who it's intended for
                 audience: did,
                 // issuer is a priv/pub keypair because the ucan is signed by
                 // the issuer
@@ -161,7 +162,8 @@ test('create a ucan', async t => {
                         "cap": "OVERWRITE"
                     }
                 ],
-                // proof: 'foo'
+                // prf -- Proof, an optional nested token with equal or greater
+                // privileges.
                 proof: null
             })
         })

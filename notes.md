@@ -1,6 +1,20 @@
-# UCAN notes
+# webcrypto
 
-----------------------------------------------------------------------
+[SubtleCrypto.generateKey](https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/generateKey)
+
+```js
+const result = crypto.subtle.generateKey(algorithm, extractable, keyUsages);
+```
+
+[cryptoKeypair](https://developer.mozilla.org/en-US/docs/Web/API/CryptoKeyPair)
+
+
+
+------------------------------------------------------------
+
+
+
+# UCAN notes
 
 ## UCAN
 How to do invitations? 
