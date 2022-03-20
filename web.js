@@ -8,6 +8,8 @@ var { clone, isObject, isInvalidShape, getId,
 
 let keys = null
 
+const KEY_TYPE = 'ed25519'
+
 // 'ecc' or 'rsa'
 const get = async (keyType) => {
     if (keys) return keys;
@@ -31,14 +33,14 @@ async function createMsg (keyStore, prevMsg, content) {
     }
 
     const writeKey = await keyStore.publicWriteKey()
-    const keyType = 'ed25519'
-    const ourDID = publicKeyToDid(writeKey, keyType)
+
+    // const ourDID = publicKeyToDid(writeKey, keyType)
 
     var msg = {
         previous: prevMsg ? getId(prevMsg) : null,
         sequence: prevMsg ? prevMsg.sequence + 1 : 1,
-        // author: '@' + writeKey + '.' + keyType,
-        author: ourDID,
+        author: '@' + writeKey + '.' + KEY_TYPE,
+        // author: ourDID,
         timestamp: +timestamp(),
         hash: 'sha256',
         content: content
@@ -102,6 +104,11 @@ function getDidFromKeys (ks) {
 
 const KEY_TYPES = { ECC: 'ecc', RSA: 'rsa' }
 
+function didToSsbId (did) {
+    const pubKey = didToPublicKey(did).publicKey
+    return '@' + pubKey + '.' + KEY_TYPE
+}
+
 module.exports = {
     get,
     getId,
@@ -116,5 +123,6 @@ module.exports = {
     getDidFromKeys,
     publicKeyToDid,
     didToPublicKey,
+    didToSsbId,
     keyTypes: KEY_TYPES
 }
