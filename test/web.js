@@ -129,7 +129,6 @@ test('get author from a message', t => {
     var author = ssc.getAuthor(msg)
     t.equal(author, ssc.didToSsbId(msgDid),
         'should get the DID from a message')
-    // t.equal(author, msgDid, 'should get the DID from a message')
     t.end()
 })
 
