@@ -104,9 +104,13 @@ function getDidFromKeys (ks) {
 
 const KEY_TYPES = { ECC: 'ecc', RSA: 'rsa' }
 
-function didToSsbId (did) {
+function didToId (did) {
     const pubKey = didToPublicKey(did).publicKey
     return '@' + pubKey + '.' + KEY_TYPE
+}
+
+function idToPublicKey (id) {
+    return id.slice(1).split('.')[0]
 }
 
 module.exports = {
@@ -123,6 +127,7 @@ module.exports = {
     getDidFromKeys,
     publicKeyToDid,
     didToPublicKey,
-    didToSsbId,
+    didToId,
+    idToPublicKey,
     keyTypes: KEY_TYPES
 }

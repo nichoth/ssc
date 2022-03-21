@@ -30,7 +30,7 @@ test('create a message', async t => {
 
     const pubKey = await ks.publicWriteKey()
     const did = msgDid = ssc.publicKeyToDid(pubKey, 'ed25519')
-    t.equal(msg.author, ssc.didToSsbId(did),
+    t.equal(msg.author, ssc.didToId(did),
         'should have right the message author')
     t.equal(msg.content.type, 'test', 'should have the message content')
     t.ok(msg.signature, 'should have the message signature')
@@ -101,7 +101,7 @@ test('create a merkle list', async t => {
     }, Promise.resolve([]))
 
     t.equal(list.length, 3, 'should create the right number of list items')
-    t.equal(list[0].author, ssc.didToSsbId(msgDid),
+    t.equal(list[0].author, ssc.didToId(msgDid),
         'should have the right author')
 
     const pubKey = ssc.didToPublicKey(msgDid).publicKey
@@ -125,9 +125,23 @@ test('public key to DID', t => {
     t.end()
 })
 
+test('ID to public key', t => {
+    const ID = ssc.getAuthor(msg)
+    // const pubKey = ssc.idToPublicKey(ID)
+    t.equal(ssc.didToPublicKey(msgDid).publicKey, ssc.idToPublicKey(ID),
+        'should turn ID into public key')
+    t.end()
+})
+
+test('DID to ID', t => {
+    t.equal(ssc.didToId(msgDid), ssc.getAuthor(msg),
+        'should transform DID to ID format')
+    t.end()
+})
+
 test('get author from a message', t => {
     var author = ssc.getAuthor(msg)
-    t.equal(author, ssc.didToSsbId(msgDid),
+    t.equal(author, ssc.didToId(msgDid),
         'should get the DID from a message')
     t.end()
 })
