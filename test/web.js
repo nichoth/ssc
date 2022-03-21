@@ -134,6 +134,8 @@ test('get author from a message', t => {
 
 test('get DID from some keys', async t => {
     const authorDID = await ssc.getDidFromKeys(ks)
+    t.equal(authorDID, msgDid,
+        'should return the same did that was used in the message')
     const pubKey = ssc.didToPublicKey(authorDID).publicKey
     t.equal('@' + pubKey + '.ed25519', ssc.getAuthor(msg),
         'should get the author DID from a set of keys')
