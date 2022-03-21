@@ -45,7 +45,6 @@ test('verify a message', async t => {
     t.end()
 })
 
-// TODO -- check with an invalid message
 test('verify an invalid message', async t => {
     const invalidMsg = Object.assign({}, msg, {
         signature: (msg.signature + 'foo')
@@ -54,15 +53,6 @@ test('verify an invalid message', async t => {
     var msgIsOk = await ssc.verifyObj(pubKey, invalidMsg)
     t.equal(msgIsOk, false, 'should return false for an invalid message')
 })
-
-// this checks the merkle integrity of two messages,
-// in addition to the signature
-// test('the merkle list integrity of two messages', async t => {
-//     t.plan(1)
-//     const pubKey = ssc.didToPublicKey(msgDid).publicKey
-//     var isValid = await ssc.isValidMsg(msg, null, pubKey)
-//     t.equal(isValid, true, 'should return true for valid message')
-// })
 
 var msg2
 test('create a second message', async t => {
@@ -142,7 +132,7 @@ test('DID to ID', t => {
 test('get author from a message', t => {
     var author = ssc.getAuthor(msg)
     t.equal(author, ssc.didToId(msgDid),
-        'should get the DID from a message')
+        'should get the author ID from a message')
     t.end()
 })
 
