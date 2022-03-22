@@ -94,3 +94,5 @@ public/
 
 # Local Netlify folder
 .netlify
+test/test-msgs.json
+
