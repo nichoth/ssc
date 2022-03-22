@@ -7,10 +7,10 @@ import { ECCKeyStore } from 'keystore-idb/lib/ecc/keystore'
 const Keys = require('./keys.json')
 // const testMsgs = require('./test-msgs.json')
 
+const testMsgs = getTestMsgs()
+
 test('verify the messages created in node', t => {
     const pubKey = ssc.idToPublicKey(Keys.id)
-
-    const testMsgs = getTestMsgs()
 
     ssc.isValidMsg(testMsgs[0], null, pubKey)
         .then(res => {
@@ -89,8 +89,6 @@ test('create a second message', async t => {
     // we pass in the original msg here
     msg2 = await ssc.createMsg(ks, msg, content2)
 
-    const testMsgs = getTestMsgs()
-
     console.log('**test msg 2**', testMsgs[1])
 
     console.log('**msg 2**', msg2)
@@ -105,7 +103,24 @@ test('create a second message', async t => {
 // the signature is valid.
 test('validate the second message', async t => {
     const pubKey = ssc.didToPublicKey(msgDid).publicKey
-    var isValid = await ssc.isValidMsg(msg2, msg, pubKey)
+    const isValid = await ssc.isValidMsg(msg2, msg, pubKey)
+
+    console.log('is val', isValid)
+
+    console.log('valid ones-------------------')
+    // console.log(msg)
+    console.log(msg2)
+
+    console.log('invalidssss-----------------')
+    // console.log(testMsgs[0])
+    console.log(testMsgs[1])
+
+
+
+    const _pubKey = ssc.idToPublicKey(Keys.id)
+    const aaa = await ssc.isValidMsg(testMsgs[1], testMsgs[0], _pubKey)
+    console.log('aaaaaa', aaa)
+
     t.equal(isValid, true, 'should validate a message with a previous hash')
     t.end()
 })

@@ -75,6 +75,7 @@ async function _verify (pubKey, sig, msg) {
             'Did you mean verifyObj(public, signed_obj)?')
     }
 
+    // default_ecc_curve = 'p-256'
     return verify(msg, sig, pubKey)
         .then(res => {
             return res
