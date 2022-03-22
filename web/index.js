@@ -3,8 +3,8 @@ import keystore from "keystore-idb";
 import { verify } from "keystore-idb/lib/ecc/operations";
 var timestamp = require('monotonic-timestamp')
 var stringify = require('json-stable-stringify')
-var { clone, isObject, isInvalidShape, getId,
-    publicKeyToDid, didToPublicKey } = require('./util')
+import { clone, isObject, isInvalidShape, getId,
+    publicKeyToDid, didToPublicKey } from './util.js'
 
 let keys = null
 
@@ -33,8 +33,6 @@ async function createMsg (keyStore, prevMsg, content) {
     }
 
     const writeKey = await keyStore.publicWriteKey()
-
-    // const ourDID = publicKeyToDid(writeKey, keyType)
 
     var msg = {
         previous: prevMsg ? getId(prevMsg) : null,

@@ -1,7 +1,3 @@
-import { createRequire } from 'module';
-const require = createRequire(import.meta.url);
-
-var sodium = require("chloride")
 var stringify = require('json-stable-stringify')
 var isCanonicalBase64 = require('is-canonical-base64')
 // var feedIdRegex = isCanonicalBase64('@', '.(?:sha256|ed25519)', 32)
@@ -9,6 +5,7 @@ var isEncryptedRx = isCanonicalBase64('','\\.box.*')
 // import * as ucan from 'ucans'
 import * as uint8arrays from "uint8arrays"
 import * as utils from "keystore-idb/lib/utils.js"
+const sodium = require("chloride")
 
 export function clone (obj) {
     var _obj = {}
@@ -203,7 +200,7 @@ function decode (ucan) {
     };
 }
 
-function didToPublicKey (did) {
+export function didToPublicKey (did) {
     if (!did.startsWith(BASE58_DID_PREFIX)) {
         throw new Error(
             "Please use a base58-encoded DID formatted `did:key:z...`")
@@ -226,7 +223,7 @@ function arrBufToBase64 (buf) {
 }
 
 
-function publicKeyToDid(publicKey, type) {
+export function publicKeyToDid(publicKey, type) {
     type = type || 'ed25519'
     const pubKeyBuf = utils.base64ToArrBuf(publicKey)
   

@@ -1,13 +1,19 @@
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+
 var sodium = require("chloride")
 var hmac = sodium.crypto_auth
-var curve = require('./sodium')
+// var curve = require('./sodium')
+import curve from './sodium.js'
 var timestamp = require('monotonic-timestamp')
 var ssbKeys = require('ssb-keys')
 var stringify = require('json-stable-stringify')
-var { clone, isObject, getId, hash, isInvalidShape,
-    isString } = require('./util')
+// var { clone, isObject, getId, hash, isInvalidShape,
+//     isString } = require('./util')
+import { clone, isObject, getId, hash, isInvalidShape,
+    isString } from './util.js'
 
-module.exports = {
+export default {
     sign,
     verifyObj,
     verify,
@@ -19,6 +25,19 @@ module.exports = {
     generate: ssbKeys.generate,
     hash
 }
+
+// module.exports = {
+//     sign,
+//     verifyObj,
+//     verify,
+//     createMsg,
+//     getId,
+//     isPrevMsgOk,
+//     isValidMsg,
+//     createKeys,
+//     generate: ssbKeys.generate,
+//     hash
+// }
 
 function createKeys () {
     return ssbKeys.generate()
