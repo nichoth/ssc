@@ -1,3 +1,6 @@
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+
 var sodium = require("chloride")
 var stringify = require('json-stable-stringify')
 var isCanonicalBase64 = require('is-canonical-base64')
@@ -7,7 +10,7 @@ var isEncryptedRx = isCanonicalBase64('','\\.box.*')
 import * as uint8arrays from "uint8arrays"
 import * as utils from "keystore-idb/lib/utils.js"
 
-function clone (obj) {
+export function clone (obj) {
     var _obj = {}
     for (var k in obj) {
         if (Object.hasOwnProperty.call(obj, k)) _obj[k] = obj[k]
@@ -29,7 +32,7 @@ const BASE58_DID_PREFIX = 'did:key:z'
 /**
  * Magic bytes.
  */
-function magicBytes (keyType) {
+export function magicBytes (keyType) {
     switch (keyType) {
         case KeyType.Edwards: return EDWARDS_DID_PREFIX
         case KeyType.RSA: return RSA_DID_PREFIX
@@ -38,36 +41,36 @@ function magicBytes (keyType) {
     }
 }
 
-function isObject (o) {
+export function isObject (o) {
     return o && 'object' === typeof o
 }
 
-function getId (msg) {
+export function getId (msg) {
     return '%' + hash(stringify(msg, null, 2))
 }
 
 // from ssb-keys
 // https://github.com/ssb-js/ssb-keys/blob/2342a85c5bd4a1cf8739b7b09eb2f667f735bd08/util.js#L4
-function hash (data, enc) {
+export function hash (data, enc) {
     data = (typeof data === 'string' && enc == null) ?
         Buffer.from(data, "binary") :
         Buffer.from(data, enc);
     return sodium.crypto_hash_sha256(data).toString("base64") + ".sha256"
 }
 
-function isInteger (n) {
+export function isInteger (n) {
     return ~~n === n
 }
 
-function isFeedId (data) {
+export function isFeedId (data) {
     return isString(data) // && feedIdRegex.test(data)
 }
 
-function isString (s) {
+export function isString (s) {
     return s && 'string' === typeof s
 }
 
-function isEncrypted (str) {
+export function isEncrypted (str) {
     //NOTE: does not match end of string,
     //so future box version are accepted.
     //XXX check that base64 is canonical!
@@ -76,11 +79,11 @@ function isEncrypted (str) {
     return isString(str) && isEncryptedRx.test(str)
 }
 
-function encode (obj) {
+export function encode (obj) {
     return stringify(obj, null, 2)
 }
 
-function isValidOrder (msg, signed) {
+export function isValidOrder (msg, signed) {
     var keys = Object.keys(msg)
 
     if (signed && keys.length !== 7) return false
@@ -106,11 +109,11 @@ function isValidOrder (msg, signed) {
     return true
 }
 
-function isSupportedHash (msg) {
+export function isSupportedHash (msg) {
     return msg.hash === 'sha256'
 }
 
-function isInvalidContent  (content) {
+export function isInvalidContent  (content) {
     if (!isEncrypted(content)) {
         var type = content.type
         if (!(isString(type) && type.length <= 52 && type.length >= 3)) {
@@ -121,7 +124,7 @@ function isInvalidContent  (content) {
     return false
 }
 
-function isInvalidShape (msg) {
+export function isInvalidShape (msg) {
     if (
         !isObject(msg) ||
         !isInteger(msg.sequence) ||
@@ -281,17 +284,17 @@ function parseMagicBytes (prefixedKey) {
 }
 
 
-module.exports = {
-    clone,
-    isObject,
-    getId,
-    hash,
-    isInvalidShape,
-    isString,
-    encodeHeader,
-    makeUrlUnsafe,
-    // verifySignedData,
-    decode,
-    publicKeyToDid,
-    didToPublicKey
-}
+// module.exports = {
+//     clone,
+//     isObject,
+//     getId,
+//     hash,
+//     isInvalidShape,
+//     isString,
+//     encodeHeader,
+//     makeUrlUnsafe,
+//     // verifySignedData,
+//     decode,
+//     publicKeyToDid,
+//     didToPublicKey
+// }

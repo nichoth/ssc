@@ -1,6 +1,9 @@
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
 var sodium = require("chloride")
 
-module.exports = {
+export default {
+// module.exports = {
     curves: ["ed25519"],
 
     generate: function (seed) {
