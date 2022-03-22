@@ -52,6 +52,7 @@ test('verify an invalid message', async t => {
     const pubKey = ssc.didToPublicKey(msgDid).publicKey
     var msgIsOk = await ssc.verifyObj(pubKey, invalidMsg)
     t.equal(msgIsOk, false, 'should return false for an invalid message')
+    t.end()
 })
 
 var msg2
@@ -62,6 +63,7 @@ test('create a second message', async t => {
     msg2 = await ssc.createMsg(ks, msg, content2)
     t.equal(msg2.previous, ssc.getId(msg), 
         'should create the correct previous message hash')
+    t.end()
 })
 
 // check that the message contains the hash of prevMsg, and also make sure
