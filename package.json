@@ -30,7 +30,6 @@
   },
   "homepage": "https://github.com/nichoth/ssc#readme",
   "dependencies": {
-    "brittle": "^2.2.6",
     "chloride": "^2.3.0",
     "is-canonical-base64": "^1.1.1",
     "json-stable-stringify": "^1.0.1",

@@ -3,7 +3,6 @@ const require = createRequire(import.meta.url);
 
 import fs from 'fs'
 import ssc from '../index.js'
-// import test from 'brittle'
 const test = require('tape')
 const keys = require('./keys.json')
 
@@ -11,8 +10,6 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
-// var keys = ssc.generate()
 
 test('create a list and write it to file', t => {
     var arr = ['one', 'two', 'three']
