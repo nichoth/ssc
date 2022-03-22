@@ -12,9 +12,9 @@
     "build-example": "browserify -p esmify example/index.js > example/bundle.js",
     "postversion": "git push && git push --tags && npm publish",
     "test": "npm run test-node && npm run test-web",
-    "test-node": "tape test/index.js | tap-spec",
-    "test-web": "npm run write-test-msgs && browserify --debug -p esmify test/web.js -t [ envify --NODE_ENV browser ] | tape-run | tap-spec",
-    "write-test-msgs": "node test/write-node.js",
+    "test-node": "tape test/index.js | tap-arc",
+    "test-web": "browserify --debug -p esmify test/web.js -t [ envify --NODE_ENV browser ] | tape-run | tap-arc",
+    "//write-test-msgs": "node test/write-node.js",
     "start": "npm run build-example && npm run serve",
     "serve": "budo example/index.js:bundle.js --dir=example/ --live --pushstate --open -- -p esmify -dv"
   },
@@ -47,9 +47,9 @@
     "budo": "^11.6.4",
     "envify": "^4.1.0",
     "esmify": "^2.1.1",
-    "tap-spec": "^5.0.0",
+    "tap-arc": "^0.1.2",
     "tape": "^5.0.1",
-    "tape-run": "^9.0.0",
+    "tape-run": "github:nichoth/tape-run",
     "ucans": "^0.8.0"
   }
 }

@@ -4,6 +4,31 @@ import ssc from '../web'
 // we use this just for tests. is not necessary for normal use
 import { ECCKeyStore } from 'keystore-idb/lib/ecc/keystore'
 
+const Keys = require('./keys.json')
+// const testMsgs = require('./test-msgs.json')
+
+test('verify the messages created in node', t => {
+    const pubKey = ssc.idToPublicKey(Keys.id)
+
+    const testMsgs = getTestMsgs()
+
+    ssc.isValidMsg(testMsgs[0], null, pubKey)
+        .then(res => {
+            console.log('baaaaaaa', res)
+            t.end()
+        })
+
+    // console.log('baaaaaa', ssc.isValidMsg(testMsgs[0], null, pubKey))
+
+    // var isValidList = await testMsgs.reduce(async function (isValid, msg, i) {
+    //     var prev = testMsgs[i - 1] || null
+    //     return isValid && await ssc.isValidMsg(msg, prev, pubKey)
+    // }, true)
+
+    // t.equal(isValidList, true, 'should be a valid list')
+    // t.end()
+})
+
 var ks
 test('create keys', async t => {
     ks = await ssc.createKeys(ssc.keyTypes.ECC)
@@ -55,16 +80,26 @@ test('verify an invalid message', async t => {
     t.end()
 })
 
+
+// TODO -- should create a msg with the `.sig.ed25519` suffix
 var msg2
 test('create a second message', async t => {
     t.plan(1)
     var content2 = { type: 'test2', text: 'ok' }
     // we pass in the original msg here
     msg2 = await ssc.createMsg(ks, msg, content2)
+
+    const testMsgs = getTestMsgs()
+
+    console.log('**test msg 2**', testMsgs[1])
+
+    console.log('**msg 2**', msg2)
+
     t.equal(msg2.previous, ssc.getId(msg), 
         'should create the correct previous message hash')
     t.end()
 })
+
 
 // check that the message contains the hash of prevMsg, and also make sure
 // the signature is valid.
@@ -200,4 +235,44 @@ test('is the ucan valid?', t => {
         })
 })
 
-// should get the root ucan, then check the permissions of the root
+// created by the node API, and copy and pasted here
+function getTestMsgs () {
+    return [
+        {
+            "previous": null,
+            "sequence": 1,
+            "author": "@bjttMrwqDSjnsa4kcZtXZKddvBOAxEoAJKX2M1e4AO0=.ed25519",
+            "timestamp": 1647984352651,
+            "hash": "sha256",
+            "content": {
+            "type": "test",
+            "text": "one"
+            },
+            "signature": "rDt010Cmi7muyLXRG0a88BgSPw7hi2KYCrklATnz9D+Wh95SMRsf8QhOw51U6ZzRpFaeYgyhxUzzNaoNwrOrAQ==.sig.ed25519"
+        },
+        {
+            "previous": "%RNdKWzqGV/2QbPAlNJfDS2//2JOAGQRwazjyab4VjYA=.sha256",
+            "sequence": 2,
+            "author": "@bjttMrwqDSjnsa4kcZtXZKddvBOAxEoAJKX2M1e4AO0=.ed25519",
+            "timestamp": 1647984352652,
+            "hash": "sha256",
+            "content": {
+            "type": "test",
+            "text": "two"
+            },
+            "signature": "Sts8iU4x+gIpjTwYtwexn2kSiU3iWvUdSEKd/i9CxY9S73u5MCZJgdBlRBQ7qOMRCV+yzAeIbsLIet8TWTGIDA==.sig.ed25519"
+        },
+        {
+            "previous": "%ly+G83O9eXQ/s0CClY6mHdwV6wdJ+ZDK0kd+HJ8d/x8=.sha256",
+            "sequence": 3,
+            "author": "@bjttMrwqDSjnsa4kcZtXZKddvBOAxEoAJKX2M1e4AO0=.ed25519",
+            "timestamp": 1647984352652.001,
+            "hash": "sha256",
+            "content": {
+            "type": "test",
+            "text": "three"
+            },
+            "signature": "0ALOLM3GubczxPFv43Rs7m9qmy/G5JrFVYviUtsM3Df/wRq4MfWsBsjNN/AiJ9dpi3BmFrtFOMtZNky+kvNLDA==.sig.ed25519"
+        }
+    ]
+}
