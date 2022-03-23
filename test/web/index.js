@@ -1,10 +1,10 @@
 import test from 'tape'
 import * as ucan from 'ucans'
-import ssc from '../web'
+import ssc from '../../web/index.js'
 // we use this just for tests. is not necessary for normal use
 import { ECCKeyStore } from 'keystore-idb/lib/ecc/keystore'
 
-const Keys = require('./keys.json')
+const Keys = require('../keys.json')
 // const testMsgs = require('./test-msgs.json')
 
 const testMsgs = getTestMsgs()

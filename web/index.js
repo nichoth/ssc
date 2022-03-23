@@ -98,7 +98,6 @@ function isValidMsg (msg, prevMsg, pubKey) {
         .then(ver => {
             return ver && isPrevMsgOk(prevMsg, msg)
         })
-    // return (await verifyObj(pubKey, msg) && isPrevMsgOk(prevMsg, msg))
 }
 
 function getAuthor (msg) {

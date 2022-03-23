@@ -18,7 +18,7 @@ import { webcrypto } from 'one-webcrypto'
 import { ECC_WRITE_ALG, DEFAULT_HASH_ALG,
     DEFAULT_CHAR_SIZE } from './CONSTANTS.js'
 import * as utils from 'keystore-idb/lib/utils.js'
-import { getPublicKey } from 'keystore-idb/lib/ecc/operations.js'
+// import { getPublicKey } from 'keystore-idb/lib/ecc/operations.js'
 
 export default {
     sign,

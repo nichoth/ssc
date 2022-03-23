@@ -15,12 +15,10 @@ test('create a message', function (t) {
             ssc.createMsg(keys, null, content)
                 .then(_msg => {
                     msg = _msg
-                    t.equal(typeof msg.author, 'string',
-                        'should set msg.author')
                     t.equal(msg.author[0], '@',
-                        'should have the correct ID prefix')
+                        'should have the correct aughor ID prefix')
                     t.equal(msg.author.split('.')[1], 'ed25519', 
-                        'should have the correct ID suffix')
+                        'should have the correct author ID suffix')
                     t.equal(msg.content.text, 'woooo',
                         'should have the message text')
                     t.equal(msg.previous, null,
