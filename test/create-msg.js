@@ -10,7 +10,12 @@ test('create a message', function (t) {
         .then(keys => {
             ssc.createMsg(keys, null, content)
                 .then(msg => {
-                    console.log('*msg*', msg)
+                    t.equal(typeof msg.author, 'string',
+                        'should set msg.author')
+                    t.equal(msg.author[0], '@',
+                        'should format the ID correctly')
+                    t.equal(msg.author.split('.')[1], 'ed25519', 
+                        'should format the ID correctly')
                     t.end()
                 })
         })
