@@ -1,5 +1,6 @@
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
+// import { toString } from 'uint8arrays/to-string'
 
 var sodium = require("chloride")
 var hmac = sodium.crypto_auth
@@ -17,6 +18,7 @@ import { webcrypto } from 'one-webcrypto'
 import { ECC_WRITE_ALG, DEFAULT_HASH_ALG,
     DEFAULT_CHAR_SIZE } from './CONSTANTS.js'
 import * as utils from 'keystore-idb/lib/utils.js'
+import { getPublicKey } from 'keystore-idb/lib/ecc/operations.js'
 
 export default {
     sign,
@@ -47,13 +49,24 @@ export default {
 function createKeys () {
     const uses = ['sign', 'verify']
 
-    // console.log('onsts', CONSTANTS)
-
     return webcrypto.subtle.generateKey({
-        // name: CONSTANTS.ECC_WRITE_ALG,
         name:  ECC_WRITE_ALG,
         namedCurve: 'P-256'
     }, false, uses)
+        .then(key => {
+            return {
+                id: '',
+                keys: key
+            }
+        })
+
+    // return {
+    //     id: '',
+    //     keys: webcrypto.subtle.generateKey({
+    //         name:  ECC_WRITE_ALG,
+    //         namedCurve: 'P-256'
+    //     }, false, uses)
+    // }
 }
 
 
@@ -86,21 +99,25 @@ var u = {
     }
 }
 
+
+
 // just creates a msg, doesn't check that the `msg.previous` key is valid
-function createMsg (keys, prevMsg, content) {
-    // state here is { id, sequence }
-    // exports.create = function (state, keys, hmac_key, content, timestamp) {
-
-
+async function createMsg (keys, prevMsg, content) {
     if (!isObject(content) && !isEncrypted(content)) {
         throw new Error('invalid message content, ' +
             'must be object or encrypted string')
     }
 
+    // console.log('arguments', arguments)
+
+    // const pubKey = await publicKeyToId(keys.keys)
+    // console.log('pub key', pubKey)
+    const id = await publicKeyToId(keys.keys)
+
     var msg = {
         previous: prevMsg ? getId(prevMsg) : null,
         sequence: prevMsg ? prevMsg.sequence + 1 : 1,
-        author: keys.id,
+        author: id,
         timestamp: +timestamp(),
         hash: 'sha256',
         content: content
@@ -108,8 +125,23 @@ function createMsg (keys, prevMsg, content) {
 
     var err = isInvalidShape(msg)
     if (err) throw err
-    return signObj(keys, null, msg)
+    return signObj(keys.keys, null, msg)
 }
+
+const KEY_TYPE = 'ed25519'
+
+async function publicKeyToId (keypair) {
+    // const jwk = await webcrypto.subtle.exportKey('jwk', keypair.publicKey)
+    const raw = await webcrypto.subtle.exportKey('raw', keypair.publicKey)
+    // console.log('jwk', jwk)
+    // console.log('raw', raw)
+    // console.log('to strinnnnnnnng', toString(raw))
+    const str = utils.arrBufToBase64(raw)
+    // console.log('*str*', str)
+    return '@' + str + '.' + KEY_TYPE
+    // return str
+}
+
 
 function verifyObj (keys, hmac_key, obj) {
     if (!obj) (obj = hmac_key), (hmac_key = null);
@@ -201,15 +233,16 @@ async function sign (keys, msg) {
     // )
 }
 
-function signObj (keys, hmac_key, obj) {
+async function signObj (keys, hmac_key, obj) {
     if (!obj) {
         obj = hmac_key
         hmac_key = null
     }
     var _obj = clone(obj)
-    var b = Buffer.from(stringify(_obj, null, 2))
-    if (hmac_key) b = hmac(b, u.toBuffer(hmac_key))
-    _obj.signature = sign(keys, b)
+    // var b = Buffer.from(stringify(_obj, null, 2))
+    const msgStr = stringify(_obj, null, 2)
+    // if (hmac_key) b = hmac(b, u.toBuffer(hmac_key))
+    _obj.signature = await sign(keys, msgStr)
     return _obj
 }
 
