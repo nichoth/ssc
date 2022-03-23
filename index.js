@@ -138,7 +138,6 @@ function verifyObj (keys, hmac_key, obj) {
     delete obj.signature;
     // var b = Buffer.from(stringify(obj, null, 2));
     // if (hmac_key) b = hmac(b, u.toBuffer(hmac_key));
-    console.log('obj', obj)
     return verify(keys, sig, stringify(obj))
     // return verify(keys, sig, b);
 }
@@ -166,8 +165,6 @@ function verify (keys, sig, msg) {
     //     u.toBuffer(sig),
     //     Buffer.isBuffer(msg) ? msg : Buffer.from(msg)
     // )
-
-    console.log('aaaaaaaa', msg)
 
     return webcrypto.subtle.verify(
         {
