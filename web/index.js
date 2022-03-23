@@ -6,6 +6,7 @@ var stringify = require('json-stable-stringify')
 import { clone, isObject, isInvalidShape, getId,
     publicKeyToDid, didToPublicKey } from './util.js'
 
+
 let keys = null
 
 const KEY_TYPE = 'ed25519'
@@ -46,22 +47,21 @@ async function createMsg (keyStore, prevMsg, content) {
 
     var err = isInvalidShape(msg)
     if (err) throw err
-    var ob = await signObj(keys, msg)
-    return ob
+    var obj = await signObj(keys, msg)
+    return obj
 }
 
 async function signObj (keys, obj) {
     var _obj = clone(obj)
     var b = Buffer.from(stringify(_obj, null, 2))
-    _obj.signature = await sign(keys, b)
+    _obj.signature = (await sign(keys, b) + '.sig.ed25519')
     return _obj
 }
 
-// TODO verify with just a public key
-// async function verifyObj (keys, _obj) {
 async function verifyObj (pubKey, _obj) {
     var obj = clone(_obj);
     var sig = obj.signature;
+    sig = sig.replace('.sig.ed25519', '')
     delete obj.signature;
     const msgArr = fromString(stringify(obj, null, 2))
     return _verify(pubKey, sig, msgArr);
@@ -76,7 +76,16 @@ async function _verify (pubKey, sig, msg) {
             'Did you mean verifyObj(public, signed_obj)?')
     }
 
+    // default_ecc_curve = 'p-256'
     return verify(msg, sig, pubKey)
+        .then(res => {
+            return res
+        })
+        .catch(err => {
+            console.log('errrrrrrrrrrr', err)
+            console.log('code', err.code)
+            console.log('*msg*', err.message)
+        })
 }
 
 function isPrevMsgOk (prevMsg, msg) {
@@ -84,8 +93,11 @@ function isPrevMsgOk (prevMsg, msg) {
     return (msg.previous === getId(prevMsg))
 }
 
-async function isValidMsg (msg, prevMsg, pubKey) {
-    return (await verifyObj(pubKey, msg) && isPrevMsgOk(prevMsg, msg))
+function isValidMsg (msg, prevMsg, pubKey) {
+    return verifyObj(pubKey, msg)
+        .then(ver => {
+            return ver && isPrevMsgOk(prevMsg, msg)
+        })
 }
 
 function getAuthor (msg) {
@@ -112,6 +124,25 @@ function idToPublicKey (id) {
 }
 
 module.exports = {
+    get,
+    getId,
+    createKeys,
+    sign,
+    createMsg,
+    signObj,
+    verify: _verify,
+    verifyObj,
+    isValidMsg,
+    getAuthor,
+    getDidFromKeys,
+    publicKeyToDid,
+    didToPublicKey,
+    didToId,
+    idToPublicKey,
+    keyTypes: KEY_TYPES
+}
+
+export default {
     get,
     getId,
     createKeys,

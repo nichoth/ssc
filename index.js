@@ -1,10 +1,11 @@
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
+// import { toString } from 'uint8arrays/to-string'
 
 var sodium = require("chloride")
 var hmac = sodium.crypto_auth
 // var curve = require('./sodium')
-import curve from './sodium.js'
+// import curve from './sodium.js'
 var timestamp = require('monotonic-timestamp')
 var ssbKeys = require('ssb-keys')
 var stringify = require('json-stable-stringify')
@@ -12,6 +13,12 @@ var stringify = require('json-stable-stringify')
 //     isString } = require('./util')
 import { clone, isObject, getId, hash, isInvalidShape,
     isString } from './util.js'
+import { webcrypto } from 'one-webcrypto'
+// const CONSTANTS = require('./CONSTANTS')
+import { ECC_WRITE_ALG, DEFAULT_HASH_ALG,
+    DEFAULT_CHAR_SIZE } from './CONSTANTS.js'
+import * as utils from 'keystore-idb/lib/utils.js'
+// import { getPublicKey } from 'keystore-idb/lib/ecc/operations.js'
 
 export default {
     sign,
@@ -23,7 +30,8 @@ export default {
     isValidMsg,
     createKeys,
     generate: ssbKeys.generate,
-    hash
+    hash,
+    publicKeyToId
 }
 
 // module.exports = {
@@ -40,7 +48,18 @@ export default {
 // }
 
 function createKeys () {
-    return ssbKeys.generate()
+    const uses = ['sign', 'verify']
+
+    return webcrypto.subtle.generateKey({
+        name:  ECC_WRITE_ALG,
+        namedCurve: 'P-256'
+    }, false, uses)
+        .then(key => {
+            return publicKeyToId(key)
+                .then(id => {
+                    return { id, keys: key }
+                })
+        })
 }
 
 
@@ -73,21 +92,25 @@ var u = {
     }
 }
 
+
+
 // just creates a msg, doesn't check that the `msg.previous` key is valid
-function createMsg (keys, prevMsg, content) {
-    // state here is { id, sequence }
-    // exports.create = function (state, keys, hmac_key, content, timestamp) {
-
-
+async function createMsg (keys, prevMsg, content) {
     if (!isObject(content) && !isEncrypted(content)) {
         throw new Error('invalid message content, ' +
             'must be object or encrypted string')
     }
 
+    // console.log('arguments', arguments)
+
+    // const pubKey = await publicKeyToId(keys.keys)
+    // console.log('pub key', pubKey)
+    const id = await publicKeyToId(keys)
+
     var msg = {
         previous: prevMsg ? getId(prevMsg) : null,
         sequence: prevMsg ? prevMsg.sequence + 1 : 1,
-        author: keys.id,
+        author: id,
         timestamp: +timestamp(),
         hash: 'sha256',
         content: content
@@ -98,14 +121,25 @@ function createMsg (keys, prevMsg, content) {
     return signObj(keys, null, msg)
 }
 
+const KEY_TYPE = 'ed25519'
+
+async function publicKeyToId (keypair) {
+    // const jwk = await webcrypto.subtle.exportKey('jwk', keypair.publicKey)
+    const raw = await webcrypto.subtle.exportKey('raw', keypair.publicKey)
+    const str = utils.arrBufToBase64(raw)
+    return '@' + str + '.' + KEY_TYPE
+}
+
+
 function verifyObj (keys, hmac_key, obj) {
     if (!obj) (obj = hmac_key), (hmac_key = null);
     obj = clone(obj);
     var sig = obj.signature;
     delete obj.signature;
-    var b = Buffer.from(stringify(obj, null, 2));
-    if (hmac_key) b = hmac(b, u.toBuffer(hmac_key));
-    return verify(keys, sig, b);
+    // var b = Buffer.from(stringify(obj, null, 2));
+    // if (hmac_key) b = hmac(b, u.toBuffer(hmac_key));
+    return verify(keys, sig, stringify(obj))
+    // return verify(keys, sig, b);
 }
 
 function isValidMsg (msg, prevMsg, keys) {
@@ -126,31 +160,92 @@ function verify (keys, sig, msg) {
             'did you mean verifyObj(public, signed_obj)')
     }
 
-    return curve.verify(
-        u.toBuffer(keys.public || keys),
-        u.toBuffer(sig),
-        Buffer.isBuffer(msg) ? msg : Buffer.from(msg)
+    // return curve.verify(
+    //     u.toBuffer(keys.public || keys),
+    //     u.toBuffer(sig),
+    //     Buffer.isBuffer(msg) ? msg : Buffer.from(msg)
+    // )
+
+    return webcrypto.subtle.verify(
+        {
+            name: ECC_WRITE_ALG,
+            hash: { name: DEFAULT_HASH_ALG }
+        },
+        keys.publicKey,
+        utils.normalizeBase64ToBuf(sig),
+        utils.normalizeUnicodeToBuf(msg, DEFAULT_CHAR_SIZE)
     )
+
+
+    // function verify(
+    //     msg: Msg,
+    //     sig: Msg,
+    //     publicKey: string | PublicKey,
+    //     charSize: CharSize = DEFAULT_CHAR_SIZE,
+    //     curve: EccCurve = DEFAULT_ECC_CURVE,
+    //     hashAlg: HashAlg = DEFAULT_HASH_ALG
+    //   ): Promise<boolean> {
+    //     return webcrypto.subtle.verify(
+    //       { name: ECC_WRITE_ALG, hash: { name: hashAlg }},
+    //       typeof publicKey === "string"
+    //         ? await keys.importPublicKey(publicKey, curve, KeyUse.Write)
+    //         : publicKey,
+    //       normalizeBase64ToBuf(sig),
+    //       normalizeUnicodeToBuf(msg, charSize)
+    //     )
+    // }
 }
 
-function sign (keys, msg) {
-    if (isString(msg)) msg = Buffer.from(msg);
-    if (!Buffer.isBuffer(msg)) throw new Error("msg should be buffer");
 
-    return (curve
-        .sign(u.toBuffer(keys.private || keys), msg)
-        .toString("base64") + ".sig." + 'ed25519'
+async function sign (keys, msg) {
+    // if (isString(msg)) msg = Buffer.from(msg);
+    // if (!Buffer.isBuffer(msg)) throw new Error("msg should be buffer");
+
+    const sig = await webcrypto.subtle.sign(
+        {
+            name: ECC_WRITE_ALG,
+            hash: { name: DEFAULT_HASH_ALG }
+        },
+        keys.privateKey,
+        utils.normalizeUnicodeToBuf(msg, DEFAULT_CHAR_SIZE)
     )
+
+    // var str = utils.arrBufToStr(sig)
+    // console.log('*str*', str)
+    // return str
+
+    return utils.arrBufToBase64(sig)
+
+    // return (curve
+    //     .sign(u.toBuffer(keys.private || keys), msg)
+    //     .toString("base64") + ".sig." + 'ed25519'
+    // )
 }
 
-function signObj (keys, hmac_key, obj) {
+async function signObj (keys, hmac_key, obj) {
     if (!obj) {
         obj = hmac_key
         hmac_key = null
     }
     var _obj = clone(obj)
-    var b = Buffer.from(stringify(_obj, null, 2))
-    if (hmac_key) b = hmac(b, u.toBuffer(hmac_key))
-    _obj.signature = sign(keys, b)
+    // var b = Buffer.from(stringify(_obj, null, 2))
+    const msgStr = stringify(_obj, null, 2)
+    // if (hmac_key) b = hmac(b, u.toBuffer(hmac_key))
+    _obj.signature = await sign(keys, msgStr)
     return _obj
 }
+
+// function normalizeUnicodeToBuf (msg, charSize) {
+//     switch (charSize) {
+//       case 8: return normalizeUtf8ToBuf(msg)
+//       default: return normalizeUtf16ToBuf(msg)
+//     }
+// }
+
+// function normalizeUtf8ToBuf (msg) {
+//     return normalizeToBuf(msg, (str) => strToArrBuf(str, CharSize.B8))
+// }
+  
+// function normalizeUtf16ToBuf (msg) {
+//     return normalizeToBuf(msg, (str) => strToArrBuf(str, CharSize.B16))
+// }
