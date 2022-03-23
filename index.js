@@ -112,7 +112,7 @@ async function createMsg (keys, prevMsg, content) {
 
     // const pubKey = await publicKeyToId(keys.keys)
     // console.log('pub key', pubKey)
-    const id = await publicKeyToId(keys.keys)
+    const id = await publicKeyToId(keys)
 
     var msg = {
         previous: prevMsg ? getId(prevMsg) : null,
@@ -125,7 +125,7 @@ async function createMsg (keys, prevMsg, content) {
 
     var err = isInvalidShape(msg)
     if (err) throw err
-    return signObj(keys.keys, null, msg)
+    return signObj(keys, null, msg)
 }
 
 const KEY_TYPE = 'ed25519'
@@ -148,9 +148,10 @@ function verifyObj (keys, hmac_key, obj) {
     obj = clone(obj);
     var sig = obj.signature;
     delete obj.signature;
-    var b = Buffer.from(stringify(obj, null, 2));
-    if (hmac_key) b = hmac(b, u.toBuffer(hmac_key));
-    return verify(keys, sig, b);
+    // var b = Buffer.from(stringify(obj, null, 2));
+    // if (hmac_key) b = hmac(b, u.toBuffer(hmac_key));
+    return verify(keys, sig, stringify(obj))
+    // return verify(keys, sig, b);
 }
 
 function isValidMsg (msg, prevMsg, keys) {

@@ -5,7 +5,6 @@ import ssc from '../../web/index.js'
 import { ECCKeyStore } from 'keystore-idb/lib/ecc/keystore'
 
 const Keys = require('../keys.json')
-// const testMsgs = require('./test-msgs.json')
 
 const testMsgs = getTestMsgs()
 
