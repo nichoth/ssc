@@ -139,11 +139,40 @@ function verify (keys, sig, msg) {
             'did you mean verifyObj(public, signed_obj)')
     }
 
-    return curve.verify(
-        u.toBuffer(keys.public || keys),
-        u.toBuffer(sig),
-        Buffer.isBuffer(msg) ? msg : Buffer.from(msg)
+    // return curve.verify(
+    //     u.toBuffer(keys.public || keys),
+    //     u.toBuffer(sig),
+    //     Buffer.isBuffer(msg) ? msg : Buffer.from(msg)
+    // )
+
+    return webcrypto.subtle.verify(
+        {
+            name: ECC_WRITE_ALG,
+            hash: { name: DEFAULT_HASH_ALG }
+        },
+        keys.publicKey,
+        utils.normalizeBase64ToBuf(sig),
+        utils.normalizeUnicodeToBuf(msg, DEFAULT_CHAR_SIZE)
     )
+
+
+    // function verify(
+    //     msg: Msg,
+    //     sig: Msg,
+    //     publicKey: string | PublicKey,
+    //     charSize: CharSize = DEFAULT_CHAR_SIZE,
+    //     curve: EccCurve = DEFAULT_ECC_CURVE,
+    //     hashAlg: HashAlg = DEFAULT_HASH_ALG
+    //   ): Promise<boolean> {
+    //     return webcrypto.subtle.verify(
+    //       { name: ECC_WRITE_ALG, hash: { name: hashAlg }},
+    //       typeof publicKey === "string"
+    //         ? await keys.importPublicKey(publicKey, curve, KeyUse.Write)
+    //         : publicKey,
+    //       normalizeBase64ToBuf(sig),
+    //       normalizeUnicodeToBuf(msg, charSize)
+    //     )
+    // }
 }
 
 
