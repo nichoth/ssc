@@ -6,12 +6,11 @@ import ssc from '../index.js'
 var alice
 test('init', t => {
     ssc.createKeys()
-        .then(_keys => {
-            alice = _keys
+        .then(_alice => {
+            alice = _alice
             t.pass('create keys')
             t.end()
         })
-
 })
 
 test('create a merkle list', async function (t) {
