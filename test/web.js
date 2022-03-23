@@ -80,8 +80,6 @@ test('verify an invalid message', async t => {
     t.end()
 })
 
-
-// TODO -- should create a msg with the `.sig.ed25519` suffix
 var msg2
 test('create a second message', async t => {
     t.plan(1)
@@ -114,8 +112,6 @@ test('validate the second message', async t => {
     console.log('invalidssss-----------------')
     // console.log(testMsgs[0])
     console.log(testMsgs[1])
-
-
 
     const _pubKey = ssc.idToPublicKey(Keys.id)
     const aaa = await ssc.isValidMsg(testMsgs[1], testMsgs[0], _pubKey)
