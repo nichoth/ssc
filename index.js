@@ -12,6 +12,11 @@ var stringify = require('json-stable-stringify')
 //     isString } = require('./util')
 import { clone, isObject, getId, hash, isInvalidShape,
     isString } from './util.js'
+import { webcrypto } from 'one-webcrypto'
+// const CONSTANTS = require('./CONSTANTS')
+import { ECC_WRITE_ALG, DEFAULT_HASH_ALG,
+    DEFAULT_CHAR_SIZE } from './CONSTANTS.js'
+import * as utils from 'keystore-idb/lib/utils.js'
 
 export default {
     sign,
@@ -40,7 +45,15 @@ export default {
 // }
 
 function createKeys () {
-    return ssbKeys.generate()
+    const uses = ['sign', 'verify']
+
+    // console.log('onsts', CONSTANTS)
+
+    return webcrypto.subtle.generateKey({
+        // name: CONSTANTS.ECC_WRITE_ALG,
+        name:  ECC_WRITE_ALG,
+        namedCurve: 'P-256'
+    }, false, uses)
 }
 
 
@@ -133,14 +146,30 @@ function verify (keys, sig, msg) {
     )
 }
 
-function sign (keys, msg) {
-    if (isString(msg)) msg = Buffer.from(msg);
-    if (!Buffer.isBuffer(msg)) throw new Error("msg should be buffer");
 
-    return (curve
-        .sign(u.toBuffer(keys.private || keys), msg)
-        .toString("base64") + ".sig." + 'ed25519'
+async function sign (keys, msg) {
+    // if (isString(msg)) msg = Buffer.from(msg);
+    // if (!Buffer.isBuffer(msg)) throw new Error("msg should be buffer");
+
+    const sig = await webcrypto.subtle.sign(
+        {
+            name: ECC_WRITE_ALG,
+            hash: { name: DEFAULT_HASH_ALG }
+        },
+        keys.privateKey,
+        utils.normalizeUnicodeToBuf(msg, DEFAULT_CHAR_SIZE)
     )
+
+    // var str = utils.arrBufToStr(sig)
+    // console.log('*str*', str)
+    // return str
+
+    return utils.arrBufToBase64(sig)
+
+    // return (curve
+    //     .sign(u.toBuffer(keys.private || keys), msg)
+    //     .toString("base64") + ".sig." + 'ed25519'
+    // )
 }
 
 function signObj (keys, hmac_key, obj) {
@@ -154,3 +183,18 @@ function signObj (keys, hmac_key, obj) {
     _obj.signature = sign(keys, b)
     return _obj
 }
+
+// function normalizeUnicodeToBuf (msg, charSize) {
+//     switch (charSize) {
+//       case 8: return normalizeUtf8ToBuf(msg)
+//       default: return normalizeUtf16ToBuf(msg)
+//     }
+// }
+
+// function normalizeUtf8ToBuf (msg) {
+//     return normalizeToBuf(msg, (str) => strToArrBuf(str, CharSize.B8))
+// }
+  
+// function normalizeUtf16ToBuf (msg) {
+//     return normalizeToBuf(msg, (str) => strToArrBuf(str, CharSize.B16))
+// }

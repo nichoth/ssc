@@ -6,6 +6,7 @@ var stringify = require('json-stable-stringify')
 import { clone, isObject, isInvalidShape, getId,
     publicKeyToDid, didToPublicKey } from './util.js'
 
+
 let keys = null
 
 const KEY_TYPE = 'ed25519'
