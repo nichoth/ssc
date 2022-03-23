@@ -5,7 +5,7 @@ const require = createRequire(import.meta.url);
 var sodium = require("chloride")
 var hmac = sodium.crypto_auth
 // var curve = require('./sodium')
-import curve from './sodium.js'
+// import curve from './sodium.js'
 var timestamp = require('monotonic-timestamp')
 var ssbKeys = require('ssb-keys')
 var stringify = require('json-stable-stringify')
@@ -30,7 +30,8 @@ export default {
     isValidMsg,
     createKeys,
     generate: ssbKeys.generate,
-    hash
+    hash,
+    publicKeyToId
 }
 
 // module.exports = {
@@ -54,19 +55,11 @@ function createKeys () {
         namedCurve: 'P-256'
     }, false, uses)
         .then(key => {
-            return {
-                id: '',
-                keys: key
-            }
+            return publicKeyToId(key)
+                .then(id => {
+                    return { id, keys: key }
+                })
         })
-
-    // return {
-    //     id: '',
-    //     keys: webcrypto.subtle.generateKey({
-    //         name:  ECC_WRITE_ALG,
-    //         namedCurve: 'P-256'
-    //     }, false, uses)
-    // }
 }
 
 
@@ -133,13 +126,8 @@ const KEY_TYPE = 'ed25519'
 async function publicKeyToId (keypair) {
     // const jwk = await webcrypto.subtle.exportKey('jwk', keypair.publicKey)
     const raw = await webcrypto.subtle.exportKey('raw', keypair.publicKey)
-    // console.log('jwk', jwk)
-    // console.log('raw', raw)
-    // console.log('to strinnnnnnnng', toString(raw))
     const str = utils.arrBufToBase64(raw)
-    // console.log('*str*', str)
     return '@' + str + '.' + KEY_TYPE
-    // return str
 }
 
 
@@ -150,6 +138,7 @@ function verifyObj (keys, hmac_key, obj) {
     delete obj.signature;
     // var b = Buffer.from(stringify(obj, null, 2));
     // if (hmac_key) b = hmac(b, u.toBuffer(hmac_key));
+    console.log('obj', obj)
     return verify(keys, sig, stringify(obj))
     // return verify(keys, sig, b);
 }
@@ -177,6 +166,8 @@ function verify (keys, sig, msg) {
     //     u.toBuffer(sig),
     //     Buffer.isBuffer(msg) ? msg : Buffer.from(msg)
     // )
+
+    console.log('aaaaaaaa', msg)
 
     return webcrypto.subtle.verify(
         {
