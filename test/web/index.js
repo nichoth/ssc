@@ -4,8 +4,6 @@ import ssc from '../../web/index.js'
 // we use this just for tests. is not necessary for normal use
 import { ECCKeyStore } from 'keystore-idb/lib/ecc/keystore'
 
-// const Keys = require('../keys.json')
-
 const testMsgs = getTestMsgs()
 
 test('verify the messages created in node', t => {
@@ -13,20 +11,9 @@ test('verify the messages created in node', t => {
 
     ssc.isValidMsg(testMsgs[0], null, pubKey)
         .then(res => {
-            console.log('baaaaaaa', res)
             t.ok(res, 'should say it is a valid message')
             t.end()
         })
-
-    // console.log('baaaaaa', ssc.isValidMsg(testMsgs[0], null, pubKey))
-
-    // var isValidList = await testMsgs.reduce(async function (isValid, msg, i) {
-    //     var prev = testMsgs[i - 1] || null
-    //     return isValid && await ssc.isValidMsg(msg, prev, pubKey)
-    // }, true)
-
-    // t.equal(isValidList, true, 'should be a valid list')
-    // t.end()
 })
 
 var ks

@@ -1,4 +1,3 @@
-import { fromString } from 'uint8arrays/from-string'
 import keystore from "keystore-idb";
 import { verify } from "keystore-idb/lib/ecc/operations";
 var timestamp = require('monotonic-timestamp')
@@ -6,11 +5,7 @@ var stringify = require('json-stable-stringify')
 import { clone, isObject, isInvalidShape, getId,
     publicKeyToDid, didToPublicKey } from './util.js'
 import * as utils from 'keystore-idb/lib/utils.js'
-import { ECC_WRITE_ALG, DEFAULT_HASH_ALG,
-    DEFAULT_CHAR_SIZE } from '../CONSTANTS.js'
-import { webcrypto } from 'one-webcrypto'
-// import { ECC_WRITE_ALG, DEFAULT_HASH_ALG,
-//     DEFAULT_CHAR_SIZE } from '../CONSTANTS.js'
+import { DEFAULT_CHAR_SIZE } from '../CONSTANTS.js'
 
 let keys = null
 
