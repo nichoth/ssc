@@ -9,9 +9,14 @@ const testMsgs = getTestMsgs()
 test('verify the messages created in node', t => {
     const pubKey = ssc.idToPublicKey(testMsgs[0].author)
 
-    ssc.isValidMsg(testMsgs[0], null, pubKey)
-        .then(res => {
-            t.ok(res, 'should say it is a valid message')
+    Promise.all([
+        // (msg, prevMsg, pubKey) {
+        ssc.isValidMsg(testMsgs[0], null, pubKey),
+        ssc.isValidMsg(testMsgs[1], testMsgs[0], pubKey)
+    ])
+        .then(([validOne, validTwo]) => {
+            t.ok(validOne, 'should say message one is valid')
+            t.ok(validTwo, 'should say message two is valid')
             t.end()
         })
 })
