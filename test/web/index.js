@@ -216,7 +216,8 @@ test('is the ucan valid?', t => {
         })
 })
 
-// these were created with the current `one-webcrypto` node library
+// these were created with the current `one-webcrypto` node library,
+// and copy-pasted here
 function getTestMsgs () {
     return [
         {
