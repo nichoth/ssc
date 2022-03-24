@@ -79,6 +79,10 @@ async function _verify (pubKey, sig, msg) {
     // default_ecc_curve = 'p-256'
     return verify(msg, sig, pubKey)
         .then(res => {
+            console.log('*pub key*', pubKey)
+            console.log('*sig*', sig)
+            console.log('*msg*', msg)
+            console.log('ressssssssssss', res)
             return res
         })
         .catch(err => {
@@ -94,8 +98,10 @@ function isPrevMsgOk (prevMsg, msg) {
 }
 
 function isValidMsg (msg, prevMsg, pubKey) {
+    console.log('in is val', msg)
     return verifyObj(pubKey, msg)
         .then(ver => {
+            console.log('verrrrrrrr', ver)
             return ver && isPrevMsgOk(prevMsg, msg)
         })
 }

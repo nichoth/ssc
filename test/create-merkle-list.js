@@ -29,6 +29,9 @@ test('create a merkle list', async function (t) {
         })
     }, Promise.resolve([]))
 
+    console.log('*list*')
+    console.log(list)
+
     t.equal(list.length, 3, 'should create a merkle list')
     t.equal(list[2].content.text, 'three', 'should have the right msg content')
 
