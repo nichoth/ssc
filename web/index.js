@@ -38,11 +38,7 @@ async function createMsg (keyStore, prevMsg, content) {
             'must be object or encrypted string')
     }
 
-    // console.log('in here', content)
-
     const writeKey = await keyStore.publicWriteKey()
-
-    console.log('writer', writeKey)
 
     const msg = {
         previous: prevMsg ? getId(prevMsg) : null,
@@ -62,10 +58,7 @@ async function createMsg (keyStore, prevMsg, content) {
 
 async function signObj (keys, obj) {
     var _obj = clone(obj)
-    // console.log('signing', obj)
     var b = utils.normalizeUnicodeToBuf(stringify(obj), DEFAULT_CHAR_SIZE)
-    // console.log('signing 2', obj)
-    // var b = Buffer.from(stringify(_obj, null, 2))
     _obj.signature = (await sign(keys, b) + '.sig.ed25519')
     return _obj
 }
@@ -75,7 +68,6 @@ async function verifyObj (pubKey, _obj) {
     var sig = obj.signature;
     sig = sig.replace('.sig.ed25519', '')
     delete obj.signature;
-    console.log('sig', sig)
     // const msgArr = fromString(stringify(obj, null, 2))
     const msgStr = stringify(obj, null, 2)
     return _verify(pubKey, sig, msgStr);
@@ -90,30 +82,8 @@ async function _verify (pubKey, sig, msg) {
             'Did you mean verifyObj(public, signed_obj)?')
     }
 
-    // return webcrypto.subtle.verify(
-    //     {
-    //         name: ECC_WRITE_ALG,
-    //         hash: { name: DEFAULT_HASH_ALG }
-    //     },
-    //     pubKey,
-    //     utils.normalizeBase64ToBuf(sig),
-    //     utils.normalizeUnicodeToBuf(msg, DEFAULT_CHAR_SIZE)
-    // )
-
     // default_ecc_curve = 'p-256'
     return verify(msg, sig, pubKey)
-        .then(res => {
-            // console.log('*pub key*', pubKey)
-            // console.log('*sig*', sig)
-            // console.log('*msg*', msg)
-            // console.log('ressssssssssss', res)
-            return res
-        })
-        .catch(err => {
-            console.log('errrrrrrrrrrr', err)
-            console.log('code', err.code)
-            console.log('*msg*', err.message)
-        })
 }
 
 function isPrevMsgOk (prevMsg, msg) {
@@ -122,10 +92,8 @@ function isPrevMsgOk (prevMsg, msg) {
 }
 
 function isValidMsg (msg, prevMsg, pubKey) {
-    // console.log('in is val', msg)
     return verifyObj(pubKey, msg)
         .then(ver => {
-            console.log('verrrrrrrr', ver)
             return ver && isPrevMsgOk(prevMsg, msg)
         })
 }
