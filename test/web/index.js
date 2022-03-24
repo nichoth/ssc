@@ -143,6 +143,8 @@ test('create a merkle list', async t => {
     t.equal(list[0].author, ssc.didToId(msgDid),
         'should have the right author')
 
+    console.log('list', list)
+
     const pubKey = ssc.didToPublicKey(msgDid).publicKey
 
     var isValidList = await list.reduce(async function (isValid, msg, i) {

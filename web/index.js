@@ -9,7 +9,8 @@ import * as utils from 'keystore-idb/lib/utils.js'
 import { ECC_WRITE_ALG, DEFAULT_HASH_ALG,
     DEFAULT_CHAR_SIZE } from '../CONSTANTS.js'
 import { webcrypto } from 'one-webcrypto'
-
+// import { ECC_WRITE_ALG, DEFAULT_HASH_ALG,
+//     DEFAULT_CHAR_SIZE } from '../CONSTANTS.js'
 
 let keys = null
 
@@ -37,9 +38,13 @@ async function createMsg (keyStore, prevMsg, content) {
             'must be object or encrypted string')
     }
 
+    // console.log('in here', content)
+
     const writeKey = await keyStore.publicWriteKey()
 
-    var msg = {
+    console.log('writer', writeKey)
+
+    const msg = {
         previous: prevMsg ? getId(prevMsg) : null,
         sequence: prevMsg ? prevMsg.sequence + 1 : 1,
         author: '@' + writeKey + '.' + KEY_TYPE,
@@ -57,7 +62,10 @@ async function createMsg (keyStore, prevMsg, content) {
 
 async function signObj (keys, obj) {
     var _obj = clone(obj)
-    var b = Buffer.from(stringify(_obj, null, 2))
+    // console.log('signing', obj)
+    var b = utils.normalizeUnicodeToBuf(stringify(obj), DEFAULT_CHAR_SIZE)
+    // console.log('signing 2', obj)
+    // var b = Buffer.from(stringify(_obj, null, 2))
     _obj.signature = (await sign(keys, b) + '.sig.ed25519')
     return _obj
 }
