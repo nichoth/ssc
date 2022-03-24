@@ -5,6 +5,10 @@ var timestamp = require('monotonic-timestamp')
 var stringify = require('json-stable-stringify')
 import { clone, isObject, isInvalidShape, getId,
     publicKeyToDid, didToPublicKey } from './util.js'
+import * as utils from 'keystore-idb/lib/utils.js'
+import { ECC_WRITE_ALG, DEFAULT_HASH_ALG,
+    DEFAULT_CHAR_SIZE } from '../CONSTANTS.js'
+import { webcrypto } from 'one-webcrypto'
 
 
 let keys = null
@@ -76,13 +80,23 @@ async function _verify (pubKey, sig, msg) {
             'Did you mean verifyObj(public, signed_obj)?')
     }
 
+    // return webcrypto.subtle.verify(
+    //     {
+    //         name: ECC_WRITE_ALG,
+    //         hash: { name: DEFAULT_HASH_ALG }
+    //     },
+    //     pubKey,
+    //     utils.normalizeBase64ToBuf(sig),
+    //     utils.normalizeUnicodeToBuf(msg, DEFAULT_CHAR_SIZE)
+    // )
+
     // default_ecc_curve = 'p-256'
     return verify(msg, sig, pubKey)
         .then(res => {
-            console.log('*pub key*', pubKey)
-            console.log('*sig*', sig)
-            console.log('*msg*', msg)
-            console.log('ressssssssssss', res)
+            // console.log('*pub key*', pubKey)
+            // console.log('*sig*', sig)
+            // console.log('*msg*', msg)
+            // console.log('ressssssssssss', res)
             return res
         })
         .catch(err => {
@@ -98,7 +112,7 @@ function isPrevMsgOk (prevMsg, msg) {
 }
 
 function isValidMsg (msg, prevMsg, pubKey) {
-    console.log('in is val', msg)
+    // console.log('in is val', msg)
     return verifyObj(pubKey, msg)
         .then(ver => {
             console.log('verrrrrrrr', ver)
