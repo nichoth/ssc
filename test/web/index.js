@@ -63,7 +63,8 @@ test('create a message', async t => {
 })
 
 test('verify a message', async t => {
-    // this validates a single message, does not check the merkle-list integrity
+    // this validates a single message,
+    // does not check the merkle-list integrity
     const pubKey = ssc.didToPublicKey(msgDid).publicKey
     console.log('pub key', pubKey)
     var msgIsOk = await ssc.verifyObj(pubKey, msg)

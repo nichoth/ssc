@@ -75,8 +75,10 @@ async function verifyObj (pubKey, _obj) {
     var sig = obj.signature;
     sig = sig.replace('.sig.ed25519', '')
     delete obj.signature;
-    const msgArr = fromString(stringify(obj, null, 2))
-    return _verify(pubKey, sig, msgArr);
+    console.log('sig', sig)
+    // const msgArr = fromString(stringify(obj, null, 2))
+    const msgStr = stringify(obj, null, 2)
+    return _verify(pubKey, sig, msgStr);
 }
 
 // takes a public key, signature, and a hash
