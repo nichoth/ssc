@@ -4,8 +4,6 @@ import ssc from '../../web/index.js'
 // we use this just for tests. is not necessary for normal use
 import { ECCKeyStore } from 'keystore-idb/lib/ecc/keystore'
 
-// const Keys = require('../keys.json')
-
 const testMsgs = getTestMsgs()
 
 test('verify the messages created in node', t => {
@@ -13,20 +11,9 @@ test('verify the messages created in node', t => {
 
     ssc.isValidMsg(testMsgs[0], null, pubKey)
         .then(res => {
-            console.log('baaaaaaa', res)
             t.ok(res, 'should say it is a valid message')
             t.end()
         })
-
-    // console.log('baaaaaa', ssc.isValidMsg(testMsgs[0], null, pubKey))
-
-    // var isValidList = await testMsgs.reduce(async function (isValid, msg, i) {
-    //     var prev = testMsgs[i - 1] || null
-    //     return isValid && await ssc.isValidMsg(msg, prev, pubKey)
-    // }, true)
-
-    // t.equal(isValidList, true, 'should be a valid list')
-    // t.end()
 })
 
 var ks
@@ -63,7 +50,8 @@ test('create a message', async t => {
 })
 
 test('verify a message', async t => {
-    // this validates a single message, does not check the merkle-list integrity
+    // this validates a single message,
+    // does not check the merkle-list integrity
     const pubKey = ssc.didToPublicKey(msgDid).publicKey
     var msgIsOk = await ssc.verifyObj(pubKey, msg)
     t.equal(msgIsOk, true, 'should return true for a valid message')
@@ -87,10 +75,6 @@ test('create a second message', async t => {
     // we pass in the original msg here
     msg2 = await ssc.createMsg(ks, msg, content2)
 
-    // console.log('**test msg 2**', testMsgs[1])
-
-    // console.log('**msg 2**', msg2)
-
     t.equal(msg2.previous, ssc.getId(msg), 
         'should create the correct previous message hash')
     t.end()
@@ -102,20 +86,6 @@ test('create a second message', async t => {
 test('validate the second message', async t => {
     const pubKey = ssc.didToPublicKey(msgDid).publicKey
     const isValid = await ssc.isValidMsg(msg2, msg, pubKey)
-
-    // console.log('is val', isValid)
-
-    // console.log('valid ones-------------------')
-    // console.log(msg)
-    // console.log(msg2)
-
-    // console.log('invalidssss-----------------')
-    // console.log(testMsgs[0])
-    // console.log(testMsgs[1])
-
-    // const _pubKey = ssc.idToPublicKey(Keys.id)
-    // const aaa = await ssc.isValidMsg(testMsgs[1], testMsgs[0], _pubKey)
-    // console.log('aaaaaa', aaa)
 
     t.equal(isValid, true, 'should validate a message with a previous hash')
     t.end()
@@ -246,7 +216,8 @@ test('is the ucan valid?', t => {
         })
 })
 
-// these were created with the current `one-webcrypto` node library
+// these were created with the current `one-webcrypto` node library,
+// and copy-pasted here
 function getTestMsgs () {
     return [
         {

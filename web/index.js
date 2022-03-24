@@ -1,11 +1,11 @@
-import { fromString } from 'uint8arrays/from-string'
 import keystore from "keystore-idb";
 import { verify } from "keystore-idb/lib/ecc/operations";
 var timestamp = require('monotonic-timestamp')
 var stringify = require('json-stable-stringify')
 import { clone, isObject, isInvalidShape, getId,
     publicKeyToDid, didToPublicKey } from './util.js'
-
+import * as utils from 'keystore-idb/lib/utils.js'
+import { DEFAULT_CHAR_SIZE } from '../CONSTANTS.js'
 
 let keys = null
 
@@ -35,7 +35,7 @@ async function createMsg (keyStore, prevMsg, content) {
 
     const writeKey = await keyStore.publicWriteKey()
 
-    var msg = {
+    const msg = {
         previous: prevMsg ? getId(prevMsg) : null,
         sequence: prevMsg ? prevMsg.sequence + 1 : 1,
         author: '@' + writeKey + '.' + KEY_TYPE,
@@ -53,7 +53,7 @@ async function createMsg (keyStore, prevMsg, content) {
 
 async function signObj (keys, obj) {
     var _obj = clone(obj)
-    var b = Buffer.from(stringify(_obj, null, 2))
+    var b = utils.normalizeUnicodeToBuf(stringify(obj), DEFAULT_CHAR_SIZE)
     _obj.signature = (await sign(keys, b) + '.sig.ed25519')
     return _obj
 }
@@ -63,8 +63,9 @@ async function verifyObj (pubKey, _obj) {
     var sig = obj.signature;
     sig = sig.replace('.sig.ed25519', '')
     delete obj.signature;
-    const msgArr = fromString(stringify(obj, null, 2))
-    return _verify(pubKey, sig, msgArr);
+    // const msgArr = fromString(stringify(obj, null, 2))
+    const msgStr = stringify(obj, null, 2)
+    return _verify(pubKey, sig, msgStr);
 }
 
 // takes a public key, signature, and a hash
@@ -78,18 +79,6 @@ async function _verify (pubKey, sig, msg) {
 
     // default_ecc_curve = 'p-256'
     return verify(msg, sig, pubKey)
-        .then(res => {
-            console.log('*pub key*', pubKey)
-            console.log('*sig*', sig)
-            console.log('*msg*', msg)
-            console.log('ressssssssssss', res)
-            return res
-        })
-        .catch(err => {
-            console.log('errrrrrrrrrrr', err)
-            console.log('code', err.code)
-            console.log('*msg*', err.message)
-        })
 }
 
 function isPrevMsgOk (prevMsg, msg) {
@@ -98,10 +87,8 @@ function isPrevMsgOk (prevMsg, msg) {
 }
 
 function isValidMsg (msg, prevMsg, pubKey) {
-    console.log('in is val', msg)
     return verifyObj(pubKey, msg)
         .then(ver => {
-            console.log('verrrrrrrr', ver)
             return ver && isPrevMsgOk(prevMsg, msg)
         })
 }
