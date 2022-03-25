@@ -63,5 +63,10 @@ test('import keys', t => {
 })
 
 test('sign something with the imported keys', t => {
-    t.end()
+    ssc.sign(importedKeys, 'a test message')
+        .then(sig => {
+            t.ok(sig, 'should return a signature')
+            t.equal(typeof sig, 'string', 'should return a string as signature')
+            t.end()
+        })
 })
