@@ -23,7 +23,20 @@ export default {
     hash,
     publicKeyToId,
     importKeys,
-    exportKeys
+    exportKeys,
+    idToPublicKey
+}
+
+function idToPublicKey (id) {
+    const pubKeyStr = id.replace('@', '').replace('.ed25519', '')
+
+    return webcrypto.subtle.importKey(
+        'raw',
+        utils.base64ToArrBuf(pubKeyStr),
+        { name: ECC_WRITE_ALG, namedCurve: DEFAULT_ECC_CURVE },
+        true,
+        ['verify']
+    )
 }
 
 function importKeys (userDoc) {
@@ -31,7 +44,6 @@ function importKeys (userDoc) {
         webcrypto.subtle.importKey(
             'raw',
             utils.base64ToArrBuf(userDoc.keys.public),
-            // buf,
             { name: ECC_WRITE_ALG, namedCurve: DEFAULT_ECC_CURVE },
             true,
             ['verify']

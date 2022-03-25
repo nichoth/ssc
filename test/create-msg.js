@@ -41,12 +41,17 @@ test('create a second message', t => {
         })
 })
 
-test('verify a message', t => {
+test('verify a message', async t => {
     t.ok(ssc.isValidMsg(msg, null, alice.keys.publicKey),
         'should validate the first msg')
 
     t.ok(ssc.isValidMsg(msgTwo, msg, alice.keys.publicKey),
         'should validate the second msg')
+
+    console.log('msg.author', msg.author)
+
+    t.ok(ssc.isValidMsg(msg, null, await ssc.idToPublicKey(msg.author)),
+        'should transform a message id to a public key')
 
     t.end()
 })
