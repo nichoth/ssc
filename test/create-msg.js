@@ -3,7 +3,7 @@ const require = createRequire(import.meta.url)
 const test = require('tape')
 import ssc from '../index.js'
 
-var keys
+var alice
 var msg
 var msgTwo
 
@@ -12,8 +12,8 @@ test('create a message', function (t) {
 
     ssc.createKeys()
         .then(_keys => {
-            keys = _keys
-            ssc.createMsg(keys.keys, null, content)
+            alice = _keys
+            ssc.createMsg(alice.keys, null, content)
                 .then(_msg => {
                     msg = _msg
                     t.equal(msg.author[0], '@',
@@ -31,7 +31,7 @@ test('create a message', function (t) {
 
 test('create a second message', t => {
     var content = { type: 'test', text: 'message two' }
-    ssc.createMsg(keys.keys, msg, content)
+    ssc.createMsg(alice.keys, msg, content)
         .then(_msgTwo => {
             msgTwo = _msgTwo
             t.equal(msgTwo.sequence, 2, 'should have the right sequence number')
@@ -42,16 +42,16 @@ test('create a second message', t => {
 })
 
 test('verify a message', t => {
-    t.ok(ssc.isValidMsg(msg, null, keys.keys), 'should validate the first msg')
-    t.ok(ssc.isValidMsg(msgTwo, msg, keys.keys),
+    t.ok(ssc.isValidMsg(msg, null, alice.keys), 'should validate the first msg')
+    t.ok(ssc.isValidMsg(msgTwo, msg, alice.keys),
         'should validate the second msg')
     t.end()
 })
 
 test('verify an invalid message', t => {
-    var badPrevMsg = ssc.createMsg(keys.keys, null,
+    var badPrevMsg = ssc.createMsg(alice.keys, null,
         { type: 'test', text: 'ok' })
-    t.equal(ssc.isValidMsg(msgTwo, badPrevMsg, keys.keys), false,
+    t.equal(ssc.isValidMsg(msgTwo, badPrevMsg, alice.keys), false,
         'should return that an invalid message is not valid')
     t.end()
 })
