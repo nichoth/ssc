@@ -3,6 +3,7 @@ const require = createRequire(import.meta.url);
 const test = require('tape')
 import ssc from '../index.js'
 import fs from "fs";
+import { webcrypto } from 'one-webcrypto'
 
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -51,10 +52,16 @@ test('key file', t => {
 })
 
 // how do you import keys from a file?
+var importedKeys
 test('import keys', t => {
     ssc.importKeys(aliceDoc).then(keys => {
+        importedKeys = keys
         t.equal(keys.publicKey.type, 'public', 'should import a public key')
         t.equal(keys.privateKey.type, 'private', 'should import a private key')
         t.end()
     })
+})
+
+test('sign something with the imported keys', t => {
+    t.end()
 })
