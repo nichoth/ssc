@@ -80,7 +80,4 @@ test('verify the signature created with imported keys', t => {
             t.equal(isValid, true, 'should say a valid signature is valid')
             t.end()
         })
-        .catch(err => {
-            console.log('errrrrrrr', err)
-        })
 })
