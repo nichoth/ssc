@@ -7,7 +7,7 @@ var stringify = require('json-stable-stringify')
 import { clone, isObject, getId, hash, isInvalidShape } from './util.js'
 import { webcrypto } from 'one-webcrypto'
 import { ECC_WRITE_ALG, DEFAULT_HASH_ALG,
-    DEFAULT_CHAR_SIZE } from './CONSTANTS.js'
+    DEFAULT_CHAR_SIZE, DEFAULT_ECC_CURVE } from './CONSTANTS.js'
 import * as utils from 'keystore-idb/lib/utils.js'
 
 export default {
@@ -27,25 +27,29 @@ export default {
 }
 
 function importKeys (userDoc) {
-    // function str2ab (str) {
-    //     const buf = new ArrayBuffer(str.length);
-    //     const bufView = new Uint8Array(buf);
-    //     for (let i = 0, strLen = str.length; i < strLen; i++) {
-    //         bufView[i] = str.charCodeAt(i);
-    //     }
-    //     return buf;
-    // }
+    return Promise.all([
+        webcrypto.subtle.importKey(
+            'raw',
+            utils.base64ToArrBuf(userDoc.keys.public),
+            // buf,
+            { name: ECC_WRITE_ALG, namedCurve: DEFAULT_ECC_CURVE },
+            true,
+            ['verify']
+        ),
 
-    const base64Key = userDoc.keys.public
-    const buf = utils.base64ToArrBuf(base64Key)
+        webcrypto.subtle.importKey(
+            'pkcs8',
+            utils.base64ToArrBuf(userDoc.keys.private),
+            // buf,
+            { name: ECC_WRITE_ALG, namedCurve: DEFAULT_ECC_CURVE },
+            true,
+            ['sign']
+        )
+    ])
+        .then(([pub, priv]) => {
+            return { publicKey: pub, privateKey: priv }
+        })
 
-    return webcrypto.subtle.importKey(
-        'raw',
-        buf,
-        { name: ECC_WRITE_ALG, namedCurve: curve },
-        true,
-        uses
-    )
 }
 
 function exportKeys (keypair) {
@@ -126,7 +130,6 @@ async function publicKeyToId (keypair) {
     const str = utils.arrBufToBase64(raw)
     return '@' + str + '.' + KEY_TYPE
 }
-
 
 function verifyObj (keys, hmac_key, obj) {
     if (!obj) (obj = hmac_key), (hmac_key = null);
