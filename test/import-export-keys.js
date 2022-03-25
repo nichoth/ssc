@@ -3,7 +3,7 @@ const require = createRequire(import.meta.url);
 const test = require('tape')
 import ssc from '../index.js'
 import fs from "fs";
-import { webcrypto } from 'one-webcrypto'
+// import { webcrypto } from 'one-webcrypto'
 
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -23,7 +23,7 @@ test('init', t => {
 test('export keys', t => {
     ssc.exportKeys(alice.keys)
         .then((keys) => {
-            ssc.publicKeyToId(alice.keys).then(id => {
+            ssc.publicKeyToId(alice.keys.publicKey).then(id => {
                 const userDoc = {
                     id: id,
                     keys
@@ -64,7 +64,6 @@ test('import keys', t => {
 
 var sig
 test('sign something with the imported keys', t => {
-    // console.log('imported keys', importedKeys)
     ssc.sign(importedKeys, 'a test message')
         .then(_sig => {
             sig = _sig

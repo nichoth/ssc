@@ -59,11 +59,8 @@ function exportKeys (keypair) {
         // webcrypto.subtle.exportKey('raw', keypair.privateKey)
     ])
         .then(([pub, priv]) => {
-            // console.log('priv', priv)
             return {
-                // public: pub,
                 public: utils.arrBufToBase64(pub),
-                // private: priv
                 private: utils.arrBufToBase64(priv)
             }
         })
@@ -77,7 +74,7 @@ function createKeys () {
         namedCurve: 'P-256'
     }, true, uses)
         .then(key => {
-            return publicKeyToId(key)
+            return publicKeyToId(key.publicKey)
                 .then(id => {
                     return { id, keys: key }
                 })
@@ -106,7 +103,7 @@ async function createMsg (keys, prevMsg, content) {
             'must be object or encrypted string')
     }
 
-    const id = await publicKeyToId(keys)
+    const id = await publicKeyToId(keys.publicKey)
 
     var msg = {
         previous: prevMsg ? getId(prevMsg) : null,
@@ -124,8 +121,8 @@ async function createMsg (keys, prevMsg, content) {
 
 const KEY_TYPE = 'ed25519'
 
-async function publicKeyToId (keypair) {
-    const raw = await webcrypto.subtle.exportKey('raw', keypair.publicKey)
+async function publicKeyToId (publicKey) {
+    const raw = await webcrypto.subtle.exportKey('raw', publicKey)
     const str = utils.arrBufToBase64(raw)
     return '@' + str + '.' + KEY_TYPE
 }
