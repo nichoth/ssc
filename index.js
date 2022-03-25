@@ -21,7 +21,49 @@ export default {
     createKeys,
     generate: ssbKeys.generate,
     hash,
-    publicKeyToId
+    publicKeyToId,
+    importKeys,
+    exportKeys
+}
+
+function importKeys (userDoc) {
+    // function str2ab (str) {
+    //     const buf = new ArrayBuffer(str.length);
+    //     const bufView = new Uint8Array(buf);
+    //     for (let i = 0, strLen = str.length; i < strLen; i++) {
+    //         bufView[i] = str.charCodeAt(i);
+    //     }
+    //     return buf;
+    // }
+
+    const base64Key = userDoc.keys.public
+    const buf = utils.base64ToArrBuf(base64Key)
+
+    return webcrypto.subtle.importKey(
+        'raw',
+        buf,
+        { name: ECC_WRITE_ALG, namedCurve: curve },
+        true,
+        uses
+    )
+}
+
+function exportKeys (keypair) {
+    return Promise.all([
+        webcrypto.subtle.exportKey('raw', keypair.publicKey),
+        // Promise.resolve('fooo')
+        webcrypto.subtle.exportKey('pkcs8', keypair.privateKey)
+        // webcrypto.subtle.exportKey('raw', keypair.privateKey)
+    ])
+        .then(([pub, priv]) => {
+            // console.log('priv', priv)
+            return {
+                // public: pub,
+                public: utils.arrBufToBase64(pub),
+                // private: priv
+                private: utils.arrBufToBase64(priv)
+            }
+        })
 }
 
 function createKeys () {
@@ -30,7 +72,7 @@ function createKeys () {
     return webcrypto.subtle.generateKey({
         name:  ECC_WRITE_ALG,
         namedCurve: 'P-256'
-    }, false, uses)
+    }, true, uses)
         .then(key => {
             return publicKeyToId(key)
                 .then(id => {
