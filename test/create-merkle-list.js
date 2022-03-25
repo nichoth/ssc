@@ -37,7 +37,7 @@ test('create a merkle list', async function (t) {
 
     var isValidList = list.reduce(function (isValid, msg, i) {
         var prev = list[i - 1] || null
-        return isValid && ssc.isValidMsg(msg, prev, alice.keys)
+        return isValid && ssc.isValidMsg(msg, prev, alice.keys.publicKey)
     }, true)
 
     t.equal(isValidList, true, 'reduced validation should be ok')

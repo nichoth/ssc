@@ -75,7 +75,8 @@ test('sign something with the imported keys', t => {
 })
 
 test('verify the signature created with imported keys', t => {
-    ssc.verify({ publicKey: importedKeys.publicKey }, sig, 'a test message')
+    ssc.verify(importedKeys.publicKey, sig, 'a test message')
+    // ssc.verify({ publicKey: importedKeys.publicKey }, sig, 'a test message')
         .then(isValid => {
             t.equal(isValid, true, 'should say a valid signature is valid')
             t.end()

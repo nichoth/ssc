@@ -19,7 +19,8 @@ test('sign a string', function (t) {
 })
 
 test('validate a signature', t => {
-    ssc.verify(keys, sig, 'a test message')
+    // ssc.verify(keys, sig, 'a test message')
+    ssc.verify(keys.publicKey, sig, 'a test message')
         .then(isValid => {
             t.equal(isValid, true, 'should say a valid signature is valid')
             t.end()

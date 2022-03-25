@@ -36,7 +36,7 @@ test('create ssb style posts', async function (t) {
     }, Promise.resolve([]))
 
     t.ok(posts[0].key, 'should have `.key`')
-    t.ok(ssc.verifyObj(alice.keys, null, posts[0].value),
+    t.ok(ssc.verifyObj(alice.keys.publicKey, null, posts[0].value),
         'msg should have valid .value')
     t.equal(posts[0].value.content.text, 'one',
         'should have the right content at the right key')

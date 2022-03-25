@@ -42,16 +42,23 @@ test('create a second message', t => {
 })
 
 test('verify a message', t => {
-    t.ok(ssc.isValidMsg(msg, null, alice.keys), 'should validate the first msg')
-    t.ok(ssc.isValidMsg(msgTwo, msg, alice.keys),
+    t.ok(ssc.isValidMsg(msg, null, alice.keys.publicKey),
+        'should validate the first msg')
+
+    t.ok(ssc.isValidMsg(msgTwo, msg, alice.keys.publicKey),
         'should validate the second msg')
+
     t.end()
 })
 
 test('verify an invalid message', t => {
-    var badPrevMsg = ssc.createMsg(alice.keys, null,
-        { type: 'test', text: 'ok' })
-    t.equal(ssc.isValidMsg(msgTwo, badPrevMsg, alice.keys), false,
+    var badPrevMsg = ssc.createMsg(alice.keys, null, {
+        type: 'test',
+        text: 'ok'
+    })
+
+    t.equal(ssc.isValidMsg(msgTwo, badPrevMsg, alice.keys.publicKey), false,
         'should return that an invalid message is not valid')
+
     t.end()
 })

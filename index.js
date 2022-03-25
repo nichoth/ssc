@@ -49,7 +49,6 @@ function importKeys (userDoc) {
         .then(([pub, priv]) => {
             return { publicKey: pub, privateKey: priv }
         })
-
 }
 
 function exportKeys (keypair) {
@@ -131,16 +130,17 @@ async function publicKeyToId (keypair) {
     return '@' + str + '.' + KEY_TYPE
 }
 
-function verifyObj (keys, hmac_key, obj) {
+function verifyObj (publicKey, hmac_key, obj) {
+// function verifyObj (keys, hmac_key, obj) {
     if (!obj) (obj = hmac_key), (hmac_key = null);
     obj = clone(obj);
     var sig = obj.signature;
     delete obj.signature;
-    return verify(keys, sig, stringify(obj))
+    return verify(publicKey, sig, stringify(obj))
 }
 
-function isValidMsg (msg, prevMsg, keys) {
-    return (verifyObj(keys, null, msg) && isPrevMsgOk(prevMsg, msg))
+function isValidMsg (msg, prevMsg, publicKey) {
+    return (verifyObj(publicKey, null, msg) && isPrevMsgOk(prevMsg, msg))
 }
 
 function isPrevMsgOk (prevMsg, msg) {
@@ -151,7 +151,9 @@ function isPrevMsgOk (prevMsg, msg) {
 // takes a public key, signature, and a hash
 // and returns true if the signature was valid.
 // the msg here does not include the `signature` field
-function verify (keys, sig, msg) {
+
+// TODO -- should take a simple string instead of a real 'key' instance
+function verify (publicKey, sig, msg) {
     if (typeof sig === 'object') {
         throw new Error('signature should be base64 string,' +
             'did you mean verifyObj(public, signed_obj)')
@@ -162,7 +164,7 @@ function verify (keys, sig, msg) {
             name: ECC_WRITE_ALG,
             hash: { name: DEFAULT_HASH_ALG }
         },
-        keys.publicKey,
+        publicKey,
         utils.normalizeBase64ToBuf(sig),
         utils.normalizeUnicodeToBuf(msg, DEFAULT_CHAR_SIZE)
     )
