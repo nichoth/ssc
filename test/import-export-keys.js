@@ -62,11 +62,25 @@ test('import keys', t => {
     })
 })
 
+var sig
 test('sign something with the imported keys', t => {
+    // console.log('imported keys', importedKeys)
     ssc.sign(importedKeys, 'a test message')
-        .then(sig => {
+        .then(_sig => {
+            sig = _sig
             t.ok(sig, 'should return a signature')
             t.equal(typeof sig, 'string', 'should return a string as signature')
             t.end()
+        })
+})
+
+test('verify the signature created with imported keys', t => {
+    ssc.verify({ publicKey: importedKeys.publicKey }, sig, 'a test message')
+        .then(isValid => {
+            t.equal(isValid, true, 'should say a valid signature is valid')
+            t.end()
+        })
+        .catch(err => {
+            console.log('errrrrrrr', err)
         })
 })
