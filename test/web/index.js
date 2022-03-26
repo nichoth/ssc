@@ -191,9 +191,9 @@ test('init', t => {
         })
             .then(serverUcan => {
                 mockServerUcan = serverUcan
+                t.end()
             })
 
-        t.end()
     })
 })
 
