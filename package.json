@@ -39,6 +39,7 @@
     "monotonic-timestamp": "0.0.9",
     "one-webcrypto": "^1.0.3",
     "ssb-keys": "^8.1.0",
+    "ucans": "^0.8.0",
     "uint8arrays": "^3.0.0",
     "webnative": "^0.28.0"
   },
@@ -49,7 +50,6 @@
     "esmify": "^2.1.1",
     "tap-arc": "^0.1.2",
     "tape": "^5.0.1",
-    "tape-run": "github:nichoth/tape-run",
-    "ucans": "^0.8.0"
+    "tape-run": "github:nichoth/tape-run"
   }
 }

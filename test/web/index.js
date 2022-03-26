@@ -25,6 +25,7 @@ test('verify the messages created in node', t => {
 var ks
 test('create keys', async t => {
     ks = await ssc.createKeys(ssc.keyTypes.ECC)
+    console.log('ks', ks)
     t.ok(ks, 'should return a keystore')
     t.ok(ks instanceof ECCKeyStore, 'should be an instance of ECC keystore')
     t.ok(ssc.createKeys(), 'the keyType parameter is optional')
@@ -175,13 +176,55 @@ test('get author from message', async t => {
     t.end()
 })
 
+var mockServer
+var mockServerUcan
+test('init', t => {
+    ucan.EdKeypair.create().then(kp => {
+        mockServer = kp
 
+        ucan.build({
+            audience: mockServer.did(), // recipient
+            issuer: mockServer, // self signed
+            capabilities: [ // permissions for ucan
+                { hermes: 'member' }
+            ]
+        })
+            .then(serverUcan => {
+                mockServerUcan = serverUcan
+            })
 
-// test('create a UCAN with write capabilities', t => {
-//     /** did:key:z6Mkk89bC3JrVqKie71YEcc5M1SMVxuCgNx6zLZ8SYJsxALi */
-//     const alice = ucan.EdKeypair.fromSecretKey("U+bzp2GaFQHso587iSFWPSeCzbSfn/CbNHEz7ilKRZ1UQMmMS7qq4UhTzKn3X9Nj/4xgrwa+UqhMOeo4Ki8JUw==")
-//     console.log('alice', alice)
-// })
+        t.end()
+    })
+})
+
+var origUcan
+test('create a UCAN with write capabilities', async t => {
+    /** did:key:z6Mkk89bC3JrVqKie71YEcc5M1SMVxuCgNx6zLZ8SYJsxALi */
+    // const alice = ucan.EdKeypair.fromSecretKey("U+bzp2GaFQHso587iSFWPSeCzbSfn/CbNHEz7ilKRZ1UQMmMS7qq4UhTzKn3X9Nj/4xgrwa+UqhMOeo4Ki8JUw==")
+    // console.log('alice', alice)
+
+    ucan.build({
+        audience: await ssc.getDidFromKeys(ks),
+        issuer: mockServer, // signing key
+        capabilities: [ // permissions for ucan
+            { hermes: 'member' }
+        ],
+        proof: ucan.encode(mockServer)
+    })
+        .then(userUcan => {
+            origUcan = userUcan
+            ucan.isValid(userUcan).then(val => {
+                var root = ucan.rootIssuer(ucan.encode(userUcan))
+                var isOk = val && (root === mockServer.did())
+
+                t.ok(isOk, 'should be a valid UCAN')
+                t.deepEqual(userUcan.attenuation(), [{ hermes: 'member' }],
+                    'should have the right capabilities')
+                t.end()
+            })
+        })
+})
+
 
 
 
