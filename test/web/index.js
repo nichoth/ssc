@@ -27,7 +27,7 @@ test('create keys', t => {
         ks = _ks
         t.ok(ks, 'should return a keystore')
         t.ok(ks instanceof ECCKeyStore, 'should be an instance of ECC keystore')
-        t.end()
+        // t.end()
 
         ssc.createKeys().then(_keys => {
             t.ok(_keys, 'the keyType parameter is optional')

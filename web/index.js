@@ -11,11 +11,11 @@ let keys = null
 const KEY_TYPES = { ECC: 'ecc', RSA: 'rsa' }
 const KEY_TYPE = 'ed25519'
 
-const get = (keyType) => {
-    if (keys) return keys;
+function get (keyType) {
+    if (keys) return Promise.resolve(keys);
     return keystore.init({ type: keyType }).then(_keys => {
         keys = _keys
-        return keys
+        return _keys
     })
 }
 

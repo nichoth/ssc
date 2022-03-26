@@ -11,7 +11,7 @@
     "build-web": "browserify -p esmify web.js",
     "build-example": "browserify -p esmify example/index.js > example/bundle.js",
     "postversion": "git push && git push --tags && npm publish",
-    "test": "npm run test-node && npm run test-web",
+    "test": "npm run test-node && npm run test-web && npm run test-ucan",
     "test-node": "tape test/*.js | tap-arc",
     "test-web": "browserify --debug -p esmify test/web/index.js -t [ envify --NODE_ENV browser ] | tape-run | tap-arc",
     "test-ucan": "browserify --debug -p esmify test/web/ucan.js -t [ envify --NODE_ENV browser ] | tape-run | tap-arc",
