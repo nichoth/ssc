@@ -4,6 +4,7 @@ import ssc from '../../web/index.js'
 // we use this just for tests. is not necessary for normal use
 import { ECCKeyStore } from 'keystore-idb/lib/ecc/keystore'
 
+
 const testMsgs = getTestMsgs()
 
 test('verify the messages created in node', t => {
@@ -38,16 +39,6 @@ test('sign and validate something', async t => {
     var isValid = await ks.verify('my message', sig, publicKey)
     t.equal(isValid, true, 'should return a valid signature')
 })
-
-
-
-
-// test('create a UCAN that is able to write messages', t => {
-
-// })
-
-
-
 
 var msg
 var msgDid
@@ -173,17 +164,32 @@ test('get DID from some keys', async t => {
     const authorDID = await ssc.getDidFromKeys(ks)
     t.equal(authorDID, msgDid,
         'should return the same did that was used in the message')
+    t.end()
+})
+
+test('get author from message', async t => {
+    const authorDID = await ssc.getDidFromKeys(ks)
     const pubKey = ssc.didToPublicKey(authorDID).publicKey
     t.equal('@' + pubKey + '.ed25519', ssc.getAuthor(msg),
         'should get the author DID from a set of keys')
     t.end()
 })
 
+
+
+// test('create a UCAN with write capabilities', t => {
+//     /** did:key:z6Mkk89bC3JrVqKie71YEcc5M1SMVxuCgNx6zLZ8SYJsxALi */
+//     const alice = ucan.EdKeypair.fromSecretKey("U+bzp2GaFQHso587iSFWPSeCzbSfn/CbNHEz7ilKRZ1UQMmMS7qq4UhTzKn3X9Nj/4xgrwa+UqhMOeo4Ki8JUw==")
+//     console.log('alice', alice)
+// })
+
+
+
 var myUcan
 test('create a ucan', async t => {
     t.plan(3)
 
-    const keypair = await ucan.EdKeypair.create()
+    const issuerKeypair = await ucan.EdKeypair.create()
 
     var _did
 
@@ -195,7 +201,7 @@ test('create a ucan', async t => {
                 audience: did,
                 // issuer is a priv/pub keypair because the ucan is signed by
                 // the issuer
-                issuer: keypair,
+                issuer: issuerKeypair,
                 // facts: [],
                 lifetimeInSeconds: 60 * 60 * 24, // UCAN expires in 24 hours
                 capabilities: [
