@@ -57,6 +57,9 @@ test('create a UCAN with write capabilities', async t => {
                 t.ok(isOk, 'should be a valid UCAN')
                 t.deepEqual(userUcan.attenuation(), [{ hermes: 'member' }],
                     'should have the right capabilities')
+                t.ok(userUcan.attenuation().find(cap => {
+                    return cap.hermes === 'member'
+                }), 'should find the capability that we care about')
                 t.end()
             })
         })
