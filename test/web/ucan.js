@@ -44,10 +44,15 @@ test('create a UCAN with write capabilities', t => {
     ssc.getDidFromKeys(ks).then(did => {
         // console.log('did', did)
 
+        // https://github.com/ucan-wg/ts-ucan
         ucan.build({
             audience: did,
             issuer: mockServer, // signing key
             capabilities: [ // permissions for ucan
+                // {
+                //     "wnfs": "boris.fission.name/public/photos/",
+                //     "cap": "OVERWRITE"
+                // },
                 { hermes: 'hermes', cap: 'WRITE' }
             ],
             proof: ucan.encode(mockServerUcan)
