@@ -29,14 +29,7 @@ export default {
 
 function idToPublicKey (id) {
     const pubKeyStr = id.replace('@', '').replace('.ed25519', '')
-
-    return webcrypto.subtle.importKey(
-        'raw',
-        utils.base64ToArrBuf(pubKeyStr),
-        { name: ECC_WRITE_ALG, namedCurve: DEFAULT_ECC_CURVE },
-        true,
-        ['verify']
-    )
+    return pubKeyStr
 }
 
 function importKeys (userDoc) {
@@ -149,7 +142,24 @@ function verifyObj (publicKey, hmac_key, obj) {
 }
 
 function isValidMsg (msg, prevMsg, publicKey) {
-    return (verifyObj(publicKey, null, msg) && isPrevMsgOk(prevMsg, msg))
+    if (typeof publicKey === 'string') {
+        return webcrypto.subtle.importKey(
+            'raw',
+            utils.base64ToArrBuf(publicKey),
+            { name: ECC_WRITE_ALG, namedCurve: DEFAULT_ECC_CURVE },
+            true,
+            ['verify']
+        )
+            .then(pubKey => {
+                return verifyObj(pubKey, null, msg)
+                    .then(isVal => isVal && isPrevMsgOk(prevMsg, msg))
+            })
+    }
+
+    return verifyObj(publicKey, null, msg)
+        .then(isVal => isVal && isPrevMsgOk(prevMsg, msg))
+
+    // return (verifyObj(publicKey, null, msg) && isPrevMsgOk(prevMsg, msg))
 }
 
 function isPrevMsgOk (prevMsg, msg) {

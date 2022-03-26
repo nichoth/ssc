@@ -48,21 +48,20 @@ test('verify a message', async t => {
     t.ok(ssc.isValidMsg(msgTwo, msg, alice.keys.publicKey),
         'should validate the second msg')
 
-    console.log('msg.author', msg.author)
-
-    t.ok(ssc.isValidMsg(msg, null, await ssc.idToPublicKey(msg.author)),
+    t.ok(await ssc.isValidMsg(msg, null, await ssc.idToPublicKey(msg.author)),
         'should transform a message id to a public key')
 
     t.end()
 })
 
-test('verify an invalid message', t => {
+test('verify an invalid message', async t => {
     var badPrevMsg = ssc.createMsg(alice.keys, null, {
         type: 'test',
         text: 'ok'
     })
 
-    t.equal(ssc.isValidMsg(msgTwo, badPrevMsg, alice.keys.publicKey), false,
+    t.equal(await ssc.isValidMsg(msgTwo, badPrevMsg, alice.keys.publicKey),
+        false,
         'should return that an invalid message is not valid')
 
     t.end()

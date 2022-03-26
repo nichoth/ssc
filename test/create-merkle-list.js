@@ -32,7 +32,7 @@ test('create a merkle list', async function (t) {
     t.equal(list.length, 3, 'should create a merkle list')
     t.equal(list[2].content.text, 'three', 'should have the right msg content')
 
-    var isValidList = list.reduce(function (isValid, msg, i) {
+    var isValidList = await list.reduce(function (isValid, msg, i) {
         var prev = list[i - 1] || null
         return isValid && ssc.isValidMsg(msg, prev, alice.keys.publicKey)
     }, true)
