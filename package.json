@@ -14,6 +14,7 @@
     "test": "npm run test-node && npm run test-web",
     "test-node": "tape test/*.js | tap-arc",
     "test-web": "browserify --debug -p esmify test/web/index.js -t [ envify --NODE_ENV browser ] | tape-run | tap-arc",
+    "test-ucan": "browserify --debug -p esmify test/web/ucan.js -t [ envify --NODE_ENV browser ] | tape-run | tap-arc",
     "//write-test-msgs": "node test/write-node.js",
     "start": "npm run build-example && npm run serve",
     "serve": "budo example/index.js:bundle.js --dir=example/ --live --pushstate --open -- -p esmify -dv"
