@@ -8,12 +8,14 @@ var mockServer
 var mockServerUcan
 var ks
 
-test('create keys', async t => {
-    ks = await ssc.createKeys(ssc.keyTypes.ECC)
-    t.ok(ks, 'should return a keystore')
-    t.ok(ks instanceof ECCKeyStore, 'should be an instance of ECC keystore')
-    t.ok(ssc.createKeys(), 'the keyType parameter is optional')
-    t.end()
+test('create keys', t => {
+    ssc.createKeys().then(keys => {
+        console.log('aaaaa', keys)
+        ks = keys
+        t.ok(ks, 'should return a keystore')
+        t.ok(ks instanceof ECCKeyStore, 'should be an instance of ECC keystore')
+        t.end()
+    })
 })
 
 test('init', t => {
@@ -35,35 +37,61 @@ test('init', t => {
 })
 
 var origUcan
-test('create a UCAN with write capabilities', async t => {
+test('create a UCAN with write capabilities', t => {
     /** did:key:z6Mkk89bC3JrVqKie71YEcc5M1SMVxuCgNx6zLZ8SYJsxALi */
     // const alice = ucan.EdKeypair.fromSecretKey("U+bzp2GaFQHso587iSFWPSeCzbSfn/CbNHEz7ilKRZ1UQMmMS7qq4UhTzKn3X9Nj/4xgrwa+UqhMOeo4Ki8JUw==")
     // console.log('alice', alice)
 
-    ucan.build({
-        audience: await ssc.getDidFromKeys(ks),
-        issuer: mockServer, // signing key
-        capabilities: [ // permissions for ucan
-            { hermes: 'member' }
-        ],
-        proof: ucan.encode(mockServer)
-    })
-        .then(userUcan => {
-            origUcan = userUcan
-            ucan.isValid(userUcan).then(val => {
-                var root = ucan.rootIssuer(ucan.encode(userUcan))
-                var isOk = val && (root === mockServer.did())
+    ssc.getDidFromKeys(ks).then(did => {
+        ucan.build({
+            audience: did,
+            issuer: mockServer, // signing key
+            capabilities: [ // permissions for ucan
+                { hermes: 'member' }
+            ],
+            proof: ucan.encode(mockServer)
+        })
+            .then(userUcan => {
+                origUcan = userUcan
+                ucan.isValid(userUcan).then(val => {
+                    var root = ucan.rootIssuer(ucan.encode(userUcan))
+                    var isOk = val && (root === mockServer.did())
 
-                t.ok(isOk, 'should be a valid UCAN')
-                t.deepEqual(userUcan.attenuation(), [{ hermes: 'member' }],
-                    'should have the right capabilities')
-                t.ok(userUcan.attenuation().find(cap => {
-                    return cap.hermes === 'member'
-                }), 'should find the capability that we care about')
-                t.end()
+                    t.ok(isOk, 'should be a valid UCAN')
+                    t.deepEqual(userUcan.attenuation(), [{ hermes: 'member' }],
+                        'should have the right capabilities')
+                    t.ok(userUcan.attenuation().find(cap => {
+                        return cap.hermes === 'member'
+                    }), 'should find the capability that we care about')
+                    t.end()
+                })
             })
         })
 })
+
+
+
+
+
+// test('create a second ucan, for another device', t => {
+//     ucan.EdKeypair.create().then(deviceTwo => {
+//         ssc.getDidFromKeys(deviceTwo).then(did => {
+//             ucan.build({
+//                 audience: did,
+//                 issuer: ks,
+//                 capabilities: [{ hermes: 'member' }],
+//                 proof: ucan.encode(origUcan)
+//             })
+//                 .then(_ucan => {
+//                     console.log('***ucan 2***', _ucan)
+//                     t.end()
+//                 })
+//         })
+//     })
+// })
+
+
+
 
 var myUcan
 test('create a ucan', async t => {

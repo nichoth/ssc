@@ -8,18 +8,19 @@ import * as utils from 'keystore-idb/lib/utils.js'
 import { DEFAULT_CHAR_SIZE } from '../CONSTANTS.js'
 
 let keys = null
-
+const KEY_TYPES = { ECC: 'ecc', RSA: 'rsa' }
 const KEY_TYPE = 'ed25519'
 
-const get = async (keyType) => {
+const get = (keyType) => {
     if (keys) return keys;
-    keyType = keyType || KEY_TYPE
-    keys = await keystore.init({ type: keyType });
-    return keys;
-};
+    return keystore.init({ type: keyType }).then(_keys => {
+        keys = _keys
+        return keys
+    })
+}
 
 function createKeys (type) {
-    return get(type)
+    return get(type || KEY_TYPES.ECC)
 }
 
 async function sign (keys, msg) {
@@ -105,7 +106,6 @@ function getDidFromKeys (ks) {
         })
 }
 
-const KEY_TYPES = { ECC: 'ecc', RSA: 'rsa' }
 
 function didToId (did) {
     const pubKey = didToPublicKey(did).publicKey

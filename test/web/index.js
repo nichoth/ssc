@@ -22,12 +22,18 @@ test('verify the messages created in node', t => {
 })
 
 var ks
-test('create keys', async t => {
-    ks = await ssc.createKeys(ssc.keyTypes.ECC)
-    t.ok(ks, 'should return a keystore')
-    t.ok(ks instanceof ECCKeyStore, 'should be an instance of ECC keystore')
-    t.ok(ssc.createKeys(), 'the keyType parameter is optional')
-    t.end()
+test('create keys', t => {
+    ssc.createKeys(ssc.keyTypes.ECC).then(_ks => {
+        ks = _ks
+        t.ok(ks, 'should return a keystore')
+        t.ok(ks instanceof ECCKeyStore, 'should be an instance of ECC keystore')
+        t.end()
+
+        ssc.createKeys().then(_keys => {
+            t.ok(_keys, 'the keyType parameter is optional')
+            t.end()
+        })
+    })
 })
 
 // this is an example just using the keystore, not ssc
