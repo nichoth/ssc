@@ -26,6 +26,7 @@ test('create keys', async t => {
     ks = await ssc.createKeys(ssc.keyTypes.ECC)
     t.ok(ks, 'should return a keystore')
     t.ok(ks instanceof ECCKeyStore, 'should be an instance of ECC keystore')
+    t.ok(ssc.createKeys(), 'the keyType parameter is optional')
     t.end()
 })
 
@@ -37,6 +38,16 @@ test('sign and validate something', async t => {
     var isValid = await ks.verify('my message', sig, publicKey)
     t.equal(isValid, true, 'should return a valid signature')
 })
+
+
+
+
+// test('create a UCAN that is able to write messages', t => {
+
+// })
+
+
+
 
 var msg
 var msgDid

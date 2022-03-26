@@ -11,9 +11,9 @@ let keys = null
 
 const KEY_TYPE = 'ed25519'
 
-// 'ecc' or 'rsa'
 const get = async (keyType) => {
     if (keys) return keys;
+    keyType = keyType || KEY_TYPE
     keys = await keystore.init({ type: keyType });
     return keys;
 };
