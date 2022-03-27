@@ -14,6 +14,16 @@ import ssc from '../../web/index.js'
 // const __filename = fileURLToPath(import.meta.url);
 // const __dirname = path.dirname(__filename);
 
+// we may want to start a localhost server and run these tests against the
+// server, because writing to the filesystem doesn't seem to be working
+// that well
+
+// _server-side tests_
+// * [ ] _server-side_ -- create a self-signed UCAN on the server
+// * [ ] _server-side_ -- create a UCAN for alice's DID, signed by the server's
+// keypair, with the server's UCAN as root
+// * [ ] _server-side_ -- send alice's UCAN back to the client side
+
 var alice
 
 test('init', t => {
@@ -31,4 +41,21 @@ test('init', t => {
     }).catch(err => {
         console.log("oh no", err)
     })
+})
+
+test('who is the server', t => {
+    fetch('http://localhost:8888/who-are-you', {
+        method: 'GET'
+    })
+        .then(res => {
+            return res.text()
+        })
+        .then(res => {
+            console.log('got response', res)
+            t.end()
+        })
+        .catch(err => {
+            console.log('err', err)
+            t.end()
+        })
 })

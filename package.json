@@ -12,7 +12,8 @@
     "build-example": "browserify -p esmify example/index.js > example/bundle.js",
     "postversion": "git push && git push --tags && npm publish",
     "test": "npm run test-node && npm run test-web && npm run test-ucan",
-    "test-ucan-web-one": "browserify --debug -p esmify test/ucan/web-one.js -t [ envify --NODE_ENV browser ] | tape-run | tap-arc",
+    "test-web-ucan": "concurrently --kill-others \"node ./test/ucan/test-server\" \"npm run test-ucan-browser\"",
+    "test-ucan-browser": "browserify --debug -p esmify test/ucan/browser.js -t [ envify --NODE_ENV browser ] | tape-run | tap-arc",
     "test-node": "tape test/*.js | tap-arc",
     "test-web": "browserify --debug -p esmify test/web/index.js -t [ envify --NODE_ENV browser ] | tape-run | tap-arc",
     "test-ucan": "browserify --debug -p esmify test/web/ucan.js -t [ envify --NODE_ENV browser ] | tape-run | tap-arc",
@@ -33,6 +34,7 @@
     "crypto": false
   },
   "homepage": "https://github.com/nichoth/ssc#readme",
+  "//comment": "nichoth/ts-ucan so we can use the latest API, but have some stability",
   "dependencies": {
     "chloride": "^2.3.0",
     "is-canonical-base64": "^1.1.1",
@@ -41,7 +43,6 @@
     "monotonic-timestamp": "0.0.9",
     "one-webcrypto": "^1.0.3",
     "ssb-keys": "^8.1.0",
-    "//": "nichoth/ts-ucan so we can use the latest API, but have some stability",
     "ucans": "github:nichoth/ts-ucan",
     "uint8arrays": "^3.0.0",
     "webnative": "^0.28.0"
@@ -49,6 +50,7 @@
   "devDependencies": {
     "browserify": "^17.0.0",
     "budo": "^11.6.4",
+    "concurrently": "^7.0.0",
     "envify": "^4.1.0",
     "esmify": "^2.1.1",
     "tap-arc": "^0.1.2",
