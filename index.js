@@ -4,7 +4,8 @@ const require = createRequire(import.meta.url);
 var timestamp = require('monotonic-timestamp')
 var ssbKeys = require('ssb-keys')
 var stringify = require('json-stable-stringify')
-import { clone, isObject, getId, hash, isInvalidShape } from './util.js'
+import { clone, isObject, getId, hash, isInvalidShape,
+    publicKeyToDid } from './util.js'
 import { webcrypto } from 'one-webcrypto'
 import { ECC_WRITE_ALG, DEFAULT_HASH_ALG,
     DEFAULT_CHAR_SIZE, DEFAULT_ECC_CURVE } from './CONSTANTS.js'
@@ -24,7 +25,8 @@ export default {
     publicKeyToId,
     importKeys,
     exportKeys,
-    idToPublicKey
+    idToPublicKey,
+    publicKeyToDid
 }
 
 function idToPublicKey (id) {
