@@ -152,23 +152,23 @@ export function isInvalidShape (msg) {
 }
 
 
-var base64 = {
-    urlEncode: function urlEncode(str) {
-        return makeUrlSafe(encode64(str));
-    },
+// var base64 = {
+//     urlEncode: function urlEncode(str) {
+//         return makeUrlSafe(encode64(str));
+//     },
 
-    urlDecode: function decode(base64) {
-        return uint8arrays.toString(uint8arrays.fromString(base64, "base64pad"));
-    }
-}
+//     urlDecode: function decode(base64) {
+//         return uint8arrays.toString(uint8arrays.fromString(base64, "base64pad"));
+//     }
+// }
 
-function makeUrlSafe(a) {
-    return a.replace(/\//g, "_").replace(/\+/g, "-").replace(/=+$/, '');
-}
+// function makeUrlSafe(a) {
+//     return a.replace(/\//g, "_").replace(/\+/g, "-").replace(/=+$/, '');
+// }
 
-function makeUrlUnsafe (a) {
-    return a.replace(/_/g, "/").replace(/-/g, "+");
-}
+// function makeUrlUnsafe (a) {
+//     return a.replace(/_/g, "/").replace(/-/g, "+");
+// }
 
 function encode64 (str) {
     return uint8arrays.toString(uint8arrays.fromString(str), "base64pad");
@@ -179,9 +179,9 @@ function encode64 (str) {
  *
  * @param header The UcanHeader to encode
  */
-function encodeHeader (header) {
-    return base64.urlEncode(JSON.stringify(header));
-}
+// function encodeHeader (header) {
+//     return base64.urlEncode(JSON.stringify(header));
+// }
 
 /**
  * Try to decode a UCAN.
@@ -189,16 +189,16 @@ function encodeHeader (header) {
  *
  * @param ucan The encoded UCAN to decode
  */
-function decode (ucan) {
-    const split = ucan.split(".");
-    const header = JSON.parse(base64.urlDecode(split[0]));
-    const payload = JSON.parse(base64.urlDecode(split[1]));
-    return {
-        header,
-        payload,
-        signature: split[2] || null
-    };
-}
+// function decode (ucan) {
+//     const split = ucan.split(".");
+//     const header = JSON.parse(base64.urlDecode(split[0]));
+//     const payload = JSON.parse(base64.urlDecode(split[1]));
+//     return {
+//         header,
+//         payload,
+//         signature: split[2] || null
+//     };
+// }
 
 export function didToPublicKey (did) {
     if (!did.startsWith(BASE58_DID_PREFIX)) {
@@ -223,6 +223,7 @@ function arrBufToBase64 (buf) {
 }
 
 
+// (string, string)
 export function publicKeyToDid(publicKey, type) {
     type = type || 'ed25519'
     const pubKeyBuf = utils.base64ToArrBuf(publicKey)
