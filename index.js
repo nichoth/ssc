@@ -71,6 +71,10 @@ function exportKeys (keypair) {
         })
 }
 
+function getPublicKey () {
+
+}
+
 function createKeys () {
     const uses = ['sign', 'verify']
 
@@ -78,10 +82,10 @@ function createKeys () {
         name:  ECC_WRITE_ALG,
         namedCurve: 'P-256'
     }, true, uses)
-        .then(key => {
-            return publicKeyToId(key.publicKey)
+        .then(keys => {
+            return publicKeyToId(keys.publicKey)
                 .then(id => {
-                    return { id, keys: key }
+                    return { id, keys }
                 })
         })
 }
