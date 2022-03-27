@@ -34,7 +34,7 @@ test('init', t => {
         //     'should be an instance of ECC keystore')
             
         ssc.getDidFromKeys(alice).then(did => {
-            console.log('did', did)
+            // console.log('did', did)
             // fs.writeFileSync(__dirname + '/alice-did.json', did)
             t.end()
         })
@@ -51,7 +51,8 @@ test('who is the server', t => {
             return res.text()
         })
         .then(res => {
-            console.log('got response', res)
+            console.log(res)
+            t.ok(res.includes('did:key:'), 'should return a DID')
             t.end()
         })
         .catch(err => {
