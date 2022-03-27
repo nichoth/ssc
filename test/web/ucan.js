@@ -11,17 +11,20 @@ import { capabilities } from "ucans/dist/attenuation"
 
 var mockServer
 var mockServerUcan
-var ks
+var alice
 
 test('create keys', t => {
     ssc.createKeys(ssc.keyTypes.ECC).then(keys => {
-        ks = keys
+        alice = keys
         t.ok(!!keys, 'should return a keystore')
-        // t.ok(ks instanceof ECCKeyStore, 'should be an instance of ECC keystore')
+        // t.ok(alice instanceof ECCKeyStore, 'should be an instance of ECC keystore')
         t.end()
+    }).catch(err => {
+        console.log("oh no", err)
     })
 })
 
+// this is the mock server 
 test('init', t => {
     ucan.EdKeypair.create().then(kp => {
         mockServer = kp
@@ -40,6 +43,46 @@ test('init', t => {
     })
 })
 
+
+// this is made server-side, because it is signed with the server's keys
+test('create the first UCAN for alice', t => {
+    ssc.getDidFromKeys(alice).then(did => {
+        ucan.build({
+            audience: did,
+            issuer: mockServer, // signing key
+            capabilities: [ // permissions for ucan
+                // {
+                //     "wnfs": "boris.fission.name/public/photos/",
+                //     "cap": "OVERWRITE"
+                // },
+                { hermes: 'name', cap: 'WRITE' }
+            ],
+            proofs: [ ucan.encode(mockServerUcan) ]
+        })
+            .then(aliceUcan => {
+            })
+    })
+})
+
+
+function hermesCaps (chained) {
+    const hermesSemantics = {
+        tryParsing (cap) {
+            return cap
+        },
+    
+        tryDelegating (parentCap, childCap) {
+            console.log('***parent cap', parentCap)
+            console.log('***child cap', childCap)
+            return childCap
+            // return childCap.hermes === parentCap.hermes ? childCap : null
+        }
+    }
+
+    return capabilities(chained, hermesSemantics)
+}
+
+
 var origUcan
 test('create a UCAN with write capabilities', t => {
     /** did:key:z6Mkk89bC3JrVqKie71YEcc5M1SMVxuCgNx6zLZ8SYJsxALi */
@@ -47,24 +90,7 @@ test('create a UCAN with write capabilities', t => {
     // console.log('alice', alice)
 
 
-    function hermesCaps (chained) {
-        const hermesSemantics = {
-            tryParsing (cap) {
-                return cap
-            },
-        
-            tryDelegating (parentCap, childCap) {
-                console.log('***parent cap', parentCap)
-                console.log('***child cap', childCap)
-                return childCap
-                // return childCap.hermes === parentCap.hermes ? childCap : null
-            }
-        }
-
-        return capabilities(chained, hermesSemantics)
-    }
-
-    ssc.getDidFromKeys(ks).then(did => {
+    ssc.getDidFromKeys(alice).then(did => {
         // console.log('did', did)
 
         // https://github.com/ucan-wg/ts-ucan
