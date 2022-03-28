@@ -98,6 +98,7 @@ function getAuthor (msg) {
     return msg.author
 }
 
+// (ks: keystore)
 function getDidFromKeys (ks) {
     return ks.publicWriteKey()
         .then(publicKey => {

@@ -221,7 +221,7 @@ function decode (ucan) {
     };
 }
 
-function didToPublicKey (did) {
+export function didToPublicKey (did) {
     if (!did.startsWith(BASE58_DID_PREFIX)) {
         throw new Error(
             "Please use a base58-encoded DID formatted `did:key:z...`")
