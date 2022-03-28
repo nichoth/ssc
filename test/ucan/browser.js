@@ -4,6 +4,7 @@ import ssc from '../../web/index.js'
 
 // import { Chained } from "ucans/dist/chained"
 import * as token from "ucans/dist/token"
+import * as ucan from 'ucans'
 
 // import { Chained } from "ucans/dist/chained"
 // import * as token from "ucans/dist/token"
@@ -71,15 +72,15 @@ test('get a UCAN issued by the server', t => {
             body: did
         })
             .then(res => res.text())
-            .then(ucan => {
-                t.ok(ucan, 'should return a ucan')
-                encodedUcan = ucan
+            .then(_ucan => {
+                t.ok(_ucan, 'should return a ucan')
+                encodedUcan = _ucan
 
                 // Chained.fromToken(ucan).then(ucan => {
                 //     console.log('validated ucan', ucan)
                 // })
 
-                token.validate(ucan)
+                token.validate(_ucan)
                     .then(parsed => {
                         parsedUcan = parsed
                         t.equal(parsed.payload.iss, serverDid,
@@ -119,5 +120,41 @@ test('send the UCAN back to the server, along with a message', t => {
             t.end()
         })
     })
+})
 
+
+
+test('request with an invalid UCAN', t => {
+    ssc.sign(alice, 'a test message').then(sig => {
+        ucan.EdKeypair.create().then(randomKeypair => {
+
+            ucan.build({
+                audience: aliceDid, //recipient DID
+                issuer: randomKeypair, //signing key
+                capabilities: [ // permissions for ucan
+                    { hermes: 'alice', cap: 'write' }
+                ]
+            }).then(selfSignedUcan => {
+                fetch('http://localhost:8888/post-msg', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        ucan: token.encode(selfSignedUcan),
+                        author: aliceDid,
+                        sig,
+                        msg: 'a test message'
+                    })
+                })
+                .then(res => res.text())
+                .then(res => {
+                    t.equal(res, 'booo', 'the server should reject the request')
+                    t.end()
+                })
+            }).catch(err => {
+                console.log('aaaaaaaaaa', err)
+                t.end()
+            })
+
+        })
+
+    })
 })

@@ -1,11 +1,12 @@
 import * as http from 'http';
 import ssc from '../../index.js'
 import * as ucan from 'ucans'
-import { webcrypto } from 'one-webcrypto'
+// import { webcrypto } from 'one-webcrypto'
 // import * as did from "ucans/dist/did/index.js"
 // import { EdKeypair } from 'ucans';
 // import { Chained } from "ucans/dist/chained"
 import * as token from "ucans/dist/token.js"
+import { parse } from 'path';
 
 var serverKeys
 var serverDid
@@ -100,11 +101,11 @@ function startServer () {
                 Promise.all([
                     ssc.verify(publicKey, sig, msg),
 
-                    token.validate(ucan, parsed => {
-                        return parsed
+                    token.validate(ucan).then(parsed => {
+                        return (parsed && parsed.payload.iss === serverDid)
                     })
                 ]).then(([validMsg, validUcan]) => {
-                    // console.log('aaaaa', validMsg, validUcan)
+                    // console.log('valids', validMsg, validUcan)
                     return (validMsg && validUcan) ?
                         res.end('ok') :
                         res.end('booo')
@@ -114,16 +115,8 @@ function startServer () {
         }
 
         return res.end('ciao')
-
-        // fs.readFile(__dirname + '/data.txt', function (err, data) {
-        //     res.end(data);
-        // });
-
-        // var stream = fs.createReadStream(__dirname + '/data.txt');
-        // stream.pipe(res);
-    });
+    })
 
     server.listen(8888)
     console.log('listening on :8888')
 }
-
