@@ -4,6 +4,8 @@ import * as ucan from 'ucans'
 import { webcrypto } from 'one-webcrypto'
 // import * as did from "ucans/dist/did/index.js"
 // import { EdKeypair } from 'ucans';
+// import { Chained } from "ucans/dist/chained"
+import * as token from "ucans/dist/token.js"
 
 var serverKeys
 var serverDid
@@ -95,13 +97,20 @@ function startServer () {
                 const { msg, sig, ucan, author } = JSON.parse(body)
                 const { publicKey } = ssc.didToPublicKey(author)
 
-                ssc.verify(publicKey, sig, msg)
-                    .then(ver => {
-                        if (ver) return res.end('ok')
-                        return res.end('booo')
-                    })
-            })
+                Promise.all([
+                    ssc.verify(publicKey, sig, msg),
 
+                    token.validate(ucan, parsed => {
+                        return parsed
+                    })
+                ]).then(([validMsg, validUcan]) => {
+                    // console.log('aaaaa', validMsg, validUcan)
+                    return (validMsg && validUcan) ?
+                        res.end('ok') :
+                        res.end('booo')
+                })
+
+            })
         }
 
         return res.end('ciao')
