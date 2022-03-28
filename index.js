@@ -5,7 +5,7 @@ var timestamp = require('monotonic-timestamp')
 var ssbKeys = require('ssb-keys')
 var stringify = require('json-stable-stringify')
 import { clone, isObject, getId, hash, isInvalidShape,
-    publicKeyToDid } from './util.js'
+    publicKeyToDid, didToPublicKey } from './util.js'
 import { webcrypto } from 'one-webcrypto'
 import { ECC_WRITE_ALG, DEFAULT_HASH_ALG,
     DEFAULT_CHAR_SIZE, DEFAULT_ECC_CURVE } from './CONSTANTS.js'
@@ -26,7 +26,8 @@ export default {
     importKeys,
     exportKeys,
     idToPublicKey,
-    publicKeyToDid
+    publicKeyToDid,
+    didToPublicKey
 }
 
 function idToPublicKey (id) {
@@ -73,9 +74,18 @@ function exportKeys (keypair) {
         })
 }
 
-function getPublicKey () {
+// function getPublicKey () {
 
-}
+// }
+
+// (ks: keystore)
+// function getDidFromKeys (ks) {
+//     return ks.publicWriteKey()
+//         .then(publicKey => {
+//             var did = publicKeyToDid(publicKey)
+//             return did
+//         })
+// }
 
 function createKeys () {
     const uses = ['sign', 'verify']
@@ -182,6 +192,30 @@ function verify (publicKey, sig, msg) {
     if (typeof sig === 'object') {
         throw new Error('signature should be base64 string,' +
             'did you mean verifyObj(public, signed_obj)')
+    }
+
+
+    // if we're given a string, we need to convert that
+    // into a publicKey instance
+    if (typeof publicKey === 'string') {
+        return webcrypto.subtle.importKey(
+            'raw',
+            utils.base64ToArrBuf(publicKey),
+            { name: ECC_WRITE_ALG, namedCurve: DEFAULT_ECC_CURVE },
+            true,
+            ['verify']
+        )
+            .then(pubKey => {
+                return webcrypto.subtle.verify(
+                    {
+                        name: ECC_WRITE_ALG,
+                        hash: { name: DEFAULT_HASH_ALG }
+                    },
+                    pubKey,
+                    utils.normalizeBase64ToBuf(sig),
+                    utils.normalizeUnicodeToBuf(msg, DEFAULT_CHAR_SIZE)
+                )
+            })
     }
 
     return webcrypto.subtle.verify(

@@ -1,6 +1,10 @@
 // import * as ucan from 'ucans'
 import test from 'tape'
 import ssc from '../../web/index.js'
+
+// import { Chained } from "ucans/dist/chained"
+import * as token from "ucans/dist/token"
+
 // import { Chained } from "ucans/dist/chained"
 // import * as token from "ucans/dist/token"
 // import { capabilities } from "ucans/dist/attenuation"
@@ -25,38 +29,95 @@ import ssc from '../../web/index.js'
 // * [ ] _server-side_ -- send alice's UCAN back to the client side
 
 var alice
+var aliceDid
 
 test('init', t => {
     ssc.createKeys().then(keys => {
         alice = keys
-        // t.ok(!!keys, 'should return a keystore')
-        // t.ok(alice instanceof ECCKeyStore,
-        //     'should be an instance of ECC keystore')
-            
         ssc.getDidFromKeys(alice).then(did => {
-            // console.log('did', did)
-            // fs.writeFileSync(__dirname + '/alice-did.json', did)
-            t.end()
+            aliceDid = did
         })
+        t.ok(!!keys, 'should return a keystore')
+        t.end()
     }).catch(err => {
         console.log("oh no", err)
     })
 })
 
+var serverDid
 test('who is the server', t => {
     fetch('http://localhost:8888/who-are-you', {
         method: 'GET'
     })
-        .then(res => {
-            return res.text()
-        })
+        .then(res => res.text())
         .then(res => {
             console.log(res)
+            serverDid = res
             t.ok(res.includes('did:key:'), 'should return a DID')
             t.end()
         })
         .catch(err => {
-            console.log('err', err)
+            console.log('errrrrr', err)
             t.end()
         })
+})
+
+var encodedUcan
+var parsedUcan
+test('get a UCAN issued by the server', t => {
+    ssc.getDidFromKeys(alice).then(did => {
+        fetch('http://localhost:8888/get-ucan', {
+            method: 'POST',
+            body: did
+        })
+            .then(res => res.text())
+            .then(ucan => {
+                t.ok(ucan, 'should return a ucan')
+                encodedUcan = ucan
+
+                // Chained.fromToken(ucan).then(ucan => {
+                //     console.log('validated ucan', ucan)
+                // })
+
+                token.validate(ucan)
+                    .then(parsed => {
+                        parsedUcan = parsed
+                        t.equal(parsed.payload.iss, serverDid,
+                            'UCAN should be issued by the server')
+                        t.equal(parsed.payload.aud, did,
+                            'should be issued to alice')
+                        t.end()
+                    })
+                    .catch(err => {
+                        t.fail()
+                        console.log('errrrrrr', err)
+                        t.end()
+                    })
+            })
+            .catch(err => {
+                console.log('errrrr', err)
+                t.fail()
+                t.end()
+            })
+    })
+})
+
+test('send the UCAN back to the server, along with a message', t => {
+    ssc.sign(alice, 'a test message').then(sig => {
+        fetch('http://localhost:8888/post-msg', {
+            method: 'POST',
+            body: JSON.stringify({
+                ucan: encodedUcan,
+                author: aliceDid,
+                sig,
+                msg: 'a test message'
+            })
+        })
+        .then(res => res.text())
+        .then(res => {
+            t.equal(res, 'ok', 'the server should validate the request')
+            t.end()
+        })
+    })
+
 })
