@@ -170,27 +170,29 @@ test('request with an invalid UCAN', t => {
 test('post a message with a surrogate UCAN', t => {
     // console.log('***alice***', alice)
     // console.log('alice.keys', alice.store.keys())
-    alice.store.keys().then(keys => {
-        console.log('**keys**', keys)
+    // alice.store.keys().then(keys => {
+    //     console.log('**keys**', keys)
+    //     t.end()
+    // })
+
+    Promise.all([
+        // ssc.sign(aliceSurrogate, 'a test message'),
+
+        ucan.build({
+            audience: aliceSurrogateDid, // recipient DID
+            issuer: alice, // signing key
+            capabilities: [ // permissions for ucan
+                { hermes: 'alice', cap: 'surrogate' }
+            ],
+            proof: encodedUcan
+        })
+    ]).then(([sig, surrogateUcan]) => {
+        console.log('made surrogate ucan', sig)
+        console.log('made surrogate ucan', surrogateUcan)
+        t.end()
+    }).catch(err => {
+        console.log('errrrrrr', err)
         t.end()
     })
-
-    // Promise.all([
-    //     // ssc.sign(aliceSurrogate, 'a test message'),
-
-    //     ucan.build({
-    //         audience: aliceSurrogateDid, // recipient DID
-    //         issuer: alice.keys, // signing key
-    //         capabilities: [ // permissions for ucan
-    //             { hermes: 'alice', cap: 'surrogate' }
-    //         ],
-    //         proof: encodedUcan
-    //     })
-    // ]).then(([sig, surrogateUcan]) => {
-    //     console.log('made surrogate ucan', sig)
-    //     console.log('made surrogate ucan', surrogateUcan)
-    // }).catch(err => {
-    //     console.log('errrrrrr', err)
-    // })
 
 })
