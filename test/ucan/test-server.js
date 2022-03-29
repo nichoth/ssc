@@ -4,9 +4,9 @@ import * as ucan from 'ucans'
 // import { webcrypto } from 'one-webcrypto'
 // import * as did from "ucans/dist/did/index.js"
 // import { EdKeypair } from 'ucans';
-// import { Chained } from "ucans/dist/chained"
+import { Chained } from "ucans/dist/chained.js"
 import * as token from "ucans/dist/token.js"
-import { parse } from 'path';
+// import { parse } from 'path';
 
 var serverKeys
 var serverDid
@@ -111,6 +111,23 @@ function startServer () {
                         res.end('booo')
                 })
 
+            })
+        }
+
+        if (path.includes('surrogate-post')) {
+            let body = ''
+            req.on('data', chunk => body += chunk.toString())
+
+            return req.on('end', () => {
+                const { msg, sig, ucan, author } = JSON.parse(body)
+                const { publicKey } = ssc.didToPublicKey(author)
+
+                console.log('surrogate post')
+                console.log(ucan)
+
+                Chained.fromToken(ucan).then(chain => {
+
+                })
             })
         }
 

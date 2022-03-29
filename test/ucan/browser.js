@@ -31,17 +31,27 @@ import * as ucan from 'ucans'
 
 var alice
 var aliceDid
+var aliceSurrogate
+var aliceSurrogateDid
 
 test('init', t => {
-    ssc.createKeys().then(keys => {
-        alice = keys
-        ssc.getDidFromKeys(alice).then(did => {
-            aliceDid = did
+    Promise.all([
+        ssc.createKeys().then(keys => {
+            alice = keys
+            ssc.getDidFromKeys(alice).then(did => {
+                aliceDid = did
+            })
+            t.ok(!!keys, 'should return a keystore')
+        }).catch(err => {
+            console.log("oh no", err)
+        }),
+
+        ucan.EdKeypair.create().then(keys => {
+            aliceSurrogate = keys
+            aliceSurrogateDid = keys.did()
         })
-        t.ok(!!keys, 'should return a keystore')
+    ]).then(() => {
         t.end()
-    }).catch(err => {
-        console.log("oh no", err)
     })
 })
 
@@ -64,7 +74,7 @@ test('who is the server', t => {
 })
 
 var encodedUcan
-var parsedUcan
+// var parsedUcan
 test('get a UCAN issued by the server', t => {
     ssc.getDidFromKeys(alice).then(did => {
         fetch('http://localhost:8888/get-ucan', {
@@ -82,7 +92,7 @@ test('get a UCAN issued by the server', t => {
 
                 token.validate(_ucan)
                     .then(parsed => {
-                        parsedUcan = parsed
+                        // parsedUcan = parsed
                         t.equal(parsed.payload.iss, serverDid,
                             'UCAN should be issued by the server')
                         t.equal(parsed.payload.aud, did,
@@ -114,11 +124,11 @@ test('send the UCAN back to the server, along with a message', t => {
                 msg: 'a test message'
             })
         })
-        .then(res => res.text())
-        .then(res => {
-            t.equal(res, 'ok', 'the server should validate the request')
-            t.end()
-        })
+            .then(res => res.text())
+            .then(res => {
+                t.equal(res, 'ok', 'the server should validate the request')
+                t.end()
+            })
     })
 })
 
@@ -153,8 +163,34 @@ test('request with an invalid UCAN', t => {
                 console.log('aaaaaaaaaa', err)
                 t.end()
             })
-
         })
-
     })
+})
+
+test('post a message with a surrogate UCAN', t => {
+    // console.log('***alice***', alice)
+    // console.log('alice.keys', alice.store.keys())
+    alice.store.keys().then(keys => {
+        console.log('**keys**', keys)
+        t.end()
+    })
+
+    // Promise.all([
+    //     // ssc.sign(aliceSurrogate, 'a test message'),
+
+    //     ucan.build({
+    //         audience: aliceSurrogateDid, // recipient DID
+    //         issuer: alice.keys, // signing key
+    //         capabilities: [ // permissions for ucan
+    //             { hermes: 'alice', cap: 'surrogate' }
+    //         ],
+    //         proof: encodedUcan
+    //     })
+    // ]).then(([sig, surrogateUcan]) => {
+    //     console.log('made surrogate ucan', sig)
+    //     console.log('made surrogate ucan', surrogateUcan)
+    // }).catch(err => {
+    //     console.log('errrrrrr', err)
+    // })
+
 })
