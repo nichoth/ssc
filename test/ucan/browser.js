@@ -176,19 +176,49 @@ test('post a message with a surrogate UCAN', t => {
     // })
 
     Promise.all([
-        // ssc.sign(aliceSurrogate, 'a test message'),
+        ssc.sign(aliceSurrogate, 'a test message'),
 
         ucan.build({
             audience: aliceSurrogateDid, // recipient DID
+
+            // TODO -- be able to use keystore-idb keys here
             issuer: alice, // signing key
+
             capabilities: [ // permissions for ucan
                 { hermes: 'alice', cap: 'surrogate' }
             ],
             proof: encodedUcan
         })
+
+        // alice.store.keys().then(keys => {
+        //     return ucan.build({
+        //         audience: aliceSurrogateDid, // recipient DID
+        //         issuer: keys, // signing key
+        //         capabilities: [ // permissions for ucan
+        //             { hermes: 'alice', cap: 'surrogate' }
+        //         ],
+        //         proof: encodedUcan
+        //     })
+        // })
     ]).then(([sig, surrogateUcan]) => {
         console.log('made surrogate ucan', sig)
         console.log('made surrogate ucan', surrogateUcan)
+
+        fetch('http://localhost:8888/post-msg', {
+            method: 'POST',
+            body: JSON.stringify({
+                ucan: token.encode(surrogateUcan),
+                author: aliceDid,
+                sig,
+                msg: 'a test message'
+            })
+        })
+            .then(res => res.text())
+            .then(res => {
+                t.equal(res, 'ok', 'the server says the UCAN is valid')
+                t.end()
+            })
+
         t.end()
     }).catch(err => {
         console.log('errrrrrr', err)
