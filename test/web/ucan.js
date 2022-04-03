@@ -93,19 +93,24 @@ test("create the first UCAN for alice", t => {
 
 test('create a second ucan, for another device', t => {
     alice.getKeypair().then(keypair => {
+        console.log('keypair.did****', keypair.did())
+
         ucan.EdKeypair.create().then(deviceTwo => {
+            console.log('**device two did**', deviceTwo.did())
+
             ucan.build({
                 audience: deviceTwo.did(),
-                // issuer: alice.getKeypair(),
                 issuer: keypair,
                 capabilities: [{ hermes: 'member' }],
                 proofs: [ ucan.encode(aliceUcan) ]
             })
                 .then(ucanTwo => {
-                    // console.log('***ucan 2***', _ucan)
+                    // console.log('***ucan 2***', ucanTwo)
                     t.ok(ucanTwo, 'should create a second UCAN')
                     t.equal(ucanTwo.payload.prf[0], ucan.encode(aliceUcan),
-                        'should have the original UCAN as proof')
+                        "should have alice's original UCAN as proof")
+                    // t.equal(ucanTwo.payload.iss, keypair.did(),
+                    //     'the server should be the issuer')
                     t.end()
                 })
                 .catch(err => {
