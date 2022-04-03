@@ -210,7 +210,7 @@ function encodeHeader (header) {
  *
  * @param ucan The encoded UCAN to decode
  */
-function decode (ucan) {
+export function decode (ucan) {
     const split = ucan.split(".");
     const header = JSON.parse(base64.urlDecode(split[0]));
     const payload = JSON.parse(base64.urlDecode(split[1]));
@@ -226,6 +226,8 @@ export function didToPublicKey (did) {
         throw new Error(
             "Please use a base58-encoded DID formatted `did:key:z...`")
     }
+
+    // console.log('diddddddddddddddd', did)
   
     const didWithoutPrefix = did.substr(BASE58_DID_PREFIX.length)
     const magicalBuf = uint8arrays.fromString(didWithoutPrefix, "base58btc")
@@ -278,6 +280,7 @@ function hasPrefix (prefixedKey, prefix) {
 }
 
 function parseMagicBytes (prefixedKey) {
+    // console.log('**magical buf**', prefixedKey)
     // RSA
     if (hasPrefix(prefixedKey, RSA_DID_PREFIX)) {
         return {

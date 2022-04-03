@@ -11,16 +11,22 @@ let keys = null
 const KEY_TYPES = { ECC: 'ecc', RSA: 'rsa' }
 const KEY_TYPE = 'ed25519'
 
-function get (keyType) {
+function get (keyType, storeName) {
+    storeName = storeName || null
     if (keys) return Promise.resolve(keys);
-    return keystore.init({ type: keyType }).then(_keys => {
+    return keystore.init({ type: keyType, storeName }).then(_keys => {
         keys = _keys
         return _keys
     })
+    .catch(err => {
+        console.log('errrrrrrrrrrr', err)
+    })
 }
 
-function createKeys (type) {
-    return get(type || KEY_TYPES.ECC)
+function createKeys (type, opts) {
+    opts = opts || {}
+    const storeName = opts.storeName
+    return get(type || KEY_TYPES.ECC, storeName)
 }
 
 async function sign (keys, msg) {

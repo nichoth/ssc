@@ -6,7 +6,11 @@ import * as ucan from 'ucans'
 // import { EdKeypair } from 'ucans';
 import { Chained } from "ucans/dist/chained.js"
 import * as token from "ucans/dist/token.js"
+// import { parse } from "ucans/dist/token.js"
+// console.log('token', token)
+// const { parse } = require('ucans/dist/token')
 // import { parse } from 'path';
+
 
 var serverKeys
 var serverDid
@@ -30,7 +34,7 @@ var serverEdKeys
 ucan.EdKeypair.create().then(keypair => {
     serverKeys = keypair
     serverEdKeys = keypair
-    console.log('did', keypair.did())
+    // console.log('did', keypair.did())
     serverDid = keypair.did()
     startServer()
 })
@@ -119,14 +123,40 @@ function startServer () {
             req.on('data', chunk => body += chunk.toString())
 
             return req.on('end', () => {
-                const { msg, sig, ucan, author } = JSON.parse(body)
+                // const { msg, sig, ucan, author } = JSON.parse(body)
+
+                const _body = JSON.parse(body)
+                const { msg, sig, author } = _body
+                const _ucan = _body.ucan
+                console.log('**author**', author)
                 const { publicKey } = ssc.didToPublicKey(author)
+                // const { msg, sig, ucan, author } = JSON.parse(body)
 
-                console.log('surrogate post')
-                console.log(ucan)
+                // console.log('sigggggg', sig)
 
-                Chained.fromToken(ucan).then(chain => {
+                // ssc.verify(publicKey, sig, msg).then(isValid => {
+                //     console.log('is valid??????', isValid)
+                // })
+                // console.log('pub key', publicKey)
+                // console.log('author', author)
 
+                // token.validate(_ucan).then(parsed => {
+                //     console.log('***parsed ucan***', parsed)
+                // }).catch(err => {
+                //     console.log('argggggg', err)
+                // })
+
+                // console.log('**********', _ucan)
+                // token.validate
+
+                Chained.fromToken(_ucan).then(chain => {
+                    console.log('chain', chain)
+                    res.end('cccccccccccc')
+                }).catch(err => {
+                    console.log('**chained errrrrrrrr**', err)
+                    const { header, payload } = token.parsePayload(_ucan)
+                    console.log('head and parts', header, payload)
+                    res.end('dddddddddddddddddd')
                 })
             })
         }

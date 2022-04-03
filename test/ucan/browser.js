@@ -5,6 +5,8 @@ import ssc from '../../web/index.js'
 // import { Chained } from "ucans/dist/chained"
 import * as token from "ucans/dist/token"
 import * as ucan from 'ucans'
+import { Chained } from 'ucans'
+// import { keystore } from 'webnative'
 
 // import { Chained } from "ucans/dist/chained"
 // import * as token from "ucans/dist/token"
@@ -34,6 +36,13 @@ var aliceDid
 var aliceSurrogate
 var aliceSurrogateDid
 
+
+
+// try creating everything with the ucans library -- all keys
+// that way you know they should be compatible
+
+
+
 test('init', t => {
     Promise.all([
         ssc.createKeys().then(keys => {
@@ -46,10 +55,25 @@ test('init', t => {
             console.log("oh no", err)
         }),
 
-        ucan.EdKeypair.create().then(keys => {
-            aliceSurrogate = keys
-            aliceSurrogateDid = keys.did()
+        // ssc.createKeys().then(keys2 => {
+        //     aliceSurrogate = keys2
+        //     aliceSurrogateDid = keys2.getKeypair().then(kp => {
+        //         aliceSurrogateDid = kp.did()
+        //     })
+        // })
+
+        ssc.createKeys(null, { storeName: 'fooo' }).then(keys2 => {
+            aliceSurrogate = keys2
+            ssc.getDidFromKeys(keys2).then(did => (aliceSurrogateDid = did))
+            // aliceSurrogate.getKeypair().then(kp => {
+            //     aliceSurrogateDid = kp.did()
+            // })
         })
+
+        // ucan.EdKeypair.create().then(keys => {
+        //     aliceSurrogate = keys
+        //     aliceSurrogateDid = keys.did()
+        // })
     ]).then(() => {
         t.end()
     })
@@ -62,7 +86,6 @@ test('who is the server', t => {
     })
         .then(res => res.text())
         .then(res => {
-            console.log(res)
             serverDid = res
             t.ok(res.includes('did:key:'), 'should return a DID')
             t.end()
@@ -74,7 +97,6 @@ test('who is the server', t => {
 })
 
 var encodedUcan
-// var parsedUcan
 test('get a UCAN issued by the server', t => {
     ssc.getDidFromKeys(alice).then(did => {
         fetch('http://localhost:8888/get-ucan', {
@@ -86,13 +108,8 @@ test('get a UCAN issued by the server', t => {
                 t.ok(_ucan, 'should return a ucan')
                 encodedUcan = _ucan
 
-                // Chained.fromToken(ucan).then(ucan => {
-                //     console.log('validated ucan', ucan)
-                // })
-
                 token.validate(_ucan)
                     .then(parsed => {
-                        // parsedUcan = parsed
                         t.equal(parsed.payload.iss, serverDid,
                             'UCAN should be issued by the server')
                         t.equal(parsed.payload.aud, did,
@@ -167,62 +184,96 @@ test('request with an invalid UCAN', t => {
     })
 })
 
-test('post a message with a surrogate UCAN', t => {
-    // console.log('***alice***', alice)
-    // console.log('alice.keys', alice.store.keys())
-    // alice.store.keys().then(keys => {
-    //     console.log('**keys**', keys)
-    //     t.end()
-    // })
+test('validate a surrogate UCAN from within the same process', async t => {
+    const bob = await ucan.EdKeypair.create()
+    const sig = await bob.sign('my message')
+    console.log('*sig*', sig)
+    const carol = await ucan.EdKeypair.create()
 
-    Promise.all([
-        ssc.sign(aliceSurrogate, 'a test message'),
-
-        ucan.build({
-            audience: aliceSurrogateDid, // recipient DID
-
-            // TODO -- be able to use keystore-idb keys here
-            issuer: alice, // signing key
-
-            capabilities: [ // permissions for ucan
-                { hermes: 'alice', cap: 'surrogate' }
-            ],
-            proof: encodedUcan
-        })
-
-        // alice.store.keys().then(keys => {
-        //     return ucan.build({
-        //         audience: aliceSurrogateDid, // recipient DID
-        //         issuer: keys, // signing key
-        //         capabilities: [ // permissions for ucan
-        //             { hermes: 'alice', cap: 'surrogate' }
-        //         ],
-        //         proof: encodedUcan
-        //     })
-        // })
-    ]).then(([sig, surrogateUcan]) => {
-        console.log('made surrogate ucan', sig)
-        console.log('made surrogate ucan', surrogateUcan)
-
-        fetch('http://localhost:8888/post-msg', {
-            method: 'POST',
-            body: JSON.stringify({
-                ucan: token.encode(surrogateUcan),
-                author: aliceDid,
-                sig,
-                msg: 'a test message'
-            })
-        })
-            .then(res => res.text())
-            .then(res => {
-                t.equal(res, 'ok', 'the server says the UCAN is valid')
-                t.end()
-            })
-
-        t.end()
-    }).catch(err => {
-        console.log('errrrrrr', err)
-        t.end()
+    const bobsUcan = await ucan.build({
+        audience: bob.did(), // recipient DID
+        issuer: carol, // signing key
+        capabilities: [ // permissions for ucan
+            { hermes: 'bob', cap: 'write' }
+        ]
     })
 
+    const carolsUcan = await ucan.build({
+        proofs: [ ucan.encode(mockServerUcan) ]
+    })
+
+    console.log('bobs ucan', bobsUcan)
+    t.end()
+
+    // alice.getKeypair().then(kp => {
+        // console.log('keypair', kp)
+
+        // ucan.build({
+        //     audience: bob.did(), // recipient DID
+        //     issuer: kp, // signing key
+        //     capabilities: [ // permissions for ucan
+        //         { hermes: 'bob', cap: 'write' }
+        //     ]
+        // }).then(newUcan => {
+        //     console.log('*new ucan*', newUcan)
+
+        //     const enc = token.encode(newUcan)
+        //     console.log('**encode**', token.encode)
+        //     console.log('**encoded ucan**', enc)
+
+        //     // const parsedUcan = await token.validate(enc)
+        //     // const parsedUcan = await token.validate(token.encode(newUcan))
+        //     // console.log('**parsed**', parsedUcan)
+
+        //     token.validate(token.encode(newUcan)).then(parsedUcan => {
+        //         console.log('**parsed**', parsedUcan)
+        //         t.end()
+        //     })
+        //         .catch(err => {
+        //             console.log('**arg**', err)
+        //             t.end()
+        //         })
+
+
+
+            // const chain = await Chained.fromToken(enc)
+            // console.log('aaaaaaaaaa')
+            // console.log('****chain****', chain)
+        // })
+    // })
 })
+
+// test('post a message with a surrogate UCAN', async t => {
+//     // console.log('**alice**', alice)
+
+//     const bob = await ucan.EdKeypair.create()
+
+//     // const sig = await bob.sign('a test message')
+//     const sig = await bob.sign('my message')
+//     console.log('*sig*', sig)
+
+//     alice.getKeypair().then(kp => {
+//         // console.log('keypair', kp)
+
+//         ucan.build({
+//             audience: bob.did(), // recipient DID
+//             issuer: kp, // signing key
+//             capabilities: [ // permissions for ucan
+//                 { hermes: 'bob', cap: 'write' }
+//             ]
+//         }).then(async newUcan => {
+//             console.log('*new ucan*', newUcan)
+
+//             const enc = token.encode(newUcan)
+//             console.log('**encoded ucan**', enc)
+//             const parsedUcan = await token.validate(enc)
+//             console.log('**parsed**', parsedUcan)
+
+//             t.end()
+
+//             // const chain = await Chained.fromToken(enc)
+//             // console.log('aaaaaaaaaa')
+//             // console.log('****chain****', chain)
+//         })
+//     })
+// })
