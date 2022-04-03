@@ -101,9 +101,11 @@ test('create a second ucan, for another device', t => {
                 capabilities: [{ hermes: 'member' }],
                 proofs: [ ucan.encode(aliceUcan) ]
             })
-                .then(_ucan => {
-                    console.log('***ucan 2***', _ucan)
-                    t.ok(_ucan, 'should create a second UCAN')
+                .then(ucanTwo => {
+                    // console.log('***ucan 2***', _ucan)
+                    t.ok(ucanTwo, 'should create a second UCAN')
+                    t.equal(ucanTwo.payload.prf[0], ucan.encode(aliceUcan),
+                        'should have the original UCAN as proof')
                     t.end()
                 })
                 .catch(err => {
