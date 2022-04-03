@@ -60,6 +60,12 @@ test('create the first UCAN for alice', t => {
             proofs: [ ucan.encode(mockServerUcan) ]
         })
             .then(aliceUcan => {
+                console.log('alices ucan', aliceUcan)
+                t.end()
+            })
+            .catch(err => {
+                console.log('errrrr', err)
+                t.end()
             })
     })
 })
@@ -83,7 +89,7 @@ function hermesCaps (chained) {
 }
 
 
-var origUcan
+// var origUcan
 test('create a UCAN with write capabilities', t => {
     /** did:key:z6Mkk89bC3JrVqKie71YEcc5M1SMVxuCgNx6zLZ8SYJsxALi */
     // const alice = ucan.EdKeypair.fromSecretKey("U+bzp2GaFQHso587iSFWPSeCzbSfn/CbNHEz7ilKRZ1UQMmMS7qq4UhTzKn3X9Nj/4xgrwa+UqhMOeo4Ki8JUw==")
@@ -91,7 +97,7 @@ test('create a UCAN with write capabilities', t => {
 
 
     ssc.getDidFromKeys(alice).then(did => {
-        // console.log('did', did)
+        console.log('did', did)
 
         // https://github.com/ucan-wg/ts-ucan
         ucan.build({
@@ -107,21 +113,28 @@ test('create a UCAN with write capabilities', t => {
             proofs: [ucan.encode(mockServerUcan)]
         })
             .then(userUcan => {
-                origUcan = userUcan
+                // origUcan = userUcan
 
+                console.log('*user ucan*', userUcan)
 
-                Chained.fromToken(ucan.encode(userUcan)).then(chained => {
-                    console.log('*chained*', chained)
-                    console.log('caps', Array.from(hermesCaps(chained)))
-                })
+                Chained.fromToken(ucan.encode(userUcan))
+                    .then(chained => {
+                        t.ok(chained, 'should created chained version')
+                        console.log('caps', Array.from(hermesCaps(chained)))
+                        t.end()
+                    })
+                    .catch(err => {
+                        console.log('**errrrrrr**', err)
+                        t.end()
+                    })
 
-                token.validate(ucan.encode(userUcan)).then(parsed => {
-                    // console.log('*****parsed ucan', parsed)
-                    t.end()
-                })
-                .catch(err => {
-                    console.log('errrrrrr', err)
-                })
+                // token.validate(ucan.encode(userUcan)).then(parsed => {
+                //     console.log('*****parsed ucan', parsed)
+                //     t.end()
+                // })
+                // .catch(err => {
+                //     console.log('errrrrrr', err)
+                // })
                 // console.log('****usss', ucan.issuer())
                 // ucan.isValid(userUcan).then(val => {
             //         var root = ucan.rootIssuer(ucan.encode(userUcan))
@@ -149,6 +162,10 @@ test('create a UCAN with write capabilities', t => {
             //         // }), 'should find the capability that we care about')
                     // t.end()
                 // })
+            })
+            .catch(err => {
+                console.log('errrrrrrrrrrr', err)
+                t.end()
             })
         })
 })
