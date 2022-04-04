@@ -227,9 +227,7 @@ export function didToPublicKey (did) {
             "Please use a base58-encoded DID formatted `did:key:z...`")
     }
 
-    // console.log('diddddddddddddddd', did)
-  
-    const didWithoutPrefix = did.substr(BASE58_DID_PREFIX.length)
+    const didWithoutPrefix = ('' + did.substr(BASE58_DID_PREFIX.length))
     const magicalBuf = uint8arrays.fromString(didWithoutPrefix, "base58btc")
     const { keyBuffer, type } = parseMagicBytes(magicalBuf)
   

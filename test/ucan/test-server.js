@@ -72,42 +72,55 @@ function startServer () {
                 ucan.build({
                     audience: aliceDid, //recipient DID
                     issuer: serverEdKeys, //signing key
-                    capabilities: [ // permissions for ucan
-                        { hermes: 'alice', cap: 'write' }
+                    // capabilities: [ // permissions for ucan
+                    //     { hermes: 'alice', cap: 'write' }
 
-                        // {
-                        //     "wnfs": "boris.fission.name/public/photos/",
-                        //     "cap": "OVERWRITE"
-                        // },
-                        // {
-                        //     "wnfs": "boris.fission.name/private/4tZA6S61BSXygmJGGW885odfQwpnR2UgmCaS5CfCuWtEKQdtkRnvKVdZ4q6wBXYTjhewomJWPL2ui3hJqaSodFnKyWiPZWLwzp1h7wLtaVBQqSW4ZFgyYaJScVkBs32BThn6BZBJTmayeoA9hm8XrhTX4CGX5CVCwqvEUvHTSzAwdaR",
-                        //     "cap": "APPEND"
-                        // },
-                        // {
-                        //     "email": "boris@fission.codes",
-                        //     "cap": "SEND"
-                        // }
-                    ]
+                    //     // {
+                    //     //     "wnfs": "boris.fission.name/public/photos/",
+                    //     //     "cap": "OVERWRITE"
+                    //     // },
+                    //     // {
+                    //     //     "wnfs": "boris.fission.name/private/4tZA6S61BSXygmJGGW885odfQwpnR2UgmCaS5CfCuWtEKQdtkRnvKVdZ4q6wBXYTjhewomJWPL2ui3hJqaSodFnKyWiPZWLwzp1h7wLtaVBQqSW4ZFgyYaJScVkBs32BThn6BZBJTmayeoA9hm8XrhTX4CGX5CVCwqvEUvHTSzAwdaR",
+                    //     //     "cap": "APPEND"
+                    //     // },
+                    //     // {
+                    //     //     "email": "boris@fission.codes",
+                    //     //     "cap": "SEND"
+                    //     // }
+                    // ]
                 }).then(aliceUcan => {
-                    res.end(ucan.encode(aliceUcan))
+                    console.log('**alice ucan**', aliceUcan)
+                    const encoded = token.encode(aliceUcan)
+                    // res.end(encoded)
+                    // console.log('**encoded in here**', encoded)
+                    // res.end(encoded)
+                    Chained.fromToken(encoded).then(_res => {
+                        console.log('ressssssssss', _res)
+                        res.end(encoded)
+                    })
+                    // token.validate(encoded).then(parsed => {
+                    //     console.log('**in here**', parsed)
+                    // })
                 })
             })
         }
 
         if (path.includes('post-msg')) {
-            let body = ''
-            req.on('data', chunk => body += chunk.toString())
+            let incomingBody = ''
+            req.on('data', chunk => (incomingBody += chunk.toString()))
 
             return req.on('end', () => {
-                const { msg, sig, ucan, author } = JSON.parse(body)
+                const _body = JSON.parse(incomingBody)
+                const { msg, sig, author } = _body
+                const _ucan = _body.ucan
                 const { publicKey } = ssc.didToPublicKey(author)
 
                 Promise.all([
-                    ssc.verify(publicKey, sig, msg),
-
-                    token.validate(ucan).then(parsed => {
+                    token.validate(_ucan).then(parsed => {
                         return (parsed && parsed.payload.iss === serverDid)
-                    })
+                    }),
+
+                    ssc.verify(publicKey, sig, msg),
                 ]).then(([validMsg, validUcan]) => {
                     // console.log('valids', validMsg, validUcan)
                     return (validMsg && validUcan) ?

@@ -5,7 +5,12 @@ import ssc from '../../web/index.js'
 // import { Chained } from "ucans/dist/chained"
 import * as token from "ucans/dist/token"
 import * as ucan from 'ucans'
-import { Chained } from 'ucans'
+import { Chained } from 'ucans/dist/chained'
+// import * as token from "../src/token"
+// import { Chained } from "../src/chained"
+// import { Ucan } from "../src/types"
+// import { alice, bob, mallory } from "./fixtures"
+import * as fixt from './fixtures'
 // import { keystore } from 'webnative'
 
 // import { Chained } from "ucans/dist/chained"
@@ -96,6 +101,26 @@ test('who is the server', t => {
         })
 })
 
+test('basic browser-side decode', async t => {
+    const leafUcan = token.encode(await token.build({
+        issuer: fixt.alice,
+        audience: fixt.bob.did(),
+    }))
+
+    const _ucan = token.encode(await token.build({
+        issuer: fixt.bob,
+        audience: fixt.mallory.did(),
+        proofs: [ leafUcan ]
+    }))
+
+    const chain = await Chained.fromToken(_ucan)
+    t.equal(chain.audience(), fixt.mallory.did(),
+        "audience should be mallory's DID")
+    t.equal(chain.proofs()[0]?.issuer(), fixt.alice.did(),
+        "issuer should be alice")
+    t.end()
+})
+
 var encodedUcan
 test('get a UCAN issued by the server', t => {
     ssc.getDidFromKeys(alice).then(did => {
@@ -108,8 +133,14 @@ test('get a UCAN issued by the server', t => {
                 t.ok(_ucan, 'should return a ucan')
                 encodedUcan = _ucan
 
+                // console.log('**browser encode**', encodedUcan)
+                // t.end()
+
+                console.log('***encoded, browser side***', encodedUcan)
+
                 token.validate(_ucan)
                     .then(parsed => {
+                        // console.log('**parsed**', parsed)
                         t.equal(parsed.payload.iss, serverDid,
                             'UCAN should be issued by the server')
                         t.equal(parsed.payload.aud, did,
@@ -132,14 +163,23 @@ test('get a UCAN issued by the server', t => {
 
 test('send the UCAN back to the server, along with a message', t => {
     ssc.sign(alice, 'a test message').then(sig => {
+
+        console.log('**down here encoded ucan**', encodedUcan)
+
+        const body = JSON.stringify({
+            ucan: encodedUcan,
+            author: aliceDid,
+            sig,
+            msg: 'a test message'
+        })
+
+        console.log('**JSON parsed ucan**', JSON.parse(body).ucan)
+
+        // console.log('**body**', body)
+
         fetch('http://localhost:8888/post-msg', {
             method: 'POST',
-            body: JSON.stringify({
-                ucan: encodedUcan,
-                author: aliceDid,
-                sig,
-                msg: 'a test message'
-            })
+            body
         })
             .then(res => res.text())
             .then(res => {
@@ -158,9 +198,9 @@ test('request with an invalid UCAN', t => {
             ucan.build({
                 audience: aliceDid, //recipient DID
                 issuer: randomKeypair, //signing key
-                capabilities: [ // permissions for ucan
-                    { hermes: 'alice', cap: 'write' }
-                ]
+                // capabilities: [ // permissions for ucan
+                //     { hermes: 'alice', cap: 'write' }
+                // ]
             }).then(selfSignedUcan => {
                 fetch('http://localhost:8888/post-msg', {
                     method: 'POST',
@@ -186,23 +226,24 @@ test('request with an invalid UCAN', t => {
 
 test('validate a surrogate UCAN from within the same process', async t => {
     const bob = await ucan.EdKeypair.create()
-    const sig = await bob.sign('my message')
-    console.log('*sig*', sig)
+    // const sig = await bob.sign('my message')
+    // console.log('*sig*', sig)
     const carol = await ucan.EdKeypair.create()
 
     const bobsUcan = await ucan.build({
         audience: bob.did(), // recipient DID
         issuer: carol, // signing key
-        capabilities: [ // permissions for ucan
-            { hermes: 'bob', cap: 'write' }
-        ]
+        // capabilities: [ // permissions for ucan
+        //     { hermes: 'bob', cap: 'write' }
+        // ]
     })
 
-    const carolsUcan = await ucan.build({
-        proofs: [ ucan.encode(mockServerUcan) ]
-    })
+    console.log('ucan bob', bobsUcan)
 
-    console.log('bobs ucan', bobsUcan)
+    // const carolsUcan = await ucan.build({
+    //     proofs: [ ucan.encode(mockServerUcan) ]
+    // })
+
     t.end()
 
     // alice.getKeypair().then(kp => {
@@ -243,37 +284,43 @@ test('validate a surrogate UCAN from within the same process', async t => {
     // })
 })
 
-// test('post a message with a surrogate UCAN', async t => {
-//     // console.log('**alice**', alice)
+test('post a message with a surrogate UCAN', async t => {
+    // console.log('**alice**', alice)
 
-//     const bob = await ucan.EdKeypair.create()
+    const bob = await ucan.EdKeypair.create()
 
-//     // const sig = await bob.sign('a test message')
-//     const sig = await bob.sign('my message')
-//     console.log('*sig*', sig)
+    // const sig = await bob.sign('a test message')
+    // const sig = await bob.sign('my message')
+    // console.log('*sig*', sig)
 
-//     alice.getKeypair().then(kp => {
-//         // console.log('keypair', kp)
+    alice.getKeypair().then(kp => {
+        ucan.build({
+            audience: bob.did(), // recipient DID
+            issuer: kp, // signing key
+            // capabilities: [ // permissions for ucan
+            //     { hermes: 'bob', cap: 'write' }
+            // ]
+        }).then(async newUcan => {
+            // console.log('*new ucan*', newUcan)
 
-//         ucan.build({
-//             audience: bob.did(), // recipient DID
-//             issuer: kp, // signing key
-//             capabilities: [ // permissions for ucan
-//                 { hermes: 'bob', cap: 'write' }
-//             ]
-//         }).then(async newUcan => {
-//             console.log('*new ucan*', newUcan)
+            const enc = token.encode(newUcan)
+            console.log('**encoded ucan**', enc)
 
-//             const enc = token.encode(newUcan)
-//             console.log('**encoded ucan**', enc)
-//             const parsedUcan = await token.validate(enc)
-//             console.log('**parsed**', parsedUcan)
+            Chained.fromToken(enc).then(parsedUcan => {
+                console.log('**parsed**', parsedUcan)
+                t.end()
+            }).catch(err => {
+                console.log('errrrrrrrrrrrrrr', err)
+                t.end()
+            })
 
-//             t.end()
-
-//             // const chain = await Chained.fromToken(enc)
-//             // console.log('aaaaaaaaaa')
-//             // console.log('****chain****', chain)
-//         })
-//     })
-// })
+            // token.validate(enc).then(parsedUcan => {
+            //     console.log('**parsed**', parsedUcan)
+            //     t.end()
+            // }).catch(err => {
+            //     console.log('errrrrrrrrrrrrrr', err)
+            //     t.end()
+            // })
+        })
+    })
+})
