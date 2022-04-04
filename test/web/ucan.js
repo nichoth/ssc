@@ -62,7 +62,7 @@ test("create the first UCAN for alice", t => {
         })
             .then(_aliceUcan => {
                 aliceUcan = _aliceUcan
-                console.log('*alices ucan*', aliceUcan)
+                // console.log('*alices ucan*', aliceUcan)
                 t.end()
             })
             .catch(err => {
@@ -93,10 +93,8 @@ test("create the first UCAN for alice", t => {
 
 test('create a second ucan, for another device', t => {
     alice.getKeypair().then(keypair => {
-        console.log('keypair.did****', keypair.did())
 
         ucan.EdKeypair.create().then(deviceTwo => {
-            console.log('**device two did**', deviceTwo.did())
 
             ucan.build({
                 audience: deviceTwo.did(),
@@ -105,12 +103,11 @@ test('create a second ucan, for another device', t => {
                 proofs: [ ucan.encode(aliceUcan) ]
             })
                 .then(ucanTwo => {
-                    // console.log('***ucan 2***', ucanTwo)
                     t.ok(ucanTwo, 'should create a second UCAN')
                     t.equal(ucanTwo.payload.prf[0], ucan.encode(aliceUcan),
                         "should have alice's original UCAN as proof")
-                    // t.equal(ucanTwo.payload.iss, keypair.did(),
-                    //     'the server should be the issuer')
+                    t.equal(keypair.did(), ucanTwo.payload.iss,
+                        'alice should be the issuer')
                     t.end()
                 })
                 .catch(err => {
@@ -125,3 +122,5 @@ test('create a second ucan, for another device', t => {
         t.end()
     })
 })
+
+// iss: 'did:key:z82T5Z7ohLAB3Y7tqTCJvsxHPmckYRnTBEjH8SN99eR7ED8YbG1eWjwAUNDYH3Wh9zktRYvnbD5trjv7f6FECX8z1bYwU',
