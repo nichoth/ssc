@@ -13,6 +13,19 @@ npm i @nichoth/ssc
 
 ----------------------------------------------------
 
+## keys
+
+keys created by `ssb-keys` look like this:
+
+```js
+{
+  curve: 'ed25519',
+  public: 'T/Lu07ZOO6k6oRcgv45mtmMY24v22elakI+UVppMI/k=.ed25519',
+  private: 'd3OYSdrpN7KGBP+kgJtJtn4nr3dJPUmanct2xJGhntBP8u7Ttk47qTqhFyC/jma2Yxjbi/bZ6VqQj5RWmkwj+Q==.ed25519',
+  id: '@T/Lu07ZOO6k6oRcgv45mtmMY24v22elakI+UVppMI/k=.ed25519'
+}
+```
+
 ## examples
 These demonstrate usage in node js.
 
