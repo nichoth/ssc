@@ -62,7 +62,6 @@ function importKeys (userDoc) {
 function exportKeys (keypair) {
     return Promise.all([
         webcrypto.subtle.exportKey('raw', keypair.publicKey),
-        // Promise.resolve('fooo')
         webcrypto.subtle.exportKey('pkcs8', keypair.privateKey)
         // webcrypto.subtle.exportKey('raw', keypair.privateKey)
     ])
@@ -193,7 +192,6 @@ function verify (publicKey, sig, msg) {
         throw new Error('signature should be base64 string,' +
             'did you mean verifyObj(public, signed_obj)')
     }
-
 
     // if we're given a string, we need to convert that
     // into a publicKey instance

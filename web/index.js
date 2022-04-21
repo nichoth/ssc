@@ -70,7 +70,6 @@ async function verifyObj (pubKey, _obj) {
     var obj = clone(_obj);
     var sig = obj.signature;
     delete obj.signature;
-    // const msgArr = fromString(stringify(obj, null, 2))
     const msgStr = stringify(obj, null, 2)
     return _verify(pubKey, sig, msgStr);
 }
@@ -95,9 +94,7 @@ function isPrevMsgOk (prevMsg, msg) {
 
 function isValidMsg (msg, prevMsg, pubKey) {
     return verifyObj(pubKey, msg)
-        .then(ver => {
-            return ver && isPrevMsgOk(prevMsg, msg)
-        })
+        .then(ver => (ver && isPrevMsgOk(prevMsg, msg)))
 }
 
 function getAuthor (msg) {

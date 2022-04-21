@@ -30,7 +30,7 @@ const RSA_DID_PREFIX = new Uint8Array([ 0x00, 0xf5, 0x02 ])
 const BASE58_DID_PREFIX = 'did:key:z'
 
 
-export function publicKeyToDid(publicKey, type) {
+export function publicKeyToDid (publicKey, type) {
     type = type || 'ed25519'
     const pubKeyBuf = utils.base64ToArrBuf(publicKey)
   
@@ -277,6 +277,10 @@ function hasPrefix (prefixedKey, prefix) {
     return arrBufs.equal(prefix, prefixedKey.slice(0, prefix.byteLength))
 }
 
+/**
+ * Parse magic bytes on prefixed key-buffer
+ * to determine cryptosystem & the unprefixed key-buffer.
+ */
 function parseMagicBytes (prefixedKey) {
     // console.log('**magical buf**', prefixedKey)
     // RSA
