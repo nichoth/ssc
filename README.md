@@ -244,3 +244,4 @@ test('create ssb style posts', async function (t) {
 
 ---------------------------------------------------------------------
 
+test
