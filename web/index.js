@@ -11,16 +11,22 @@ let keys = null
 const KEY_TYPES = { ECC: 'ecc', RSA: 'rsa' }
 const KEY_TYPE = 'ed25519'
 
-function get (keyType) {
+function get (keyType, storeName) {
+    storeName = storeName || null
     if (keys) return Promise.resolve(keys);
-    return keystore.init({ type: keyType }).then(_keys => {
+    return keystore.init({ type: keyType, storeName }).then(_keys => {
         keys = _keys
         return _keys
     })
+    .catch(err => {
+        console.log('errrrrrrrrrrr', err)
+    })
 }
 
-function createKeys (type) {
-    return get(type || KEY_TYPES.ECC)
+function createKeys (type, opts) {
+    opts = opts || {}
+    const storeName = opts.storeName
+    return get(type || KEY_TYPES.ECC, storeName)
 }
 
 async function sign (keys, msg) {
@@ -35,12 +41,13 @@ async function createMsg (keyStore, prevMsg, content) {
     }
 
     const writeKey = await keyStore.publicWriteKey()
+    const ourDID = publicKeyToDid(writeKey)
 
     const msg = {
         previous: prevMsg ? getId(prevMsg) : null,
         sequence: prevMsg ? prevMsg.sequence + 1 : 1,
-        author: '@' + writeKey + '.' + KEY_TYPE,
-        // author: ourDID,
+        // author: '@' + writeKey + '.' + KEY_TYPE,
+        author: ourDID,
         timestamp: +timestamp(),
         hash: 'sha256',
         content: content
@@ -55,16 +62,14 @@ async function createMsg (keyStore, prevMsg, content) {
 async function signObj (keys, obj) {
     var _obj = clone(obj)
     var b = utils.normalizeUnicodeToBuf(stringify(obj), DEFAULT_CHAR_SIZE)
-    _obj.signature = (await sign(keys, b) + '.sig.ed25519')
+    _obj.signature = (await sign(keys, b))
     return _obj
 }
 
 async function verifyObj (pubKey, _obj) {
     var obj = clone(_obj);
     var sig = obj.signature;
-    sig = sig.replace('.sig.ed25519', '')
     delete obj.signature;
-    // const msgArr = fromString(stringify(obj, null, 2))
     const msgStr = stringify(obj, null, 2)
     return _verify(pubKey, sig, msgStr);
 }
@@ -89,15 +94,14 @@ function isPrevMsgOk (prevMsg, msg) {
 
 function isValidMsg (msg, prevMsg, pubKey) {
     return verifyObj(pubKey, msg)
-        .then(ver => {
-            return ver && isPrevMsgOk(prevMsg, msg)
-        })
+        .then(ver => (ver && isPrevMsgOk(prevMsg, msg)))
 }
 
 function getAuthor (msg) {
     return msg.author
 }
 
+// (ks: keystore)
 function getDidFromKeys (ks) {
     return ks.publicWriteKey()
         .then(publicKey => {

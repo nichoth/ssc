@@ -29,6 +29,24 @@ const BLS_DID_PREFIX = new Uint8Array([ 0xea, 0x01 ])
 const RSA_DID_PREFIX = new Uint8Array([ 0x00, 0xf5, 0x02 ])
 const BASE58_DID_PREFIX = 'did:key:z'
 
+
+export function publicKeyToDid (publicKey, type) {
+    type = type || 'ed25519'
+    const pubKeyBuf = utils.base64ToArrBuf(publicKey)
+  
+    // Prefix public-write key
+    const prefix = magicBytes(type)
+    if (prefix === null) {
+        throw new Error(`Key type '${type}' not supported`)
+    }
+  
+    const prefixedBuf = utils.joinBufs(prefix, pubKeyBuf)
+  
+    // Encode prefixed
+    return BASE58_DID_PREFIX +
+        uint8arrays.toString(new Uint8Array(prefixedBuf), "base58btc")
+}
+
 /**
  * Magic bytes.
  */
@@ -192,7 +210,7 @@ function encodeHeader (header) {
  *
  * @param ucan The encoded UCAN to decode
  */
-function decode (ucan) {
+export function decode (ucan) {
     const split = ucan.split(".");
     const header = JSON.parse(base64.urlDecode(split[0]));
     const payload = JSON.parse(base64.urlDecode(split[1]));
@@ -203,13 +221,13 @@ function decode (ucan) {
     };
 }
 
-function didToPublicKey (did) {
+export function didToPublicKey (did) {
     if (!did.startsWith(BASE58_DID_PREFIX)) {
         throw new Error(
             "Please use a base58-encoded DID formatted `did:key:z...`")
     }
-  
-    const didWithoutPrefix = did.substr(BASE58_DID_PREFIX.length)
+
+    const didWithoutPrefix = ('' + did.substr(BASE58_DID_PREFIX.length))
     const magicalBuf = uint8arrays.fromString(didWithoutPrefix, "base58btc")
     const { keyBuffer, type } = parseMagicBytes(magicalBuf)
   
@@ -226,22 +244,22 @@ function arrBufToBase64 (buf) {
 }
 
 
-function publicKeyToDid(publicKey, type) {
-    type = type || 'ed25519'
-    const pubKeyBuf = utils.base64ToArrBuf(publicKey)
+// function publicKeyToDid(publicKey, type) {
+//     type = type || 'ed25519'
+//     const pubKeyBuf = utils.base64ToArrBuf(publicKey)
   
-    // Prefix public-write key
-    const prefix = magicBytes(type)
-    if (prefix === null) {
-        throw new Error(`Key type '${type}' not supported`)
-    }
+//     // Prefix public-write key
+//     const prefix = magicBytes(type)
+//     if (prefix === null) {
+//         throw new Error(`Key type '${type}' not supported`)
+//     }
   
-    const prefixedBuf = utils.joinBufs(prefix, pubKeyBuf)
+//     const prefixedBuf = utils.joinBufs(prefix, pubKeyBuf)
   
-    // Encode prefixed
-    return BASE58_DID_PREFIX +
-        uint8arrays.toString(new Uint8Array(prefixedBuf), "base58btc")
-}
+//     // Encode prefixed
+//     return BASE58_DID_PREFIX +
+//         uint8arrays.toString(new Uint8Array(prefixedBuf), "base58btc")
+// }
 
 const arrBufs = {
     equal: (aBuf, bBuf) => {
@@ -259,7 +277,12 @@ function hasPrefix (prefixedKey, prefix) {
     return arrBufs.equal(prefix, prefixedKey.slice(0, prefix.byteLength))
 }
 
+/**
+ * Parse magic bytes on prefixed key-buffer
+ * to determine cryptosystem & the unprefixed key-buffer.
+ */
 function parseMagicBytes (prefixedKey) {
+    // console.log('**magical buf**', prefixedKey)
     // RSA
     if (hasPrefix(prefixedKey, RSA_DID_PREFIX)) {
         return {

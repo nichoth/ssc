@@ -4,7 +4,8 @@ const require = createRequire(import.meta.url);
 var timestamp = require('monotonic-timestamp')
 var ssbKeys = require('ssb-keys')
 var stringify = require('json-stable-stringify')
-import { clone, isObject, getId, hash, isInvalidShape } from './util.js'
+import { clone, isObject, getId, hash, isInvalidShape,
+    publicKeyToDid, didToPublicKey } from './util.js'
 import { webcrypto } from 'one-webcrypto'
 import { ECC_WRITE_ALG, DEFAULT_HASH_ALG,
     DEFAULT_CHAR_SIZE, DEFAULT_ECC_CURVE } from './CONSTANTS.js'
@@ -24,7 +25,9 @@ export default {
     publicKeyToId,
     importKeys,
     exportKeys,
-    idToPublicKey
+    idToPublicKey,
+    publicKeyToDid,
+    didToPublicKey
 }
 
 function idToPublicKey (id) {
@@ -59,7 +62,6 @@ function importKeys (userDoc) {
 function exportKeys (keypair) {
     return Promise.all([
         webcrypto.subtle.exportKey('raw', keypair.publicKey),
-        // Promise.resolve('fooo')
         webcrypto.subtle.exportKey('pkcs8', keypair.privateKey)
         // webcrypto.subtle.exportKey('raw', keypair.privateKey)
     ])
@@ -71,6 +73,19 @@ function exportKeys (keypair) {
         })
 }
 
+// function getPublicKey () {
+
+// }
+
+// (ks: keystore)
+// function getDidFromKeys (ks) {
+//     return ks.publicWriteKey()
+//         .then(publicKey => {
+//             var did = publicKeyToDid(publicKey)
+//             return did
+//         })
+// }
+
 function createKeys () {
     const uses = ['sign', 'verify']
 
@@ -78,10 +93,10 @@ function createKeys () {
         name:  ECC_WRITE_ALG,
         namedCurve: 'P-256'
     }, true, uses)
-        .then(key => {
-            return publicKeyToId(key.publicKey)
+        .then(keys => {
+            return publicKeyToId(keys.publicKey)
                 .then(id => {
-                    return { id, keys: key }
+                    return { id, keys }
                 })
         })
 }
@@ -176,6 +191,29 @@ function verify (publicKey, sig, msg) {
     if (typeof sig === 'object') {
         throw new Error('signature should be base64 string,' +
             'did you mean verifyObj(public, signed_obj)')
+    }
+
+    // if we're given a string, we need to convert that
+    // into a publicKey instance
+    if (typeof publicKey === 'string') {
+        return webcrypto.subtle.importKey(
+            'raw',
+            utils.base64ToArrBuf(publicKey),
+            { name: ECC_WRITE_ALG, namedCurve: DEFAULT_ECC_CURVE },
+            true,
+            ['verify']
+        )
+            .then(pubKey => {
+                return webcrypto.subtle.verify(
+                    {
+                        name: ECC_WRITE_ALG,
+                        hash: { name: DEFAULT_HASH_ALG }
+                    },
+                    pubKey,
+                    utils.normalizeBase64ToBuf(sig),
+                    utils.normalizeUnicodeToBuf(msg, DEFAULT_CHAR_SIZE)
+                )
+            })
     }
 
     return webcrypto.subtle.verify(
