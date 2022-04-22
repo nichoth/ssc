@@ -36,6 +36,7 @@
   "//comment": "nichoth/ts-ucan so we can use the latest API, but have some stability",
   "dependencies": {
     "chloride": "^2.3.0",
+    "concat-stream": "^2.0.0",
     "is-canonical-base64": "^1.1.1",
     "json-stable-stringify": "^1.0.1",
     "keystore-idb": "github:nichoth/keystore-idb",

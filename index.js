@@ -11,6 +11,8 @@ import { ECC_WRITE_ALG, DEFAULT_HASH_ALG,
     DEFAULT_CHAR_SIZE, DEFAULT_ECC_CURVE } from './CONSTANTS.js'
 import * as utils from 'keystore-idb/lib/utils.js'
 
+const KEY_TYPE = 'ed25519'
+
 export default {
     sign,
     verifyObj,
@@ -123,6 +125,12 @@ function createKeys () {
 
 
 // just creates a msg, doesn't check that the `msg.previous` key is valid
+
+function isEncrypted (msg) {
+    return (typeof msg.value.content == 'string')
+}
+
+// TODO -- should verify the `previous` key is ok
 async function createMsg (keys, prevMsg, content) {
     if (!isObject(content) && !isEncrypted(content)) {
         throw new Error('invalid message content, ' +
@@ -145,8 +153,6 @@ async function createMsg (keys, prevMsg, content) {
     return signObj(keys, null, msg)
 }
 
-const KEY_TYPE = 'ed25519'
-
 async function publicKeyToId (publicKey) {
     const raw = await webcrypto.subtle.exportKey('raw', publicKey)
     const str = utils.arrBufToBase64(raw)
@@ -154,7 +160,6 @@ async function publicKeyToId (publicKey) {
 }
 
 function verifyObj (publicKey, hmac_key, obj) {
-// function verifyObj (keys, hmac_key, obj) {
     if (!obj) (obj = hmac_key), (hmac_key = null);
     obj = clone(obj);
     var sig = obj.signature;
