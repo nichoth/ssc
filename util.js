@@ -32,7 +32,14 @@ const BASE58_DID_PREFIX = 'did:key:z'
 
 export function publicKeyToDid (publicKey, type) {
     type = type || 'ed25519'
-    const pubKeyBuf = utils.base64ToArrBuf(publicKey)
+
+    // convert base64 string to buffer if necessary
+    var pubKeyBuf
+    if (typeof publicKey === 'string') {
+        pubKeyBuf = utils.base64ToArrBuf(publicKey)
+    } else {
+        pubKeyBuf = publicKey
+    }
   
     // Prefix public-write key
     const prefix = magicBytes(type)

@@ -96,7 +96,13 @@ function createKeys () {
         .then(keys => {
             return publicKeyToId(keys.publicKey)
                 .then(id => {
-                    return { id, keys }
+                    return exportKeys(keys).then(exported => {
+                        return {
+                            did: publicKeyToDid(exported.public),
+                            id,
+                            keys
+                        }
+                    })
                 })
         })
 }
@@ -175,8 +181,6 @@ function isValidMsg (msg, prevMsg, publicKey) {
 
     return verifyObj(publicKey, null, msg)
         .then(isVal => isVal && isPrevMsgOk(prevMsg, msg))
-
-    // return (verifyObj(publicKey, null, msg) && isPrevMsgOk(prevMsg, msg))
 }
 
 function isPrevMsgOk (prevMsg, msg) {
