@@ -24,7 +24,6 @@ test('init', t => {
 test('export keys', t => {
     ssc.exportKeys(alice.keys)
         .then((keys) => {
-
             const userDoc = {
                 id: alice.id,
                 keys
