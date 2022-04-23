@@ -2,11 +2,9 @@
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url)
 const concat = require('concat-stream')
-
-var argv = require('minimist')(process.argv.slice(2))
 import ssc from './index.js'
 
-// console.log('argv', argv)
+const argv = require('minimist')(process.argv.slice(2))
 
 const commands = {
     keys: function () {
@@ -74,6 +72,6 @@ if (commands[cmd]) {
 
 function usage () {
     return `
-        usage instructions go here
+        Usage instruction go here
     `
 }
