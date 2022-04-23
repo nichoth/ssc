@@ -2,8 +2,6 @@
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url)
 const concat = require('concat-stream')
-const path = require('path')
-var stringify = require('json-stable-stringify')
 
 var argv = require('minimist')(process.argv.slice(2))
 import ssc from './index.js'
