@@ -139,6 +139,10 @@ async function createMsg (keys, prevMsg, content) {
 
     const id = await publicKeyToId(keys.publicKey)
 
+    console.log('prev msg in here', prevMsg)
+    console.log('prev msg in here', prevMsg)
+    console.log('in here', getId(prevMsg))
+
     var msg = {
         previous: prevMsg ? getId(prevMsg) : null,
         sequence: prevMsg ? prevMsg.sequence + 1 : 1,
