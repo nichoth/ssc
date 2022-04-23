@@ -82,7 +82,7 @@ ssc keys | ssc post --text "woooo testing again" --prev="$(cat ./test/cli/messag
 This takes a message value piped into stdin as input, and return a sha256 hash, written to stdout.
 
 ```bash
-cat test/cli/message-json.json | ./cli.js id
+cat test/cli/message-json.json | ssc id
 ```
 
 ```
