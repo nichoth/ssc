@@ -189,8 +189,8 @@ function isValidMsg (msg, prevMsg, publicKey) {
 
 function isPrevMsgOk (prevMsg, msg) {
     if (prevMsg === null) return (msg.previous === null)
-    return (msg.previous === getId(prevMsg)) &&
-        msg.sequence === prevMsg.sequence + 1
+    return ((msg.previous === getId(prevMsg)) &&
+        msg.sequence === prevMsg.sequence + 1)
 }
 
 // takes a public key, signature, and a hash

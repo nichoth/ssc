@@ -12,7 +12,7 @@ test('sign a string', function (t) {
             .then(_sig => {
                 sig = _sig
                 t.ok(sig, 'should return a signature')
-                t.equal(typeof sig, 'string', 'should return a string')
+                t.equal(typeof sig, 'string', 'signature shoud be a string')
                 t.end()
             })
     })
