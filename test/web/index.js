@@ -63,6 +63,14 @@ test('create a message', async t => {
     t.end()
 })
 
+
+
+// test('the server can verify messages create in a browser', t => {
+
+// })
+
+
+
 test('verify a message', async t => {
     // this validates a single message,
     // does not check the merkle-list integrity
