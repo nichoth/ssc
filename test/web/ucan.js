@@ -16,7 +16,8 @@ test('create keys', t => {
     ssc.createKeys(ssc.keyTypes.ECC).then(keys => {
         alice = keys
         t.ok(!!keys, 'should return a keystore')
-        t.ok(alice instanceof ECCKeyStore, 'should be an instance of ECC keystore')
+        t.ok(alice instanceof ECCKeyStore,
+            'should return an instance of ECC keystore')
         t.end()
     }).catch(err => {
         console.log("oh no", err)

@@ -4,32 +4,109 @@ Static functions for working with a merkle-dag.
 
 This is `ssb` but more boring. `ssc` because c comes after b in the alphabet
 
+
 -------------------------------------------------------
 
-## install
+
+## CLI
+
+### install
+
 ```
-npm i @nichoth/ssc
+npm i -g @nichoth/ssc
 ```
 
-----------------------------------------------------
+### keys
+Create a new keypair, written to stdout
 
-## keys
+```
+% ssc keys
+```
 
-keys created by `ssb-keys` look like this:
-
-```js
+```
 {
-  curve: 'ed25519',
-  public: 'T/Lu07ZOO6k6oRcgv45mtmMY24v22elakI+UVppMI/k=.ed25519',
-  private: 'd3OYSdrpN7KGBP+kgJtJtn4nr3dJPUmanct2xJGhntBP8u7Ttk47qTqhFyC/jma2Yxjbi/bZ6VqQj5RWmkwj+Q==.ed25519',
-  id: '@T/Lu07ZOO6k6oRcgv45mtmMY24v22elakI+UVppMI/k=.ed25519'
+  "public": "BCgXk5VVmWd6odnczvUTMuhqxRJSHkA9roas7mtV3BF/Uj2u3/Pr0lINgToXvGjO/b0oZKNh1d1d2Q9CHU3UGB8=",
+  "private": "MIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQgem10DNzZ3BBXKmfFIELfisCzByOFh6joTn4+O+jE8TqhRANCAAQoF5OVVZlneqHZ3M71EzLoasUSUh5APa6GrO5rVdwRf1I9rt/z69JSDYE6F7xozv29KGSjYdXdXdkPQh1N1Bgf",
+  "did": "did:key:z82T5VzE8st7yLSEWweKnFHdZieEvE5rD2AevQ7RgtfwjFHjkguyB69KcHKHRx784Ybqnbmg91qCiMML5Sc3Xh34YbhNW",
+  "id": "@BCgXk5VVmWd6odnczvUTMuhqxRJSHkA9roas7mtV3BF/Uj2u3/Pr0lINgToXvGjO/b0oZKNh1d1d2Q9CHU3UGB8=.ed25519"
 }
 ```
 
-## examples
+### post
+Input includes JSON keys piped into stdin. It also requires a `--text` option
+
+This creates a new "post" type message with some new keys that we create, with **`null` as the preceding message**:
+
+```bash
+% ssc keys | ssc post --text "woooo more test"
+```
+
+```
+{
+  "previous": null,
+  "sequence": 1,
+  "author": "@BEJZ0YhJYDKDdkWEzBZF+Rf2HYZeBdtwaXmmshQsjGhEkOEbT0PR6eQiWA5tgBv46iYOlmZp2Z+bhox5UzmlgeU=.ed25519",
+  "timestamp": 1650750178099,
+  "hash": "sha256",
+  "content": {
+    "type": "post",
+    "text": "wooo more test"
+  },
+  "signature": "CFaOTRL6QHpmfE6QmN1qhzN9Nh5kxJweHZIbkEVh29Rj4CVlf+EdzBAc2TJyB6b7prUgMd2CC79MbRUjncjYeA=="
+}
+```
+
+To **set a previous message in this message**, pass in the previous message as the `--prev` option as a JSON string. This can be used to create a merkle list.
+
+```bash
+ssc keys | ssc post --text "woooo testing again" --prev="$(cat ./test/cli/message-json.json)"
+```
+
+```
+{
+  "previous": "%BUfo/WZh51h7eh91PBkdxQLnGfjrkG3ErsDdFmacWIg=.sha256",
+  "sequence": 2,
+  "author": "@BH7K096VMXU1M1aagMP8Sf7s67MaLZlYmgJ+UmxXutBAmQjnf0+/osPshE0EGHjvSiZ74BLj33u4eRDQFsdnz7U=.ed25519",
+  "timestamp": 1650750310248,
+  "hash": "sha256",
+  "content": {
+    "type": "post",
+    "text": "wooo testing again"
+  },
+  "signature": "/mNXHtq6XhK4WxuHPyM5B4lal6nx8iCnphPebGiMaTgBoEJ5GH+p1HxBfa3JaPPon3UlPVnbfcY5EzSU9HaDyw=="
+}
+```
+
+
+### id
+This takes a message value piped into stdin as input, and returns a sha256 hash, written to stdout.
+
+```bash
+cat test/cli/message-json.json | ssc id
+```
+
+```
+%BUfo/WZh51h7eh91PBkdxQLnGfjrkG3ErsDdFmacWIg=.sha256
+```
+
+
+
+--------------------------------------------------------
+
+
+
+## node/browser
+
+### install
+```
+npm i -S @nichoth/ssc
+```
+
+
+### examples
 These demonstrate usage in node js.
 
-### sign a string
+#### sign a string
 ```js
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
@@ -61,7 +138,7 @@ test('validate a signature', t => {
 ```
 
 
-### create a message
+#### create a message
 ```js
 import { createRequire } from 'module'
 const require = createRequire(import.meta.url)
@@ -123,7 +200,7 @@ test('verify an invalid message', t => {
 ```
 
 
-### create a merkle list
+#### create a merkle list
 ```js
 import { createRequire } from 'module'
 const require = createRequire(import.meta.url)
@@ -169,7 +246,7 @@ test('create a merkle list', async function (t) {
 ```
 
 
-### create an ssb style message
+#### create an ssb style message
 A message with `key` and `value` properties
 
 ```js
@@ -218,26 +295,3 @@ test('create ssb style posts', async function (t) {
     t.equal(posts[0].key[0], '%', 'should have the right format id')
 })
 ```
-
-
--------------------------------------------------------
-
-## notes
-
-```js
-// ssb style post
-// {
-//  key: '%uS0xrYDtij+ukWHir98G8cdCo8sgGDp4t2HoBWUYl3Q=.sha256',
-//  value: {
-//    previous: '%Qh2prm1RsxOjYSb0Qp9KNFjp641sL4MJGfnd8jAE3N8=.sha256',
-//    sequence: 3,
-//    author: '@FppHFxGG2TO2HqLGVad1VIwcFlTu9okR5qqj5ejGXFk=.ed25519',
-//    timestamp: 1586138755567,
-//    hash: 'sha256',
-//    content: { type: 'ev.post', text: 'iguana', mentions: [Array] },
-//    signature: 'iDWUHP/v31LELJ9PRkuPA/12IDwltHRUNRYQ0YkRUrr9wPCgi/VUzNrUmid7N64TYjeV6dL9dUx5ESShTsiqCg==.sig.ed25519'
-//  },
-//  timestamp: 1586138755568
-//}
-```
-

@@ -1,6 +1,39 @@
-# UCAN notes
+# notes
 
-----------------------------------------------------------------------
+## ssb style post message
+```js
+// ssb style post
+{
+  key: '%uS0xrYDtij+ukWHir98G8cdCo8sgGDp4t2HoBWUYl3Q=.sha256',
+  value: {
+    previous: '%Qh2prm1RsxOjYSb0Qp9KNFjp641sL4MJGfnd8jAE3N8=.sha256',
+    sequence: 3,
+    author: '@FppHFxGG2TO2HqLGVad1VIwcFlTu9okR5qqj5ejGXFk=.ed25519',
+    timestamp: 1586138755567,
+    hash: 'sha256',
+    content: { type: 'ev.post', text: 'iguana', mentions: [Array] },
+    signature: 'iDWUHP/v31LELJ9PRkuPA/12IDwltHRUNRYQ0YkRUrr9wPCgi/VUzNrUmid7N64TYjeV6dL9dUx5ESShTsiqCg==.sig.ed25519'
+  },
+  timestamp: 1586138755568
+}
+```
+
+
+## keys
+
+keys created by `ssb-keys` look like this:
+
+```js
+{
+  curve: 'ed25519',
+  public: 'T/Lu07ZOO6k6oRcgv45mtmMY24v22elakI+UVppMI/k=.ed25519',
+  private: 'd3OYSdrpN7KGBP+kgJtJtn4nr3dJPUmanct2xJGhntBP8u7Ttk47qTqhFyC/jma2Yxjbi/bZ6VqQj5RWmkwj+Q==.ed25519',
+  id: '@T/Lu07ZOO6k6oRcgv45mtmMY24v22elakI+UVppMI/k=.ed25519'
+}
+```
+
+
+--------------------------------------------
 
 ## UCAN
 How to do invitations? 
