@@ -16,7 +16,7 @@ test('init', t => {
         .then(_alice => {
             alice = _alice
             console.log('*created*', alice)
-            t.pass('create keys')
+            t.ok(alice, 'should create keys')
             t.end()
         })
 })
