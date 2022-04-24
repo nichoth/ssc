@@ -124,12 +124,11 @@ function createKeys () {
 
 
 
-// just creates a msg, doesn't check that the `msg.previous` key is valid
-
 function isEncrypted (msg) {
     return (typeof msg.value.content == 'string')
 }
 
+// just creates a msg, doesn't check that the `msg.previous` key is valid
 // TODO -- should verify the `previous` key is ok
 async function createMsg (keys, prevMsg, content) {
     if (!isObject(content) && !isEncrypted(content)) {
@@ -190,7 +189,8 @@ function isValidMsg (msg, prevMsg, publicKey) {
 
 function isPrevMsgOk (prevMsg, msg) {
     if (prevMsg === null) return (msg.previous === null)
-    return (msg.previous === getId(prevMsg))
+    return (msg.previous === getId(prevMsg)) &&
+        msg.sequence === prevMsg.sequence + 1
 }
 
 // takes a public key, signature, and a hash
