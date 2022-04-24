@@ -26,3 +26,10 @@ test('public key to id', t => {
         })
     })
 })
+
+test('public key to did', t => {
+    const pubKey = 'BKer4unf2N9zNsOYD/6eYAOVLY2R+tShLe3Cja3XYjrN2V0MIts6fP0rgXTpIXJvNqieTUb5OmgYNtR+/wP2MUY='
+    const did = 'did:key:z82T5YYAksSNmvvaiJdvCMVPhkqQUxJEXTjDPR3DpXD9vFb21saw7wJebD87p1hT2sGzygEbpBKiDEPnJ5acuQ7zbDLJZ'
+    t.equal(ssc.publicKeyToDid(pubKey), did, 'should return the expected DID')
+    t.end()
+})
