@@ -28,14 +28,12 @@ test('export keys', t => {
                 id: alice.id,
                 keys
             }
-            // console.log('*user doc*', userDoc)
             const data = JSON.stringify(userDoc, null, 2)
-            t.equal(typeof keys.public, 'string',
-                'should return public key')
-            t.equal(typeof keys.private, 'string',
-                'should return private key')
 
-            // console.log('*keys*', keys)
+            t.equal(typeof keys.public, 'string',
+                'should return public key as a string')
+            t.equal(typeof keys.private, 'string',
+                'should return private key as a string')
 
             fs.writeFileSync(__dirname + '/keys.json', data, 'utf8')
 
