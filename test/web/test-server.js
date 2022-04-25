@@ -1,30 +1,13 @@
-import { createRequire } from 'module';
-const require = createRequire(import.meta.url);
+// import { createRequire } from 'module';
+// const require = createRequire(import.meta.url);
 
 import * as http from 'http';
 import ssc from '../../index.js'
 import * as ucan from 'ucans'
 
-const stringify = require('json-stable-stringify')
-// import { webcrypto } from 'one-webcrypto'
-// import * as did from "ucans/dist/did/index.js"
-// import { EdKeypair } from 'ucans';
-// import { Chained } from "ucans/dist/chained.js"
-// import * as token from "ucans/dist/token.js"
-// import { parse } from "ucans/dist/token.js"
-// console.log('token', token)
-// const { parse } = require('ucans/dist/token')
-// import { parse } from 'path';
-
-
-var serverKeys
 var serverDid
-var serverEdKeys
 
 ucan.EdKeypair.create().then(keypair => {
-    serverKeys = keypair
-    serverEdKeys = keypair
-    // console.log('did', keypair.did())
     serverDid = keypair.did()
     startServer()
 })
