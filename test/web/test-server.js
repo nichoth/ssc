@@ -1,7 +1,7 @@
 // import { createRequire } from 'module';
 // const require = createRequire(import.meta.url);
 
-import * as http from 'http';
+import * as http from 'http'
 import ssc from '../../index.js'
 import * as ucan from 'ucans'
 

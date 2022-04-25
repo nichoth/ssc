@@ -56,7 +56,7 @@ This creates a new "post" type message with some new keys that we create, with *
 }
 ```
 
-To **set a previous message in this message**, pass in the previous message as the `--prev` option as a JSON string. This can be used to create a merkle list.
+To **set a previous message in this message**, pass in the previous message as the `--prev` option, as a JSON string. This can be used to create a merkle list.
 
 ```bash
 ssc keys | ssc post --text "woooo testing again" --prev="$(cat ./test/cli/message-json.json)"
@@ -77,6 +77,8 @@ ssc keys | ssc post --text "woooo testing again" --prev="$(cat ./test/cli/messag
 }
 ```
 
+We pass in the full message because the program takes the hash of the message's JSON for the `previous` field, and also looks at the `sequence` field in the passed in message to determine the `sequence` for this message.
+
 
 ### id
 This takes a message value piped into stdin as input, and returns a sha256 hash, written to stdout.
@@ -95,7 +97,7 @@ cat test/cli/message-json.json | ssc id
 
 
 
-## node/browser
+## node
 
 ### install
 ```

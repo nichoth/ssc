@@ -2,7 +2,6 @@ import test from 'tape'
 import ssc from '../../web/index.js'
 // we use this just for tests. is not necessary for normal use
 import { ECCKeyStore } from 'keystore-idb/lib/ecc/keystore'
-// const stringify = require('json-stable-stringify')
 
 const testMsgs = getTestMsgs()
 
@@ -63,8 +62,6 @@ test('create a message', async t => {
     t.end()
 })
 
-
-
 test('the server can verify messages created in a browser', t => {
     ks.publicWriteKey().then(pk => {
         ssc.isValidMsg(msg, null, pk).then(isValid => {
@@ -83,8 +80,6 @@ test('the server can verify messages created in a browser', t => {
 
     })
 })
-
-
 
 test('verify a message', async t => {
     // this validates a single message,
