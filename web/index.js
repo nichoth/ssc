@@ -53,15 +53,15 @@ async function createMsg (keyStore, prevMsg, content) {
         content: content
     }
 
-    var err = isInvalidShape(msg)
+    const err = isInvalidShape(msg)
     if (err) throw err
     var obj = await signObj(keys, msg)
     return obj
 }
 
 async function signObj (keys, obj) {
-    var _obj = clone(obj)
     var b = utils.normalizeUnicodeToBuf(stringify(obj), DEFAULT_CHAR_SIZE)
+    var _obj = clone(obj)
     _obj.signature = (await sign(keys, b))
     return _obj
 }

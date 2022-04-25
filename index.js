@@ -29,7 +29,12 @@ export default {
     exportKeys,
     idToPublicKey,
     publicKeyToDid,
-    didToPublicKey
+    didToPublicKey,
+    getAuthor
+}
+
+function getAuthor (msg) {
+    return msg.author
 }
 
 function idToPublicKey (id) {
@@ -153,6 +158,10 @@ async function createMsg (keys, prevMsg, content) {
 }
 
 async function publicKeyToId (publicKey) {
+    if (typeof publicKey === 'string') {
+        return '@' + publicKey + '.' + KEY_TYPE
+    }
+
     const raw = await webcrypto.subtle.exportKey('raw', publicKey)
     const str = utils.arrBufToBase64(raw)
     return '@' + str + '.' + KEY_TYPE
@@ -197,7 +206,6 @@ function isPrevMsgOk (prevMsg, msg) {
 // and returns true if the signature was valid.
 // the msg here does not include the `signature` field
 
-// TODO -- should take a simple string instead of a real 'key' instance
 function verify (publicKey, sig, msg) {
     if (typeof sig === 'object') {
         throw new Error('signature should be base64 string,' +
@@ -210,7 +218,7 @@ function verify (publicKey, sig, msg) {
         return webcrypto.subtle.importKey(
             'raw',
             utils.base64ToArrBuf(publicKey),
-            { name: ECC_WRITE_ALG, namedCurve: DEFAULT_ECC_CURVE },
+            { name: 'ECDSA', namedCurve: 'P-256' },
             true,
             ['verify']
         )
