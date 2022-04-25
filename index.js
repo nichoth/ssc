@@ -223,6 +223,7 @@ function verify (publicKey, sig, msg) {
             ['verify']
         )
             .then(pubKey => {
+                // console.log('**pub key**', pubKey)
                 return webcrypto.subtle.verify(
                     {
                         name: ECC_WRITE_ALG,
