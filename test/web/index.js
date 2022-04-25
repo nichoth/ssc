@@ -2,6 +2,11 @@ import test from 'tape'
 import ssc from '../../web/index.js'
 // we use this just for tests. is not necessary for normal use
 import { ECCKeyStore } from 'keystore-idb/lib/ecc/keystore'
+import * as sscKeys from 'ssc-keys'
+// import * as utils from 'keystore-idb/lib/utils.js'
+// import { webcrypto } from 'one-webcrypto'
+// import { toString } from 'uint8arrays/to-string'
+import base64Pad from '@nichoth/base64pad' 
 
 const testMsgs = getTestMsgs()
 
@@ -34,6 +39,66 @@ test('create keys', t => {
         })
     })
 })
+
+
+
+
+
+test('sign something with noble-ed25519 and verify with ssc', t => {
+    sscKeys.create().then(keys => {
+        console.log('*keys*', keys)
+
+        sscKeys.sign('a test', keys.privateKey).then(sig => {
+            console.log('got sig', sig)
+
+            ks.verify('a test', sig, base64Pad.encode(keys.publicKey))
+                .then(isVal => {
+                    console.log('fooooooooooooooooooooooooo', isVal)
+                    t.end()
+                })
+                .catch(err => {
+                    console.log('errrrrrrrrrrr', err)
+                    t.fail(err)
+                    t.end()
+                })
+
+            // webcrypto.subtle.importKey(
+            //     'raw',
+            //     // utils.base64ToArrBuf(keys.publicKey),
+            //     keys.publicKey,
+            //     { name: 'ECDSA', namedCurve: 'P-256' },
+            //     true,
+            //     ['verify']
+            // ).then(pubKey => {
+            //     // ks.verify('a test', sig, keys.publicKey).then(isValid => {
+            //     ks.verify('a test', sig, pubKey).then(isValid => {
+            //         console.log('!!! is valid ????', isValid)
+            //         t.end()
+            //     }).catch(err => {
+            //         console.log('errrrrr', err)
+            //         t.end()
+            //     })
+            // }).catch(err => {
+            //     console.log('bbbbbbbbbbbb', err)
+            //     // console.log(DOMException(err).message)
+            //     console.log(err.message)
+            //     t.end()
+            // })
+
+        }).catch(err => {
+            console.log('again errrrrrrrrrrrrrrrrr', err)
+            t.end()
+        })
+    }).catch(err => {
+        console.log('aaaaaaaa', err)
+        t.end()
+    })
+})
+
+
+
+
+
 
 // this is an example just using the keystore, not ssc
 test('sign and validate something', async t => {
