@@ -68,7 +68,6 @@ test('create a message', async t => {
 test('the server can verify messages created in a browser', t => {
     ks.publicWriteKey().then(pk => {
         ssc.isValidMsg(msg, null, pk).then(isValid => {
-            console.log('is valid client side???', isValid)
             t.ok(isValid, 'should validate a valid message client side')
 
             fetch('http://localhost:8888/verify', {
@@ -77,7 +76,6 @@ test('the server can verify messages created in a browser', t => {
             })
                 .then(res => res.text())
                 .then(res => {
-                    console.log('response from server', res)
                     t.equal(res, 'ok', 'server should validate a valid message')
                     t.end()
                 })

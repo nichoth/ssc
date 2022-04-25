@@ -168,12 +168,10 @@ async function publicKeyToId (publicKey) {
 }
 
 function verifyObj (publicKey, hmac_key, obj) {
-    console.log('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa')
     if (!obj) (obj = hmac_key), (hmac_key = null);
     obj = clone(obj);
     const sig = obj.signature;
     delete obj.signature;
-    console.log('****obj******', obj)
     return verify(publicKey, sig, stringify(obj))
 }
 

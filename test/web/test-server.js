@@ -49,8 +49,6 @@ function startServer () {
 
                 ssc.isValidMsg(msg, null, publicKeyObj.publicKey)
                     .then((validMsg) => {
-                        console.log('is valid msg in server???', validMsg)
-
                         return validMsg ? res.end('ok') : res.end('booo')
                     })
             })
