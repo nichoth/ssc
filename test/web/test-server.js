@@ -47,12 +47,7 @@ function startServer () {
                 const publicKeyObj = ssc.didToPublicKey(ssc.getAuthor(msg))
                 const sig = msg.signature
 
-                // console.log('**public key**', publicKeyObj)
-
-                // console.log('****msg*** in server', msg)
-                // console.log('sig', sig)
-
-                ssc.verify(publicKeyObj.publicKey, sig, stringify(msg))
+                ssc.isValidMsg(msg, null, publicKeyObj.publicKey)
                     .then((validMsg) => {
                         console.log('is valid msg in server???', validMsg)
 

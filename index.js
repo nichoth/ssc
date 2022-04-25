@@ -168,10 +168,12 @@ async function publicKeyToId (publicKey) {
 }
 
 function verifyObj (publicKey, hmac_key, obj) {
+    console.log('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa')
     if (!obj) (obj = hmac_key), (hmac_key = null);
     obj = clone(obj);
-    var sig = obj.signature;
+    const sig = obj.signature;
     delete obj.signature;
+    console.log('****obj******', obj)
     return verify(publicKey, sig, stringify(obj))
 }
 
@@ -215,6 +217,7 @@ function verify (publicKey, sig, msg) {
     // if we're given a string, we need to convert that
     // into a publicKey instance
     if (typeof publicKey === 'string') {
+        // console.log('****is string*****', publicKey)
         return webcrypto.subtle.importKey(
             'raw',
             utils.base64ToArrBuf(publicKey),
@@ -223,7 +226,7 @@ function verify (publicKey, sig, msg) {
             ['verify']
         )
             .then(pubKey => {
-                // console.log('**pub key**', pubKey)
+                console.log(typeof msg)
                 return webcrypto.subtle.verify(
                     {
                         name: ECC_WRITE_ALG,
@@ -233,6 +236,10 @@ function verify (publicKey, sig, msg) {
                     utils.normalizeBase64ToBuf(sig),
                     utils.normalizeUnicodeToBuf(msg, DEFAULT_CHAR_SIZE)
                 )
+            })
+            .then(isOk => {
+                console.log('is ok?????', isOk)
+                return isOk
             })
     }
 
