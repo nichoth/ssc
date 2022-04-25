@@ -45,7 +45,6 @@ function startServer () {
             return req.on('end', () => {
                 const msg = JSON.parse(incomingBody)
                 const publicKeyObj = ssc.didToPublicKey(ssc.getAuthor(msg))
-                const sig = msg.signature
 
                 ssc.isValidMsg(msg, null, publicKeyObj.publicKey)
                     .then((validMsg) => {
