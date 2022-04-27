@@ -33,6 +33,17 @@ keys created by `ssb-keys` look like this:
 ```
 
 
+## env variables
+
+Have a maximum size of 256 characters.
+
+To count the characters in a string: `cat keys.json | wc -m`
+
+The count for our keys json is 309...
+
+**We need to do them as separate vars, one for public, one for private**
+
+
 --------------------------------------------
 
 ## UCAN
