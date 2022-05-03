@@ -297,3 +297,34 @@ test('create ssb style posts', async function (t) {
     t.equal(posts[0].key[0], '%', 'should have the right format id')
 })
 ```
+
+
+## browser
+
+### install
+```
+npm i -S @nichoth/ssc
+```
+
+### examples
+Use in a web browser
+
+#### create keys
+```js
+import ssc from '@nichoth/ssc'
+import test from 'tape'
+// we use this just for tests. is not necessary for normal use
+import { ECCKeyStore } from 'keystore-idb/lib/ecc/keystore'
+
+test('create keys', t => {
+    ssc.createKeys(ssc.keyTypes.ECC).then(ks => {
+        t.ok(ks, 'should return a keystore')
+        t.ok(ks instanceof ECCKeyStore, 'should be an instance of ECC keystore')
+
+        ssc.createKeys().then(keystore => {
+            t.ok(keystore, 'the keyType parameter is optional')
+            t.end()
+        })
+    })
+})
+```
