@@ -1,5 +1,6 @@
 import { createRequire } from 'module';
-const require = createRequire(import.meta.url);
+const require = createRequire(import.meta.url)
+// const require = createRequire(__dirname)
 
 var timestamp = require('monotonic-timestamp')
 var ssbKeys = require('ssb-keys')

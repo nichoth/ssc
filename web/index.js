@@ -8,12 +8,13 @@ import * as utils from 'keystore-idb/lib/utils.js'
 import { DEFAULT_CHAR_SIZE } from '../CONSTANTS.js'
 
 let keys = null
+let cacheStoreName = null
 const KEY_TYPES = { ECC: 'ecc', RSA: 'rsa' }
-const KEY_TYPE = 'ed25519'
+// const KEY_TYPE = 'ed25519'  // ??? 
 
 function get (keyType, storeName) {
     storeName = storeName || null
-    if (keys) return Promise.resolve(keys);
+    if (keys && storeName === cacheStoreName) return Promise.resolve(keys);
     return keystore.init({ type: keyType, storeName }).then(_keys => {
         keys = _keys
         return _keys
@@ -111,10 +112,10 @@ function getDidFromKeys (ks) {
 }
 
 
-function didToId (did) {
-    const pubKey = didToPublicKey(did).publicKey
-    return '@' + pubKey + '.' + KEY_TYPE
-}
+// function didToId (did) {
+//     const pubKey = didToPublicKey(did).publicKey
+//     return '@' + pubKey + '.' + KEY_TYPE
+// }
 
 function idToPublicKey (id) {
     return id.slice(1).split('.')[0]
@@ -134,7 +135,7 @@ module.exports = {
     getDidFromKeys,
     publicKeyToDid,
     didToPublicKey,
-    didToId,
+    // didToId,
     idToPublicKey,
     keyTypes: KEY_TYPES
 }
@@ -153,7 +154,7 @@ export default {
     getDidFromKeys,
     publicKeyToDid,
     didToPublicKey,
-    didToId,
+    // didToId,
     idToPublicKey,
     keyTypes: KEY_TYPES
 }
