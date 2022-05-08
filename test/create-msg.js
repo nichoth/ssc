@@ -48,7 +48,7 @@ test('verify a message', async t => {
 
     const pubKey = await ssc.didToPublicKey(msg.author).publicKey
     t.ok(await ssc.isValidMsg(msg, null, pubKey),
-        'should transform a message id to a public key')
+        'should transform a message did to a public key')
 
     t.end()
 })
