@@ -142,20 +142,24 @@ async function createMsg (keys, prevMsg, content) {
             'must be object or encrypted string')
     }
 
-    const id = await publicKeyToId(keys.publicKey)
+    return exportKeys(keys).then(exported => {
+        const did = publicKeyToDid(exported.public)
 
-    var msg = {
-        previous: prevMsg ? getId(prevMsg) : null,
-        sequence: prevMsg ? prevMsg.sequence + 1 : 1,
-        author: id,
-        timestamp: +timestamp(),
-        hash: 'sha256',
-        content: content
-    }
+        var msg = {
+            previous: prevMsg ? getId(prevMsg) : null,
+            sequence: prevMsg ? prevMsg.sequence + 1 : 1,
+            author: did,
+            timestamp: +timestamp(),
+            hash: 'sha256',
+            content: content
+        }
 
-    var err = isInvalidShape(msg)
-    if (err) throw err
-    return signObj(keys, null, msg)
+        var err = isInvalidShape(msg)
+        if (err) throw err
+
+        return signObj(keys, null, msg)
+    })
+
 }
 
 async function publicKeyToId (publicKey) {

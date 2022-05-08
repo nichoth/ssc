@@ -16,10 +16,8 @@ test('create a message', function (t) {
             ssc.createMsg(alice.keys, null, content)
                 .then(_msg => {
                     msg = _msg
-                    t.equal(msg.author[0], '@',
-                        'should have the correct aughor ID prefix')
-                    t.equal(msg.author.split('.')[1], 'ed25519', 
-                        'should have the correct author ID suffix')
+                    t.ok(msg.author.includes('did:key'),
+                        'should have a DID format for author')
                     t.equal(msg.content.text, 'woooo',
                         'should have the message text')
                     t.equal(msg.previous, null,
@@ -48,7 +46,8 @@ test('verify a message', async t => {
     t.ok(ssc.isValidMsg(msgTwo, msg, alice.keys.publicKey),
         'should validate the second msg')
 
-    t.ok(await ssc.isValidMsg(msg, null, await ssc.idToPublicKey(msg.author)),
+    const pubKey = await ssc.didToPublicKey(msg.author).publicKey
+    t.ok(await ssc.isValidMsg(msg, null, pubKey),
         'should transform a message id to a public key')
 
     t.end()

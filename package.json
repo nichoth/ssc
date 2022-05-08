@@ -57,7 +57,7 @@
     "envify": "^4.1.0",
     "esmify": "github:nichoth/esmify",
     "tap-arc": "^0.1.2",
-    "tape": "^5.0.1",
+    "tape": "^5.5.3",
     "tape-run": "github:nichoth/tape-run"
   }
 }
