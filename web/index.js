@@ -30,34 +30,41 @@ function createKeys (type, opts) {
     return get(type || KEY_TYPES.ECC, storeName)
 }
 
-async function sign (keys, msg) {
-    var sig = await keys.sign(msg)
-    return sig
+function sign (keys, msg) {
+// async function sign (keys, msg) {
+    // var sig = await keys.sign(msg)
+    return keys.sign(msg)
+    // return sig
 }
 
-async function createMsg (keyStore, prevMsg, content) {
+function createMsg (keyStore, prevMsg, content) {
     if (!isObject(content) && !isEncrypted(content)) {
         throw new Error('invalid message content, ' +
             'must be object or encrypted string')
     }
 
-    const writeKey = await keyStore.publicWriteKey()
-    const ourDID = publicKeyToDid(writeKey)
+    return keystore.publicWriteKey().then(writeKey => {
+        const ourDID = publicKeyToDid(writeKey)
 
-    const msg = {
-        previous: prevMsg ? getId(prevMsg) : null,
-        sequence: prevMsg ? prevMsg.sequence + 1 : 1,
-        // author: '@' + writeKey + '.' + KEY_TYPE,
-        author: ourDID,
-        timestamp: +timestamp(),
-        hash: 'sha256',
-        content: content
-    }
+        const msg = {
+            previous: prevMsg ? getId(prevMsg) : null,
+            sequence: prevMsg ? prevMsg.sequence + 1 : 1,
+            // author: '@' + writeKey + '.' + KEY_TYPE,
+            author: ourDID,
+            timestamp: +timestamp(),
+            hash: 'sha256',
+            content: content
+        }
 
-    const err = isInvalidShape(msg)
-    if (err) throw err
-    var obj = await signObj(keys, msg)
-    return obj
+        const err = isInvalidShape(msg)
+        if (err) throw err
+        // var obj = await signObj(keys, msg)
+        // return obj
+        return signObj(keys, msg)
+    })
+
+    // const writeKey = await keyStore.publicWriteKey()
+    // const ourDID = publicKeyToDid(writeKey)
 }
 
 async function signObj (keys, obj) {

@@ -7,6 +7,9 @@ import ssc from './index.js'
 const argv = require('minimist')(process.argv.slice(2))
 
 const commands = {
+    // print keys to stdout
+    // _example:_
+    // ./cli.js keys 
     keys: function () {
         ssc.createKeys().then(myKeys => {
             ssc.exportKeys(myKeys.keys).then(exported => {
