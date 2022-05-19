@@ -56,7 +56,7 @@ async function createMsg (keyStore, prevMsg, content) {
 
     const err = isInvalidShape(msg)
     if (err) throw err
-    var obj = await signObj(keys, msg)
+    var obj = await signObj(keyStore, msg)
     return obj
 }
 
