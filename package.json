@@ -41,6 +41,8 @@
     "is-canonical-base64": "^1.1.1",
     "json-stable-stringify": "^1.0.1",
     "keystore-idb": "github:nichoth/keystore-idb",
+    "mime": "^3.0.0",
+    "mime-types": "^2.1.35",
     "minimist": "^1.2.6",
     "monotonic-timestamp": "0.0.9",
     "one-webcrypto": "^1.0.3",
