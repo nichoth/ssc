@@ -30,7 +30,8 @@ export default {
     idToPublicKey,
     publicKeyToDid,
     didToPublicKey,
-    getAuthor
+    getAuthor,
+    getDidFromKeys
 }
 
 function getAuthor (msg) {
@@ -80,18 +81,17 @@ function exportKeys (keypair) {
         })
 }
 
-// function getPublicKey () {
+function getDidFromKeys (keys) {
+    return exportKeys(keys).then((ks) => {
+        return publicKeyToDid(ks.public)
+    })
 
-// }
-
-// (ks: keystore)
-// function getDidFromKeys (ks) {
-//     return ks.publicWriteKey()
-//         .then(publicKey => {
-//             var did = publicKeyToDid(publicKey)
-//             return did
-//         })
-// }
+    // return keys.publicWriteKey()
+    //     .then(publicKey => {
+    //         var did = publicKeyToDid(publicKey)
+    //         return did
+    //     })
+}
 
 function createKeys () {
     const uses = ['sign', 'verify']

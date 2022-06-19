@@ -50,3 +50,17 @@ test('public key to did', t => {
     t.equal(ssc.publicKeyToDid(pubKey), did, 'should return the expected DID')
     t.end()
 })
+
+test('get did from keys', t => {
+    ssc.createKeys().then(alice => {
+        ssc.getDidFromKeys(alice.keys).then(did => {
+            t.ok(did.includes('did:key:z'), 'should return a DID')
+            t.end()
+        })
+    })
+    .catch(err => {
+        console.log('errrrrrrrrrr', err)
+        t.fail(err.toString())
+        t.end()
+    })
+})
