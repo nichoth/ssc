@@ -170,7 +170,7 @@ function verifyObj (publicKey, hmac_key, obj) {
     obj = clone(obj);
     const sig = obj.signature;
     delete obj.signature;
-    return verify(publicKey, sig, stringify(obj, null, 2))
+    return verify(publicKey, sig, stringify(obj))
 }
 
 // this checks the signature and also the merkle integrity of the message with
@@ -270,7 +270,7 @@ async function signObj (keys, hmac_key, obj) {
         hmac_key = null
     }
     var _obj = clone(obj)
-    const msgStr = stringify(_obj, null, 2)
+    const msgStr = stringify(_obj)
     _obj.signature = await sign(keys, msgStr)
     return _obj
 }
