@@ -85,12 +85,6 @@ function getDidFromKeys (keys) {
     return exportKeys(keys).then((ks) => {
         return publicKeyToDid(ks.public)
     })
-
-    // return keys.publicWriteKey()
-    //     .then(publicKey => {
-    //         var did = publicKeyToDid(publicKey)
-    //         return did
-    //     })
 }
 
 function createKeys () {
@@ -176,7 +170,7 @@ function verifyObj (publicKey, hmac_key, obj) {
     obj = clone(obj);
     const sig = obj.signature;
     delete obj.signature;
-    return verify(publicKey, sig, stringify(obj))
+    return verify(publicKey, sig, stringify(obj, null, 2))
 }
 
 // this checks the signature and also the merkle integrity of the message with
