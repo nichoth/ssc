@@ -108,6 +108,30 @@ npm i -S @nichoth/ssc
 ### examples
 These demonstrate usage in node js.
 
+#### create keys
+```js
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+const test = require('tape')
+import ssc from '../index.js'
+
+test('create keys', t => {
+    ssc.createKeys().then(alice => {
+        t.ok(alice.did, 'should return a DID')
+        t.ok(alice.id, 'should return an ID')
+        t.equal(alice.id[0], '@', 'should have the right format ID')
+        t.ok(alice.id.includes('.ed25519'), 'should have the right format ID')
+        t.ok(alice.keys.publicKey, 'should have public key')
+        t.ok(alice.keys.privateKey, 'should have private key')
+        t.ok(alice.keys.publicKey instanceof webcrypto.CryptoKey,
+            'public key should be a CryptoKey')
+        t.ok(alice.keys.privateKey instanceof webcrypto.CryptoKey,
+            'private key should be a CryptoKey')
+        t.end()
+    })
+})
+```
+
 #### sign a string
 ```js
 import { createRequire } from 'module';
@@ -119,7 +143,9 @@ var keys
 var sig
 test('sign a string', function (t) {
     ssc.createKeys().then(alice => {
+        t.ok(alice.did, 'should return a DID')
         keys = alice.keys
+
         ssc.sign(keys, 'a test message')
             .then(_sig => {
                 sig = _sig
