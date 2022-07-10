@@ -337,10 +337,13 @@ Use in a web browser
 
 #### create keys
 ```js
-import ssc from '@nichoth/ssc'
+import Ssc from '@nichoth/ssc/web'
 import test from 'tape'
 // we use this just for tests. is not necessary for normal use
 import { ECCKeyStore } from 'keystore-idb/lib/ecc/keystore'
+import keystore from "keystore-idb";
+
+const ssc = Ssc(keystore)
 
 test('create keys', t => {
     ssc.createKeys(ssc.keyTypes.ECC).then(ks => {

@@ -1,8 +1,10 @@
 import test from 'tape'
-import ssc from '../../web/index.js'
+import Ssc from '../../web/index.js'
 // we use this just for tests. is not necessary for normal use
 import { ECCKeyStore } from 'keystore-idb/lib/ecc/keystore'
+import keystore from "keystore-idb";
 
+const ssc = Ssc(keystore)
 const testMsgs = getTestMsgs()
 
 test('verify the messages created in node', t => {
