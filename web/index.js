@@ -1,14 +1,38 @@
-// import keystore from "keystore-idb";
-import { verify } from "keystore-idb/lib/ecc/operations";
 var timestamp = require('monotonic-timestamp')
 var stringify = require('json-stable-stringify')
 import { clone, isObject, isInvalidShape, getId,
-    publicKeyToDid, didToPublicKey } from './util.js'
-import * as utils from 'keystore-idb/lib/utils.js'
+    publicKeyToDid, didToPublicKey, normalizeUnicodeToBuf,
+    importPublicKey, normalizeBase64ToBuf } from './util.js'
 import { DEFAULT_CHAR_SIZE } from '../CONSTANTS.js'
 
 module.exports = Ssc
 export default Ssc
+
+const webcrypto = window.crypto
+
+const DEFAULT_ECC_CURVE = 'P-256'
+const DEFAULT_HASH_ALG = 'SHA-256'
+
+
+
+async function verify (msg, sig, publicKey/*, charSize, curve, hashAlg*/) {
+    return webcrypto.subtle.verify({
+        name: 'ECDSA',
+        hash: { name: DEFAULT_HASH_ALG }
+    },
+        typeof publicKey === "string" ?
+            // https://github.com/fission-suite/keystore-idb/blob/53f9d7646885db5a1632b63909d25d3b1895c2e5/src/types.ts#L69
+            // await keys.importPublicKey(publicKey, curve, KeyUse.Write) :
+            await importPublicKey(publicKey, DEFAULT_ECC_CURVE, 'write') :
+            publicKey,
+        normalizeBase64ToBuf(sig),
+        normalizeUnicodeToBuf(msg)
+    )
+        .then(ver => {
+            return ver
+        })
+}
+
 
 function Ssc (keystore) {
     let keys = null
@@ -68,7 +92,7 @@ function Ssc (keystore) {
         const ourDID = publicKeyToDid(writeKey)
 
         const msg = {
-            previous: prevMsg ? getId(prevMsg) : null,
+            previous: prevMsg ? await getId(prevMsg) : null,
             sequence: prevMsg ? prevMsg.sequence + 1 : 1,
             // author: '@' + writeKey + '.' + KEY_TYPE,
             author: ourDID,
@@ -84,7 +108,7 @@ function Ssc (keystore) {
     }
 
     async function signObj (keys, obj) {
-        var b = utils.normalizeUnicodeToBuf(stringify(obj), DEFAULT_CHAR_SIZE)
+        var b = normalizeUnicodeToBuf(stringify(obj), DEFAULT_CHAR_SIZE)
         var _obj = clone(obj)
         _obj.signature = (await sign(keys, b))
         return _obj
@@ -113,12 +137,17 @@ function Ssc (keystore) {
 
     function isPrevMsgOk (prevMsg, msg) {
         if (prevMsg === null) return (msg.previous === null)
-        return (msg.previous === getId(prevMsg))
+        return getId(prevMsg)
+            .then(id => {
+                return (msg.previous === id)
+            })
     }
 
     function isValidMsg (msg, prevMsg, pubKey) {
         return verifyObj(pubKey, msg)
-            .then(ver => (ver && isPrevMsgOk(prevMsg, msg)))
+            .then(async ver => {
+                return (ver && await isPrevMsgOk(prevMsg, msg))
+            })
     }
 
     function getAuthor (msg) {

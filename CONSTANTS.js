@@ -1,6 +1,4 @@
-// const { EccCurve } = require('./types')
-
-const types = {
+export const types = {
     KeyUse: {
         Exchange: 'exchange',
         Write: 'write'

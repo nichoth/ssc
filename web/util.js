@@ -1,11 +1,89 @@
 var stringify = require('json-stable-stringify')
 var isCanonicalBase64 = require('is-canonical-base64')
-// var feedIdRegex = isCanonicalBase64('@', '.(?:sha256|ed25519)', 32)
 var isEncryptedRx = isCanonicalBase64('','\\.box.*')
-// import * as ucan from 'ucans'
 import * as uint8arrays from "uint8arrays"
-import * as utils from "keystore-idb/lib/utils.js"
-const sodium = require("chloride")
+const { getHash } = require('@nichoth/multihash')
+const { types, ECC_WRITE_ALG, ECC_EXCHANGE_ALG } = require('../CONSTANTS')
+const { KeyUse } = types
+
+const webcrypto = window.crypto
+
+function strToArrBuf (str, charSize) {
+    const view = charSize === 8 ?
+        new Uint8Array(str.length) :
+        new Uint16Array(str.length)
+
+    for (let i = 0, strLen = str.length; i < strLen; i++) {
+      view[i] = str.charCodeAt(i)
+    }
+
+    return view.buffer
+}
+
+
+
+export function joinBufs(fst, snd) {
+    const view1 = new Uint8Array(fst)
+    const view2 = new Uint8Array(snd)
+    const joined = new Uint8Array(view1.length + view2.length)
+    joined.set(view1)
+    joined.set(view2, view1.length)
+    return joined.buffer
+}
+
+
+
+
+const normalizeToBuf = (msg, strConv) => {
+    if (typeof msg === 'string') {
+      return strConv(msg)
+    } else if (typeof msg === 'object' && msg.byteLength !== undefined) {
+      // this is the best runtime check I could find for ArrayBuffer/Uint8Array
+      const temp = new Uint8Array(msg)
+      return temp.buffer
+    } else {
+      throw new Error("Improper value. Must be a string, ArrayBuffer, Uint8Array")
+    }
+}
+
+const normalizeUtf16ToBuf = (msg) => {
+    return normalizeToBuf(msg, (str) => strToArrBuf(str, 16))
+}
+
+const normalizeUtf8ToBuf = (msg) => {
+    return normalizeToBuf(msg, (str) => strToArrBuf(str, 8))
+}
+
+export const normalizeUnicodeToBuf = (msg, charSize) => {
+    switch (charSize) {
+        case 8: return normalizeUtf8ToBuf(msg)
+        default: return normalizeUtf16ToBuf(msg)
+    }
+}
+
+function base64ToArrBuf(string) {
+    return uint8arrays.fromString(string, 'base64pad').buffer
+}
+
+export const normalizeBase64ToBuf = (msg) => {
+    return normalizeToBuf(msg, base64ToArrBuf)
+}
+
+
+export async function importPublicKey (base64Key, curve, use) {
+    // checkValidKeyUse(use)
+    const alg = use === KeyUse.Exchange ? ECC_EXCHANGE_ALG : ECC_WRITE_ALG
+    const uses = use === KeyUse.Exchange ? [] : ['verify']
+    const buf = base64ToArrBuf(base64Key)
+    return webcrypto.subtle.importKey('raw', buf, {
+        name: alg,
+        namedCurve: curve
+    }, true, uses)
+}
+
+
+
+
 
 export function clone (obj) {
     var _obj = {}
@@ -43,16 +121,18 @@ export function isObject (o) {
 }
 
 export function getId (msg) {
-    return '%' + hash(stringify(msg, null, 2))
+    return hash(stringify(msg, null, 2)).then(hashedMsg => {
+        return '%' + hashedMsg
+    })
+
+    // return '%' + hash(stringify(msg, null, 2))
 }
 
 // from ssb-keys
 // https://github.com/ssb-js/ssb-keys/blob/2342a85c5bd4a1cf8739b7b09eb2f667f735bd08/util.js#L4
 export function hash (data, enc) {
-    data = (typeof data === 'string' && enc == null) ?
-        Buffer.from(data, "binary") :
-        Buffer.from(data, enc);
-    return sodium.crypto_hash_sha256(data).toString("base64") + ".sha256"
+    return getHash(data)
+    // return sodium.crypto_hash_sha256(data).toString("base64") + ".sha256"
 }
 
 export function isInteger (n) {
@@ -226,7 +306,7 @@ function arrBufToBase64 (buf) {
 // (string, string)
 export function publicKeyToDid(publicKey, type) {
     type = type || 'ed25519'
-    const pubKeyBuf = utils.base64ToArrBuf(publicKey)
+    const pubKeyBuf = base64ToArrBuf(publicKey)
   
     // Prefix public-write key
     const prefix = magicBytes(type)
@@ -234,7 +314,7 @@ export function publicKeyToDid(publicKey, type) {
         throw new Error(`Key type '${type}' not supported`)
     }
   
-    const prefixedBuf = utils.joinBufs(prefix, pubKeyBuf)
+    const prefixedBuf = joinBufs(prefix, pubKeyBuf)
   
     // Encode prefixed
     return BASE58_DID_PREFIX +

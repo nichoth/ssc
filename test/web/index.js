@@ -2,25 +2,30 @@ import test from 'tape'
 import Ssc from '../../web/index.js'
 // we use this just for tests. is not necessary for normal use
 import { ECCKeyStore } from 'keystore-idb/lib/ecc/keystore'
-import keystore from "keystore-idb";
+import keystore from "keystore-idb"
 
 const ssc = Ssc(keystore)
 const testMsgs = getTestMsgs()
 
-test('verify the messages created in node', t => {
-    const pubKey = ssc.idToPublicKey(testMsgs[0].author)
+// test('verify the messages created in node', t => {
+//     const pubKey = ssc.idToPublicKey(testMsgs[0].author)
 
-    Promise.all([
-        // (msg, prevMsg, pubKey) {
-        ssc.isValidMsg(testMsgs[0], null, pubKey),
-        ssc.isValidMsg(testMsgs[1], testMsgs[0], pubKey)
-    ])
-        .then(([validOne, validTwo]) => {
-            t.ok(validOne, 'should say message one is valid')
-            t.ok(validTwo, 'should say message two is valid')
-            t.end()
-        })
-})
+//     Promise.all([
+//         // (msg, prevMsg, pubKey) {
+//         ssc.isValidMsg(testMsgs[0], null, pubKey),
+//         ssc.isValidMsg(testMsgs[1], testMsgs[0], pubKey)
+//     ])
+//         .then(([validOne, validTwo]) => {
+//             t.ok(validOne, 'should say message one is valid')
+//             t.ok(validTwo, 'should say message two is valid')
+//             t.end()
+//         })
+//         .catch(err => {
+//             t.fail(err)
+//             console.log('errrrrrrrrrrrrrrrr', err)
+//             t.end()
+//         })
+// })
 
 var ks
 test('create keys', t => {
@@ -47,36 +52,53 @@ test('sign and validate something', async t => {
 
 var msg
 var msgDid
-test('create a message', async t => {
+test('create a message', t => {
     var content = { type: 'test', text: 'woooo' }
-    msg = await ssc.createMsg(ks, null, content)
-    t.ok(msg, 'should create a message')
 
-    console.log('*msg*', msg)
+    ssc.createMsg(ks, null, content)
+        .then(_msg => {
+            msg = _msg
+            t.ok(msg, 'should create a message')
 
-    const pubKey = await ks.publicWriteKey()
-    const did = msgDid = ssc.publicKeyToDid(pubKey, 'ed25519')
-    t.equal(msg.author, did,
-        'should have right the message author')
-    t.equal(msg.content.type, 'test', 'should have the message content')
-    t.ok(msg.signature, 'should have the message signature')
-    t.end()
+            // const pubKey = await ks.publicWriteKey()
+            return ks.publicWriteKey()
+        })
+        .then(pubKey => {
+            const did = msgDid = ssc.publicKeyToDid(pubKey, 'ed25519')
+            t.equal(msg.author, did,
+                'should have right the message author')
+            t.equal(msg.content.type, 'test', 'should have the message content')
+            t.ok(msg.signature, 'should have the message signature')
+            t.end()
+        })
+        .catch(err => {
+            console.log('errrrrrrrrrr', err)
+            t.fail(err)
+            t.end()
+        })
 })
+
 
 test('the server can verify messages created in a browser', t => {
     ks.publicWriteKey().then(pk => {
-        ssc.isValidMsg(msg, null, pk).then(isValid => {
-            t.ok(isValid, 'should validate a valid message client side')
+        ssc.isValidMsg(msg, null, pk)
+            .then(isValid => {
+                t.ok(isValid, 'should validate a valid message client side')
 
-            fetch('http://localhost:8888/verify', {
-                method: 'POST',
-                body: JSON.stringify(msg)
-            })
-                .then(res => res.text())
-                .then(res => {
-                    t.equal(res, 'ok', 'server should validate a valid message')
-                    t.end()
+                return fetch('http://localhost:8888/verify', {
+                    method: 'POST',
+                    body: JSON.stringify(msg)
                 })
+            })
+            .then(res => res.text())
+            .then(res => {
+                t.equal(res, 'ok', 'server should validate a valid message')
+                t.end()
+            })
+            .catch(err => {
+                console.log('errrrrrrrrrrrrrr', err)
+                t.fail(err)
+                t.end()
             })
 
     })
@@ -102,26 +124,46 @@ test('verify an invalid message', async t => {
 })
 
 var msg2
-test('create a second message', async t => {
+test('create a second message', t => {
     t.plan(1)
     var content2 = { type: 'test2', text: 'ok' }
     // we pass in the original msg here
-    msg2 = await ssc.createMsg(ks, msg, content2)
+    // msg2 = await ssc.createMsg(ks, msg, content2)
 
-    t.equal(msg2.previous, ssc.getId(msg), 
-        'should create the correct previous message hash')
-    t.end()
+    ssc.createMsg(ks, msg, content2)
+        .then(_msg2 => {
+            msg2 = _msg2
+            return ssc.getId(msg)
+        })
+        .then(id => {
+            t.equal(msg2.previous, id, 
+                'should create the correct previous message hash')
+            t.end()
+        })
+        .catch(err => {
+            console.log('errrrrrrr', err)
+            t.fail(err)
+            t.end()
+        })
 })
 
 
 // check that the message contains the hash of prevMsg, and also make sure
 // the signature is valid.
-test('validate the second message', async t => {
+test('validate the second message', t => {
     const pubKey = ssc.didToPublicKey(msgDid).publicKey
-    const isValid = await ssc.isValidMsg(msg2, msg, pubKey)
 
-    t.equal(isValid, true, 'should validate a message with a previous hash')
-    t.end()
+    ssc.isValidMsg(msg2, msg, pubKey)
+        .then(isValid => {
+            t.equal(isValid, true,
+                'should validate a message with a previous hash')
+            t.end()
+        })
+        .catch(err => {
+            t.fail(err)
+            t.end()
+        })
+
 })
 
 // this works but is kind of confusing because of the use of promises &
