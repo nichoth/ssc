@@ -250,24 +250,6 @@ function arrBufToBase64 (buf) {
     return uint8arrays.toString(new Uint8Array(buf), "base64pad")
 }
 
-
-// function publicKeyToDid(publicKey, type) {
-//     type = type || 'ed25519'
-//     const pubKeyBuf = utils.base64ToArrBuf(publicKey)
-  
-//     // Prefix public-write key
-//     const prefix = magicBytes(type)
-//     if (prefix === null) {
-//         throw new Error(`Key type '${type}' not supported`)
-//     }
-  
-//     const prefixedBuf = utils.joinBufs(prefix, pubKeyBuf)
-  
-//     // Encode prefixed
-//     return BASE58_DID_PREFIX +
-//         uint8arrays.toString(new Uint8Array(prefixedBuf), "base58btc")
-// }
-
 const arrBufs = {
     equal: (aBuf, bBuf) => {
         const a = new Uint8Array(aBuf)
@@ -312,19 +294,3 @@ function parseMagicBytes (prefixedKey) {
   
     throw new Error("Unsupported key algorithm. Try using RSA.")
 }
-
-
-// module.exports = {
-//     clone,
-//     isObject,
-//     getId,
-//     hash,
-//     isInvalidShape,
-//     isString,
-//     encodeHeader,
-//     makeUrlUnsafe,
-//     // verifySignedData,
-//     decode,
-//     publicKeyToDid,
-//     didToPublicKey
-// }
