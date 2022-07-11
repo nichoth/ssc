@@ -7,6 +7,7 @@ var isCanonicalBase64 = require('is-canonical-base64')
 // var feedIdRegex = isCanonicalBase64('@', '.(?:sha256|ed25519)', 32)
 var isEncryptedRx = isCanonicalBase64('','\\.box.*')
 // import * as ucan from 'ucans'
+const base64url = require('base64url');
 import * as uint8arrays from "uint8arrays"
 import * as utils from "keystore-idb/lib/utils.js"
 
@@ -71,7 +72,8 @@ export function isObject (o) {
 }
 
 export function getId (msg) {
-    return '%' + hash(stringify(msg, null, 2))
+    const _hash = hash(stringify(msg, null, 2))
+    return '%' + base64url.fromBase64(_hash) + '.sha256'
 }
 
 // from ssb-keys
@@ -80,7 +82,7 @@ export function hash (data, enc) {
     data = (typeof data === 'string' && enc == null) ?
         Buffer.from(data, "binary") :
         Buffer.from(data, enc);
-    return sodium.crypto_hash_sha256(data).toString("base64") + ".sha256"
+    return sodium.crypto_hash_sha256(data).toString("base64")
 }
 
 export function isInteger (n) {

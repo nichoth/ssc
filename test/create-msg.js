@@ -53,6 +53,14 @@ test('verify a message', t => {
         })
 })
 
+test('get the key for a message', t => {
+    const key = ssc.getId(msg)
+    t.equal(key[0], '%', 'should return the expected key format')
+    t.ok(key.includes('.sha256'), "should include '.sha256' suffix")
+    t.notOk(key.includes('/'), 'should return a URL safe string')
+    t.end()
+})
+
 test('verify an invalid message', async t => {
     var badPrevMsg = ssc.createMsg(alice.keys, null, {
         type: 'test',
