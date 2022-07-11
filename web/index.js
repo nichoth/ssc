@@ -14,7 +14,6 @@ const DEFAULT_ECC_CURVE = 'P-256'
 const DEFAULT_HASH_ALG = 'SHA-256'
 
 
-
 async function verify (msg, sig, publicKey/*, charSize, curve, hashAlg*/) {
     return webcrypto.subtle.verify({
         name: 'ECDSA',
