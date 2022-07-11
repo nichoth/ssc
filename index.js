@@ -176,6 +176,7 @@ function verifyObj (publicKey, hmac_key, obj) {
 // this checks the signature and also the merkle integrity of the message with
 // the given previous message
 function isValidMsg (msg, prevMsg, publicKey) {
+
     if (typeof publicKey === 'string') {
         return webcrypto.subtle.importKey(
             'raw',

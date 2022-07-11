@@ -5,7 +5,10 @@ import { ECCKeyStore } from 'keystore-idb/lib/ecc/keystore'
 import keystore from "keystore-idb"
 
 const ssc = Ssc(keystore)
-const testMsgs = getTestMsgs()
+// const testMsgs = getTestMsgs()
+
+// comment out because we need to re-do the node messages, because the id
+//   format has changed
 
 // test('verify the messages created in node', t => {
 //     const pubKey = ssc.idToPublicKey(testMsgs[0].author)
@@ -256,7 +259,7 @@ function getTestMsgs () {
             signature: 'cM3Lv9YEx6KpZYTSicEjZt+WKMzNwFg6+wEWcEuQyGYnU8jQt8+VSxMk2Nt1YUxRYZsW5ACku77A12LTJ4GRVQ=='
         },
         {
-            previous: '%iD092cE/Rv1KW17k0a2Ym2AA09Jm04j6LIbR37vFgZU=.sha256',
+            previous: '%iD092cE_Rv1KW17k0a2Ym2AA09Jm04j6LIbR37vFgZU.sha256',
             sequence: 2,
             author: '@BHnPDtFGnngBZC2EvW9KXaS7zG+JuDKCUWBV0e7sVW2Ht/Zl/NU51zVK1b53agpr3/zkERAs/9dhNKyKROW4ZuA=.ed25519',
             timestamp: 1648084584761,
@@ -265,7 +268,7 @@ function getTestMsgs () {
             signature: 'G0tTIdYNQg9+YN5kILEgg2tJPKy9mfzFe8vpKUqPJI9ptmWQaLR3T8SKPbeVxchBoNOWbSrV1HoDe++G50Z5FQ=='
         },
         {
-            previous: '%MU7bbWfuwrPhIRErNS3An+YxGgGGFwVXeiDg9jl/3C0=.sha256',
+            previous: '%MU7bbWfuwrPhIRErNS3An-YxGgGGFwVXeiDg9jl_3C0.sha256',
             sequence: 3,
             author: '@BHnPDtFGnngBZC2EvW9KXaS7zG+JuDKCUWBV0e7sVW2Ht/Zl/NU51zVK1b53agpr3/zkERAs/9dhNKyKROW4ZuA=.ed25519',
             timestamp: 1648084584762,
