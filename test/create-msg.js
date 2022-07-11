@@ -39,18 +39,18 @@ test('create a second message', t => {
         })
 })
 
-test('verify a message', async t => {
-    t.ok(ssc.isValidMsg(msg, null, alice.keys.publicKey),
-        'should validate the first msg')
+test('verify a message', t => {
+    const pubKey = ssc.didToPublicKey(msg.author).publicKey
 
-    t.ok(ssc.isValidMsg(msgTwo, msg, alice.keys.publicKey),
-        'should validate the second msg')
-
-    const pubKey = await ssc.didToPublicKey(msg.author).publicKey
-    t.ok(await ssc.isValidMsg(msg, null, pubKey),
-        'should transform a message did to a public key')
-
-    t.end()
+    Promise.all([
+        ssc.isValidMsg(msg, null, alice.keys.publicKey),
+        ssc.isValidMsg(msg, null, pubKey)
+    ])
+        .then(([isVal, isVal2]) => {
+            t.ok(isVal, 'should validate the first message')
+            t.ok(isVal2, 'should transform a did to a public key')
+            t.end()
+        })
 })
 
 test('verify an invalid message', async t => {
