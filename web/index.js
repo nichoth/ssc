@@ -9,7 +9,6 @@ module.exports = Ssc
 export default Ssc
 
 const webcrypto = window.crypto
-
 const DEFAULT_ECC_CURVE = 'P-256'
 const DEFAULT_HASH_ALG = 'SHA-256'
 
@@ -173,45 +172,3 @@ function Ssc (keystore) {
     }
 
 }
-
-
-
-
-
-// module.exports = {
-//     get,
-//     getId,
-//     createKeys,
-//     sign,
-//     createMsg,
-//     signObj,
-//     verify: _verify,
-//     verifyObj,
-//     isValidMsg,
-//     getAuthor,
-//     getDidFromKeys,
-//     publicKeyToDid,
-//     didToPublicKey,
-//     // didToId,
-//     idToPublicKey,
-//     keyTypes: KEY_TYPES
-// }
-
-// export default {
-//     get,
-//     getId,
-//     createKeys,
-//     sign,
-//     createMsg,
-//     signObj,
-//     verify: _verify,
-//     verifyObj,
-//     isValidMsg,
-//     getAuthor,
-//     getDidFromKeys,
-//     publicKeyToDid,
-//     didToPublicKey,
-//     // didToId,
-//     idToPublicKey,
-//     keyTypes: KEY_TYPES
-// }
