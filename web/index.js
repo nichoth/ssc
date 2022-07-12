@@ -12,7 +12,6 @@ const webcrypto = window.crypto
 const DEFAULT_ECC_CURVE = 'P-256'
 const DEFAULT_HASH_ALG = 'SHA-256'
 
-
 async function verify (msg, sig, publicKey/*, charSize, curve, hashAlg*/) {
     return webcrypto.subtle.verify({
         name: 'ECDSA',
@@ -31,11 +30,11 @@ async function verify (msg, sig, publicKey/*, charSize, curve, hashAlg*/) {
         })
 }
 
+const KEY_TYPES = { ECC: 'ecc', RSA: 'rsa' }
 
 function Ssc (keystore) {
     let keys = null
     let cacheStoreName = null
-    const KEY_TYPES = { ECC: 'ecc', RSA: 'rsa' }
     // const KEY_TYPE = 'ed25519'  // ??? 
 
     return {
@@ -170,5 +169,6 @@ function Ssc (keystore) {
     function idToPublicKey (id) {
         return id.slice(1).split('.')[0]
     }
-
 }
+
+Ssc.keyTypes = KEY_TYPES
