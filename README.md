@@ -1,6 +1,6 @@
 # ssc
 
-Static functions for working with a merkle-dag.
+Static functions for working with a merkle-dag. This is the operations in `ssb`, but decoupled from any storage layer.
 
 This is `ssb` but more boring. `ssc` because c comes after b in the alphabet
 
@@ -62,7 +62,7 @@ To **set a previous message in this message**, pass in the previous message as t
 ssc keys | ssc post --text "woooo testing again" --prev="$(cat ./test/cli/message-json.json)"
 ```
 
-```
+```js
 {
   "previous": "%BUfo/WZh51h7eh91PBkdxQLnGfjrkG3ErsDdFmacWIg=.sha256",
   "sequence": 2,
