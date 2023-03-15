@@ -19,7 +19,7 @@ test('create a merkle list', async function (t) {
     // this is bad because the async reduce is confusing
     var list = await arr.reduce(async function (acc, val) {
         return acc.then(async _acc => {
-            var prev = (_acc[_acc.length - 1] || null)
+            var prev = (_acc[_acc.length - 1] ?? null)
             var msg = await ssc.createMsg(alice.keys, prev, {
                 type: 'test',
                 text: val
