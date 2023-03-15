@@ -265,7 +265,7 @@ test('create a merkle list', async function (t) {
     t.equal(list[2].content.text, 'three', 'should have the right msg content')
 
     var isValidList = list.reduce(function (isValid, msg, i) {
-        var prev = list[i - 1] || null
+        var prev = list[i - 1] ?? null
         return isValid && ssc.isValidMsg(msg, prev, alice.keys)
     }, true)
 
@@ -299,7 +299,7 @@ test('create ssb style posts', async function (t) {
 
     const posts = await arr.reduce(async function (acc, val) {
         return acc.then(async _acc => {
-            var prev = (_acc[_acc.length - 1] || null)
+            var prev = (_acc[_acc.length - 1] ?? null)
             prev = prev === null ? prev : prev.value
 
             var msg = await ssc.createMsg(alice.keys, prev, {

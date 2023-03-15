@@ -19,7 +19,7 @@ test('create ssb style posts', async function (t) {
 
     const posts = await arr.reduce(async function (acc, val) {
         return acc.then(async _acc => {
-            var prev = (_acc[_acc.length - 1] || null)
+            var prev = (_acc[_acc.length - 1] ?? null)
             prev = prev === null ? prev : prev.value
 
             var msg = await ssc.createMsg(alice.keys, prev, {
